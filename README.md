@@ -89,7 +89,7 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/enterprise-risk-management
+git clone https://github.com/septiannugraha/enterprise-risk-management
 cd enterprise-risk-management
 
 # Start with Docker Compose
@@ -103,7 +103,7 @@ open http://localhost:8123
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/enterprise-risk-management
+git clone https://github.com/septiannugraha/enterprise-risk-management
 cd enterprise-risk-management
 
 # Serve with any static web server
@@ -196,8 +196,8 @@ MIT License - feel free to use this for your own projects
 ## 👨‍💻 Author
 
 **Septian Adi Nugraha**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- LinkedIn: [Your LinkedIn](https://linkedin.com/in/yourusername)
+- GitHub: [@septiannugraha](https://github.com/septiannugraha)
+- LinkedIn: [Septian Adi Nugraha](https://www.linkedin.com/in/septian-adi-nugraha/)
 
 ## 🙏 Acknowledgments
 
