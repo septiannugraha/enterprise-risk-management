@@ -31,6 +31,8 @@ dist/
 Thumbs.db
 .Thumbs.db
 
+GITHUB_PUSH_INSTRUCTIONS.md
+
 # Docker
 docker-compose.override.yml
 
