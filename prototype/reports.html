@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - ERM Enterprise</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; 
+            font-family: 'Inter', sans-serif; 
+            background: #f5f5f5; 
+            color: #1f2937;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: #2563eb;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 100%;
+            padding: 2rem;
+        }
+        
+        /* Page Header */
+        .page-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .page-header h2 {
+            margin: 0 0 0.5rem 0;
+            color: #1f2937;
+            font-size: 2rem;
+        }
+        
+        .page-header p {
+            color: #6b7280;
+            margin: 0;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #6b7280;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .btn-secondary:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+        }
+        
+        /* Report Templates Section */
+        .templates-section {
+            margin-bottom: 2rem;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-header h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: #1f2937;
+        }
+        
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .template-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .template-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-color: #3b82f6;
+        }
+        
+        .template-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: #eff6ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+        
+        .template-icon.pdf { background: #fee2e2; color: #dc2626; }
+        .template-icon.excel { background: #d1fae5; color: #059669; }
+        .template-icon.powerpoint { background: #fef3c7; color: #d97706; }
+        .template-icon.word { background: #dbeafe; color: #1e40af; }
+        .template-icon.dashboard { background: #ede9fe; color: #7c3aed; }
+        
+        .template-card h4 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.125rem;
+            color: #1f2937;
+        }
+        
+        .template-card p {
+            margin: 0 0 1.5rem 0;
+            color: #6b7280;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        
+        .template-meta {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            font-size: 0.75rem;
+            color: #9ca3af;
+            margin-bottom: 1rem;
+        }
+        
+        .new-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #10b981;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        /* Report History Section */
+        .history-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-bar input,
+        .filter-bar select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            background: white;
+        }
+        
+        .filter-bar input {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .reports-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .reports-table th {
+            background: #f9fafb;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #6b7280;
+            font-size: 0.875rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .reports-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .reports-table tr:hover {
+            background: #f9fafb;
+        }
+        
+        .report-name {
+            font-weight: 600;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .report-type {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .report-type.executive { background: #fee2e2; color: #dc2626; }
+        .report-type.detailed { background: #d1fae5; color: #059669; }
+        .report-type.compliance { background: #fef3c7; color: #d97706; }
+        .report-type.kri { background: #dbeafe; color: #1e40af; }
+        
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-icon {
+            padding: 0.5rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: #6b7280;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        
+        .btn-icon:hover {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+        
+        /* Scheduled Reports */
+        .scheduled-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .scheduled-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .scheduled-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.2s;
+        }
+        
+        .scheduled-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .scheduled-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+        
+        .scheduled-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+        
+        .schedule-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .schedule-item i {
+            width: 20px;
+            color: #9ca3af;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 24px;
+            background: #e5e7eb;
+            border-radius: 24px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .toggle-switch.active {
+            background: #10b981;
+        }
+        
+        .toggle-knob {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+        
+        .toggle-switch.active .toggle-knob {
+            transform: translateX(24px);
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .fab {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: white;
+            background: #3b82f6;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+        }
+        
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+        
+        /* Loading States */
+        .loading-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 12px;
+            text-align: center;
+            color: #6b7280;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f4f6;
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .templates-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-bar {
+                flex-direction: column;
+            }
+            
+            .filter-bar input,
+            .filter-bar select {
+                width: 100%;
+            }
+            
+            .reports-table {
+                font-size: 0.875rem;
+            }
+            
+            .quick-actions {
+                bottom: 1rem;
+                right: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1><i class="fas fa-shield-alt"></i> ERM Enterprise</h1>
+            <div class="nav-menu">
+                <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="risk-register.html"><i class="fas fa-clipboard-list"></i> Risk Register</a>
+                <a href="kri-monitoring.html"><i class="fas fa-chart-line"></i> KRI</a>
+                <a href="kpi-management.html"><i class="fas fa-tachometer-alt"></i> KPI</a>
+                <a href="risk-treatment.html"><i class="fas fa-tasks"></i> Treatment</a>
+                <a href="risk-dictionary.html"><i class="fas fa-book"></i> Dictionary</a>
+                <a href="event-loss-database.html"><i class="fas fa-database"></i> Loss DB</a>
+                <a href="reports.html" class="active"><i class="fas fa-file-alt"></i> Reports</a>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <select id="userRole" style="padding: 0.5rem 1rem; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; border-radius: 6px; font-size: 0.875rem;">
+                    <option value="management">Management (View All)</option>
+                    <option value="risk-owner">Risk Owner</option>
+                    <option value="unit-mr">Unit MR</option>
+                    <option value="auditor">Auditor</option>
+                </select>
+                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px;">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userName" style="font-size: 0.875rem;">John Doe</span>
+                </div>
+                <a href="login.html" style="color: white; text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span style="font-size: 0.875rem;">Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h2><i class="fas fa-file-alt"></i> Risk Management Reports</h2>
+            <p>Generate, schedule, and manage risk reports for stakeholders</p>
+        </div>
+
+        <!-- Report Templates -->
+        <div class="templates-section">
+            <div class="section-header">
+                <h3>Report Templates</h3>
+                <button class="btn btn-secondary">
+                    <i class="fas fa-cog"></i> Manage Templates
+                </button>
+            </div>
+            
+            <div class="templates-grid">
+                <!-- Executive Summary -->
+                <div class="template-card" onclick="generateReport('executive-summary')">
+                    <div class="template-icon pdf">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h4>Executive Summary</h4>
+                    <p>High-level risk overview designed for board presentations with key metrics and trends</p>
+                    <div class="template-meta">
+                        <span><i class="fas fa-clock"></i> ~2 min</span>
+                        <span><i class="fas fa-file"></i> PDF</span>
+                    </div>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-magic"></i> Generate Now
+                    </button>
+                </div>
+
+                <!-- Risk Register Export -->
+                <div class="template-card" onclick="generateReport('risk-register')">
+                    <div class="template-icon excel">
+                        <i class="fas fa-file-excel"></i>
+                    </div>
+                    <h4>Risk Register Export</h4>
+                    <p>Complete risk register with all details, assessments, and treatment plans</p>
+                    <div class="template-meta">
+                        <span><i class="fas fa-clock"></i> ~1 min</span>
+                        <span><i class="fas fa-file"></i> Excel</span>
+                    </div>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-download"></i> Export Now
+                    </button>
+                </div>
+
+                <!-- KRI Performance Report -->
+                <div class="template-card" onclick="generateReport('kri-performance')">
+                    <div class="template-icon pdf">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h4>KRI Performance Report</h4>
+                    <p>Detailed analysis of Key Risk Indicators with trends and threshold breaches</p>
+                    <div class="template-meta">
+                        <span><i class="fas fa-clock"></i> ~3 min</span>
+                        <span><i class="fas fa-file"></i> PDF</span>
+                    </div>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-chart-line"></i> Generate Now
+                    </button>
+                    <span class="new-badge">NEW</span>
+                </div>
+
+                <!-- Monthly Risk Profile -->
+                <div class="template-card" onclick="generateReport('monthly-profile')">
+                    <div class="template-icon powerpoint">
+                        <i class="fas fa-file-powerpoint"></i>
+                    </div>
+                    <h4>Monthly Risk Profile</h4>
+                    <p>Comprehensive monthly risk assessment presentation with heat maps</p>
+                    <div class="template-meta">
+                        <span><i class="fas fa-clock"></i> ~5 min</span>
+                        <span><i class="fas fa-file"></i> PPT</span>
+                    </div>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-presentation"></i> Create Now
+                    </button>
+                </div>
+
+                <!-- Compliance Report -->
+                <div class="template-card" onclick="generateReport('compliance')">
+                    <div class="template-icon word">
+                        <i class="fas fa-file-word"></i>
+                    </div>
+                    <h4>Compliance Report</h4>
+                    <p>Regulatory compliance status and risk management framework adherence</p>
+                    <div class="template-meta">
+                        <span><i class="fas fa-clock"></i> ~4 min</span>
+                        <span><i class="fas fa-file"></i> Word</span>
+                    </div>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-check-circle"></i> Generate Now
+                    </button>
+                </div>
+
+                <!-- Custom Report -->
+                <div class="template-card" onclick="createCustomReport()">
+                    <div class="template-icon dashboard">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <h4>Custom Report</h4>
+                    <p>Build your own report with custom metrics, filters, and visualizations</p>
+                    <div class="template-meta">
+                        <span><i class="fas fa-clock"></i> Variable</span>
+                        <span><i class="fas fa-file"></i> Multiple</span>
+                    </div>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus-circle"></i> Create Custom
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report History -->
+        <div class="history-section">
+            <div class="section-header">
+                <h3>Recent Reports</h3>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-filter"></i> Filter
+                    </button>
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-download"></i> Bulk Download
+                    </button>
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <input type="text" placeholder="Search reports..." id="searchReports">
+                <select id="reportTypeFilter">
+                    <option value="">All Types</option>
+                    <option value="executive">Executive Summary</option>
+                    <option value="detailed">Detailed Analysis</option>
+                    <option value="compliance">Compliance</option>
+                    <option value="kri">KRI Report</option>
+                </select>
+                <input type="date" id="dateFilter">
+            </div>
+
+            <table class="reports-table">
+                <thead>
+                    <tr>
+                        <th>Report Name</th>
+                        <th>Type</th>
+                        <th>Generated By</th>
+                        <th>Date</th>
+                        <th>Size</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="report-name">
+                                <i class="fas fa-file-pdf" style="color: #dc2626;"></i>
+                                Q1 2025 Executive Risk Summary
+                            </div>
+                        </td>
+                        <td><span class="report-type executive">Executive</span></td>
+                        <td>Admin User</td>
+                        <td>Jan 25, 2025 09:30</td>
+                        <td>2.4 MB</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-icon" title="Download">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="btn-icon" title="View">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn-icon" title="Share">
+                                    <i class="fas fa-share"></i>
+                                </button>
+                                <button class="btn-icon" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="report-name">
+                                <i class="fas fa-file-excel" style="color: #059669;"></i>
+                                Risk Register Export - January 2025
+                            </div>
+                        </td>
+                        <td><span class="report-type detailed">Detailed</span></td>
+                        <td>Risk Officer</td>
+                        <td>Jan 24, 2025 14:15</td>
+                        <td>5.8 MB</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-icon" title="Download">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="btn-icon" title="View">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn-icon" title="Share">
+                                    <i class="fas fa-share"></i>
+                                </button>
+                                <button class="btn-icon" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="report-name">
+                                <i class="fas fa-file-pdf" style="color: #dc2626;"></i>
+                                KRI Performance Analysis - Week 4
+                            </div>
+                        </td>
+                        <td><span class="report-type kri">KRI Report</span></td>
+                        <td>System</td>
+                        <td>Jan 22, 2025 08:00</td>
+                        <td>1.2 MB</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-icon" title="Download">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="btn-icon" title="View">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn-icon" title="Share">
+                                    <i class="fas fa-share"></i>
+                                </button>
+                                <button class="btn-icon" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="report-name">
+                                <i class="fas fa-file-word" style="color: #1e40af;"></i>
+                                Regulatory Compliance Report Q4 2024
+                            </div>
+                        </td>
+                        <td><span class="report-type compliance">Compliance</span></td>
+                        <td>Compliance Officer</td>
+                        <td>Jan 20, 2025 16:45</td>
+                        <td>3.1 MB</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-icon" title="Download">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="btn-icon" title="View">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn-icon" title="Share">
+                                    <i class="fas fa-share"></i>
+                                </button>
+                                <button class="btn-icon" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="report-name">
+                                <i class="fas fa-file-powerpoint" style="color: #d97706;"></i>
+                                December 2024 Risk Presentation
+                            </div>
+                        </td>
+                        <td><span class="report-type executive">Executive</span></td>
+                        <td>CFO</td>
+                        <td>Jan 15, 2025 11:30</td>
+                        <td>8.2 MB</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-icon" title="Download">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="btn-icon" title="View">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn-icon" title="Share">
+                                    <i class="fas fa-share"></i>
+                                </button>
+                                <button class="btn-icon" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Scheduled Reports -->
+        <div class="scheduled-section">
+            <div class="section-header">
+                <h3>Scheduled Reports</h3>
+                <button class="btn btn-primary">
+                    <i class="fas fa-plus"></i> New Schedule
+                </button>
+            </div>
+
+            <div class="scheduled-grid">
+                <div class="scheduled-card">
+                    <div class="scheduled-header">
+                        <div>
+                            <div class="scheduled-title">Weekly KRI Summary</div>
+                            <div class="report-type kri">KRI Report</div>
+                        </div>
+                        <div class="toggle-switch active" onclick="toggleSchedule(this)">
+                            <div class="toggle-knob"></div>
+                        </div>
+                    </div>
+                    <div class="schedule-info">
+                        <div class="schedule-item">
+                            <i class="fas fa-calendar"></i>
+                            Every Monday at 08:00
+                        </div>
+                        <div class="schedule-item">
+                            <i class="fas fa-envelope"></i>
+                            Sent to: risk-committee@enterprise.com
+                        </div>
+                        <div class="schedule-item">
+                            <i class="fas fa-clock"></i>
+                            Next run: Feb 3, 2025
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scheduled-card">
+                    <div class="scheduled-header">
+                        <div>
+                            <div class="scheduled-title">Monthly Executive Report</div>
+                            <div class="report-type executive">Executive</div>
+                        </div>
+                        <div class="toggle-switch active" onclick="toggleSchedule(this)">
+                            <div class="toggle-knob"></div>
+                        </div>
+                    </div>
+                    <div class="schedule-info">
+                        <div class="schedule-item">
+                            <i class="fas fa-calendar"></i>
+                            1st of every month at 09:00
+                        </div>
+                        <div class="schedule-item">
+                            <i class="fas fa-envelope"></i>
+                            Sent to: board@enterprise.com
+                        </div>
+                        <div class="schedule-item">
+                            <i class="fas fa-clock"></i>
+                            Next run: Feb 1, 2025
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scheduled-card">
+                    <div class="scheduled-header">
+                        <div>
+                            <div class="scheduled-title">Quarterly Compliance Report</div>
+                            <div class="report-type compliance">Compliance</div>
+                        </div>
+                        <div class="toggle-switch" onclick="toggleSchedule(this)">
+                            <div class="toggle-knob"></div>
+                        </div>
+                    </div>
+                    <div class="schedule-info">
+                        <div class="schedule-item">
+                            <i class="fas fa-calendar"></i>
+                            Quarterly on the 5th at 14:00
+                        </div>
+                        <div class="schedule-item">
+                            <i class="fas fa-envelope"></i>
+                            Sent to: compliance@enterprise.com
+                        </div>
+                        <div class="schedule-item">
+                            <i class="fas fa-clock"></i>
+                            Next run: Apr 5, 2025
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <button class="fab" onclick="quickGenerateReport()" title="Quick Generate">
+            <i class="fas fa-bolt"></i>
+        </button>
+    </div>
+
+    <script src="reports.js"></script>
+</body>
+</html>

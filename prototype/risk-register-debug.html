@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Register DEBUG - ERM Enterprise</title>
+    <style>
+        /* Minimal CSS to ensure table displays */
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .debug-banner {
+            background: yellow;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .table-container {
+            overflow-x: auto;
+            border: 2px solid red;
+            padding: 10px;
+            background: #f0f0f0;
+        }
+        table {
+            border-collapse: collapse;
+            min-width: 1200px;
+            background: white;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background: #e0e0e0;
+            font-weight: bold;
+        }
+        .fixed-col {
+            background: #ffffcc;
+            position: sticky;
+            left: 0;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-banner">DEBUG VERSION - Table should be scrollable horizontally (red border shows container)</div>
+    
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th rowspan="2" class="fixed-col">Risk Code</th>
+                    <th rowspan="2">Perspective</th>
+                    <th rowspan="2">Strategic Objective</th>
+                    <th rowspan="2">Risk Event</th>
+                    <th rowspan="2">Risk Owner</th>
+                    <th colspan="3">Inherent Risk</th>
+                    <th rowspan="2">Controls</th>
+                    <th colspan="3">Residual Risk</th>
+                    <th rowspan="2">Treatment</th>
+                    <th rowspan="2">Status</th>
+                    <th rowspan="2">Actions</th>
+                </tr>
+                <tr>
+                    <th>L</th>
+                    <th>I</th>
+                    <th>Score</th>
+                    <th>L</th>
+                    <th>I</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="fixed-col">RR-F-001</td>
+                    <td>FINANCIAL</td>
+                    <td>Increase Shareholders Value</td>
+                    <td>Revenue target not achieved due to market downturn</td>
+                    <td>CFO</td>
+                    <td>4</td>
+                    <td>5</td>
+                    <td>20</td>
+                    <td>View Controls</td>
+                    <td>3</td>
+                    <td>4</td>
+                    <td>12</td>
+                    <td>Mitigate</td>
+                    <td>Approved</td>
+                    <td>Edit | View | RTP</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <p>You should be able to scroll horizontally inside the red border to see all columns.</p>
+</body>
+</html>

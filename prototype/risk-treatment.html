@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Treatment Plans - ERM Enterprise</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; 
+            font-family: 'Inter', sans-serif; 
+            background: #f5f5f5; 
+            color: #1f2937;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: #2563eb;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 100%;
+            padding: 2rem;
+        }
+        
+        /* Page Header */
+        .page-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .page-header h2 {
+            margin: 0 0 0.5rem 0;
+            color: #1f2937;
+            font-size: 2rem;
+        }
+        
+        .page-header p {
+            color: #6b7280;
+            margin: 0;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #6b7280;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .btn-secondary:hover {
+            background: #f9fafb;
+        }
+        
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+        }
+        
+        /* Summary Cards */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .summary-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-left: 4px solid;
+            transition: transform 0.2s;
+        }
+        
+        .summary-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .summary-card.total { border-left-color: #3b82f6; }
+        .summary-card.active { border-left-color: #10b981; }
+        .summary-card.overdue { border-left-color: #ef4444; }
+        .summary-card.completed { border-left-color: #8b5cf6; }
+        
+        .summary-card h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .summary-card.total h3 { color: #3b82f6; }
+        .summary-card.active h3 { color: #10b981; }
+        .summary-card.overdue h3 { color: #ef4444; }
+        .summary-card.completed h3 { color: #8b5cf6; }
+        
+        .summary-card p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        
+        /* Filter Section */
+        .filter-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .filter-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            background: white;
+        }
+        
+        /* Treatment Cards Grid */
+        .treatment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        /* Treatment Card */
+        .treatment-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .treatment-card:hover {
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .treatment-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .treatment-header h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .treatment-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+        
+        .treatment-code {
+            background: #f3f4f6;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .risk-level {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .risk-level.high { background: #ef4444; }
+        .risk-level.medium { background: #f59e0b; }
+        .risk-level.low { background: #10b981; }
+        
+        /* Treatment Status */
+        .treatment-status {
+            padding: 1.5rem;
+            background: #f9fafb;
+        }
+        
+        .status-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .status-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .status-value {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .progress-bar {
+            background: #e5e7eb;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #3b82f6;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-fill.on-track { background: #10b981; }
+        .progress-fill.at-risk { background: #f59e0b; }
+        .progress-fill.overdue { background: #ef4444; }
+        
+        /* Treatment Details */
+        .treatment-details {
+            padding: 1.5rem;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 0.875rem;
+        }
+        
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            color: #6b7280;
+        }
+        
+        .detail-value {
+            color: #1f2937;
+            font-weight: 500;
+        }
+        
+        /* Treatment Actions */
+        .treatment-actions {
+            padding: 1rem 1.5rem;
+            background: #f3f4f6;
+            display: flex;
+            gap: 0.5rem;
+            justify-content: space-between;
+        }
+        
+        .action-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-badge.in-progress { 
+            background: #dbeafe; 
+            color: #1e40af; 
+        }
+        
+        .status-badge.completed { 
+            background: #d1fae5; 
+            color: #065f46; 
+        }
+        
+        .status-badge.on-hold { 
+            background: #fef3c7; 
+            color: #92400e; 
+        }
+        
+        .status-badge.cancelled { 
+            background: #fee2e2; 
+            color: #991b1b; 
+        }
+        
+        /* Treatment Type Icons */
+        .treatment-type {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .type-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+        
+        .type-icon.mitigate { background: #dbeafe; color: #1e40af; }
+        .type-icon.transfer { background: #f3e8ff; color: #6b21a8; }
+        .type-icon.accept { background: #d1fae5; color: #065f46; }
+        .type-icon.avoid { background: #fee2e2; color: #991b1b; }
+        
+        /* Timeline View */
+        .timeline-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .timeline-header h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: #1f2937;
+        }
+        
+        .view-toggle {
+            display: flex;
+            background: #f3f4f6;
+            border-radius: 6px;
+            padding: 0.25rem;
+        }
+        
+        .view-toggle button {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: transparent;
+            font-size: 0.875rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        .view-toggle button.active {
+            background: white;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .treatment-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-section {
+                flex-direction: column;
+            }
+            
+            .filter-group {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1><i class="fas fa-shield-alt"></i> ERM Enterprise</h1>
+            <div class="nav-menu">
+                <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="risk-register.html"><i class="fas fa-clipboard-list"></i> Risk Register</a>
+                <a href="kri-monitoring.html"><i class="fas fa-chart-line"></i> KRI</a>
+                <a href="kpi-management.html"><i class="fas fa-tachometer-alt"></i> KPI</a>
+                <a href="risk-treatment.html" class="active"><i class="fas fa-tasks"></i> Treatment</a>
+                <a href="risk-dictionary.html"><i class="fas fa-book"></i> Dictionary</a>
+                <a href="event-loss-database.html"><i class="fas fa-database"></i> Loss DB</a>
+                <a href="reports.html"><i class="fas fa-file-alt"></i> Reports</a>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <select id="userRole" style="padding: 0.5rem 1rem; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; border-radius: 6px; font-size: 0.875rem;">
+                    <option value="management">Management (View All)</option>
+                    <option value="risk-owner">Risk Owner</option>
+                    <option value="unit-mr">Unit MR</option>
+                    <option value="auditor">Auditor</option>
+                </select>
+                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px;">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userName" style="font-size: 0.875rem;">John Doe</span>
+                </div>
+                <a href="login.html" style="color: white; text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span style="font-size: 0.875rem;">Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h2><i class="fas fa-tasks"></i> Risk Treatment Plans</h2>
+                <p>Manage and monitor risk mitigation strategies and action plans</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary">
+                    <i class="fas fa-download"></i> Export Plans
+                </button>
+                <a href="treatment-form.html" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> New Treatment Plan
+                </a>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+            <div class="summary-card total">
+                <h3>47</h3>
+                <p>Total Treatment Plans</p>
+            </div>
+            <div class="summary-card active">
+                <h3>32</h3>
+                <p>Active Plans</p>
+            </div>
+            <div class="summary-card overdue">
+                <h3>5</h3>
+                <p>Overdue Plans</p>
+            </div>
+            <div class="summary-card completed">
+                <h3>89%</h3>
+                <p>Completion Rate</p>
+            </div>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="filter-group">
+                <label>Status</label>
+                <select id="statusFilter">
+                    <option value="">All Status</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                    <option value="on-hold">On Hold</option>
+                    <option value="overdue">Overdue</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Risk Level</label>
+                <select id="riskLevelFilter">
+                    <option value="">All Levels</option>
+                    <option value="high">High Risk</option>
+                    <option value="medium">Medium Risk</option>
+                    <option value="low">Low Risk</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Treatment Type</label>
+                <select id="treatmentTypeFilter">
+                    <option value="">All Types</option>
+                    <option value="mitigate">Mitigate</option>
+                    <option value="transfer">Transfer</option>
+                    <option value="accept">Accept</option>
+                    <option value="avoid">Avoid</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Owner</label>
+                <select id="ownerFilter">
+                    <option value="">All Owners</option>
+                    <option value="cfo">CFO</option>
+                    <option value="cto">CTO</option>
+                    <option value="cmo">CMO</option>
+                    <option value="cro">Chief Risk Officer</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Search</label>
+                <input type="text" placeholder="Search treatment plans..." id="searchInput">
+            </div>
+        </div>
+
+        <!-- Treatment Plans Grid -->
+        <div class="treatment-grid" id="treatmentGrid">
+            <!-- Treatment Plan 1 -->
+            <div class="treatment-card">
+                <div class="treatment-header">
+                    <h3>Credit Limit Review & Adjustment</h3>
+                    <div class="treatment-meta">
+                        <span class="treatment-code">RTP-2025-001</span>
+                        <span class="risk-level high">High Risk</span>
+                        <span class="status-badge in-progress">In Progress</span>
+                    </div>
+                    <div class="treatment-type">
+                        <div class="type-icon mitigate">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <span>Mitigate</span>
+                    </div>
+                </div>
+                <div class="treatment-status">
+                    <div class="status-info">
+                        <span class="status-label">Progress</span>
+                        <span class="status-value">75%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill on-track" style="width: 75%;"></div>
+                    </div>
+                    <div class="status-info">
+                        <span class="status-label">Due Date</span>
+                        <span class="status-value">Feb 15, 2025</span>
+                    </div>
+                </div>
+                <div class="treatment-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Risk Reference</span>
+                        <span class="detail-value">RR-F-001</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Owner</span>
+                        <span class="detail-value">CFO</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Budget</span>
+                        <span class="detail-value">Rp 250M</span>
+                    </div>
+                </div>
+                <div class="treatment-actions">
+                    <div class="action-group">
+                        <button class="btn btn-sm btn-primary">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                        <button class="btn btn-sm btn-secondary">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                    </div>
+                    <button class="btn btn-sm btn-secondary">
+                        <i class="fas fa-chart-line"></i> Progress
+                    </button>
+                </div>
+            </div>
+
+            <!-- Treatment Plan 2 -->
+            <div class="treatment-card">
+                <div class="treatment-header">
+                    <h3>IT Security Infrastructure Upgrade</h3>
+                    <div class="treatment-meta">
+                        <span class="treatment-code">RTP-2025-002</span>
+                        <span class="risk-level medium">Medium Risk</span>
+                        <span class="status-badge in-progress">In Progress</span>
+                    </div>
+                    <div class="treatment-type">
+                        <div class="type-icon mitigate">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <span>Mitigate</span>
+                    </div>
+                </div>
+                <div class="treatment-status">
+                    <div class="status-info">
+                        <span class="status-label">Progress</span>
+                        <span class="status-value">40%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill at-risk" style="width: 40%;"></div>
+                    </div>
+                    <div class="status-info">
+                        <span class="status-label">Due Date</span>
+                        <span class="status-value">Mar 01, 2025</span>
+                    </div>
+                </div>
+                <div class="treatment-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Risk Reference</span>
+                        <span class="detail-value">RR-IBP-003</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Owner</span>
+                        <span class="detail-value">CTO</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Budget</span>
+                        <span class="detail-value">Rp 500M</span>
+                    </div>
+                </div>
+                <div class="treatment-actions">
+                    <div class="action-group">
+                        <button class="btn btn-sm btn-primary">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                        <button class="btn btn-sm btn-secondary">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                    </div>
+                    <button class="btn btn-sm btn-secondary">
+                        <i class="fas fa-chart-line"></i> Progress
+                    </button>
+                </div>
+            </div>
+
+            <!-- Treatment Plan 3 -->
+            <div class="treatment-card">
+                <div class="treatment-header">
+                    <h3>Customer Service Training Program</h3>
+                    <div class="treatment-meta">
+                        <span class="treatment-code">RTP-2025-003</span>
+                        <span class="risk-level high">High Risk</span>
+                        <span class="status-badge completed">Completed</span>
+                    </div>
+                    <div class="treatment-type">
+                        <div class="type-icon mitigate">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <span>Mitigate</span>
+                    </div>
+                </div>
+                <div class="treatment-status">
+                    <div class="status-info">
+                        <span class="status-label">Progress</span>
+                        <span class="status-value">100%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill on-track" style="width: 100%;"></div>
+                    </div>
+                    <div class="status-info">
+                        <span class="status-label">Completed</span>
+                        <span class="status-value">Jan 20, 2025</span>
+                    </div>
+                </div>
+                <div class="treatment-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Risk Reference</span>
+                        <span class="detail-value">RR-C-002</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Owner</span>
+                        <span class="detail-value">CMO</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Budget</span>
+                        <span class="detail-value">Rp 150M</span>
+                    </div>
+                </div>
+                <div class="treatment-actions">
+                    <div class="action-group">
+                        <button class="btn btn-sm btn-primary">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                        <button class="btn btn-sm btn-secondary">
+                            <i class="fas fa-file-alt"></i> Report
+                        </button>
+                    </div>
+                    <button class="btn btn-sm btn-secondary">
+                        <i class="fas fa-check-circle"></i> Results
+                    </button>
+                </div>
+            </div>
+
+            <!-- Treatment Plan 4 -->
+            <div class="treatment-card">
+                <div class="treatment-header">
+                    <h3>Risk Insurance Policy Renewal</h3>
+                    <div class="treatment-meta">
+                        <span class="treatment-code">RTP-2025-004</span>
+                        <span class="risk-level medium">Medium Risk</span>
+                        <span class="status-badge in-progress">In Progress</span>
+                    </div>
+                    <div class="treatment-type">
+                        <div class="type-icon transfer">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <span>Transfer</span>
+                    </div>
+                </div>
+                <div class="treatment-status">
+                    <div class="status-info">
+                        <span class="status-label">Progress</span>
+                        <span class="status-value">60%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill on-track" style="width: 60%;"></div>
+                    </div>
+                    <div class="status-info">
+                        <span class="status-label">Due Date</span>
+                        <span class="status-value">Feb 28, 2025</span>
+                    </div>
+                </div>
+                <div class="treatment-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Risk Reference</span>
+                        <span class="detail-value">RR-F-002</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Owner</span>
+                        <span class="detail-value">Chief Risk Officer</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Premium</span>
+                        <span class="detail-value">Rp 1.2B/year</span>
+                    </div>
+                </div>
+                <div class="treatment-actions">
+                    <div class="action-group">
+                        <button class="btn btn-sm btn-primary">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                        <button class="btn btn-sm btn-secondary">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                    </div>
+                    <button class="btn btn-sm btn-secondary">
+                        <i class="fas fa-chart-line"></i> Progress
+                    </button>
+                </div>
+            </div>
+
+            <!-- Treatment Plan 5 -->
+            <div class="treatment-card">
+                <div class="treatment-header">
+                    <h3>Employee Retention Program</h3>
+                    <div class="treatment-meta">
+                        <span class="treatment-code">RTP-2025-005</span>
+                        <span class="risk-level medium">Medium Risk</span>
+                        <span class="status-badge in-progress">In Progress</span>
+                    </div>
+                    <div class="treatment-type">
+                        <div class="type-icon mitigate">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <span>Mitigate</span>
+                    </div>
+                </div>
+                <div class="treatment-status">
+                    <div class="status-info">
+                        <span class="status-label">Progress</span>
+                        <span class="status-value">85%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill on-track" style="width: 85%;"></div>
+                    </div>
+                    <div class="status-info">
+                        <span class="status-label">Due Date</span>
+                        <span class="status-value">Jan 31, 2025</span>
+                    </div>
+                </div>
+                <div class="treatment-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Risk Reference</span>
+                        <span class="detail-value">RR-LG-004</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Owner</span>
+                        <span class="detail-value">CHRO</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Budget</span>
+                        <span class="detail-value">Rp 300M</span>
+                    </div>
+                </div>
+                <div class="treatment-actions">
+                    <div class="action-group">
+                        <button class="btn btn-sm btn-primary">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                        <button class="btn btn-sm btn-secondary">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                    </div>
+                    <button class="btn btn-sm btn-secondary">
+                        <i class="fas fa-chart-line"></i> Progress
+                    </button>
+                </div>
+            </div>
+
+            <!-- Treatment Plan 6 - Overdue -->
+            <div class="treatment-card">
+                <div class="treatment-header">
+                    <h3>Regulatory Compliance Update</h3>
+                    <div class="treatment-meta">
+                        <span class="treatment-code">RTP-2024-018</span>
+                        <span class="risk-level high">High Risk</span>
+                        <span class="status-badge on-hold">On Hold</span>
+                    </div>
+                    <div class="treatment-type">
+                        <div class="type-icon avoid">
+                            <i class="fas fa-ban"></i>
+                        </div>
+                        <span>Avoid</span>
+                    </div>
+                </div>
+                <div class="treatment-status">
+                    <div class="status-info">
+                        <span class="status-label">Progress</span>
+                        <span class="status-value">30%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill overdue" style="width: 30%;"></div>
+                    </div>
+                    <div class="status-info">
+                        <span class="status-label" style="color: #ef4444;">Overdue</span>
+                        <span class="status-value" style="color: #ef4444;">Jan 15, 2025</span>
+                    </div>
+                </div>
+                <div class="treatment-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Risk Reference</span>
+                        <span class="detail-value">RR-F-005</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Owner</span>
+                        <span class="detail-value">Compliance Officer</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Budget</span>
+                        <span class="detail-value">Rp 100M</span>
+                    </div>
+                </div>
+                <div class="treatment-actions">
+                    <div class="action-group">
+                        <button class="btn btn-sm btn-primary">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                        <button class="btn btn-sm btn-secondary">
+                            <i class="fas fa-exclamation-triangle"></i> Escalate
+                        </button>
+                    </div>
+                    <button class="btn btn-sm btn-secondary">
+                        <i class="fas fa-comments"></i> Update
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline View Section -->
+        <div class="timeline-section">
+            <div class="timeline-header">
+                <h3><i class="fas fa-calendar-alt"></i> Treatment Timeline</h3>
+                <div class="view-toggle">
+                    <button class="active">Month</button>
+                    <button>Quarter</button>
+                    <button>Year</button>
+                </div>
+            </div>
+            <div class="timeline-container">
+                <canvas id="treatmentTimeline" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="risk-treatment.js"></script>
+</body>
+</html>

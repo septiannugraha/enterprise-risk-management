@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPI Form - ERM Enterprise</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; 
+            font-family: 'Inter', sans-serif; 
+            background: #f5f5f5; 
+            color: #1f2937;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: #2563eb;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Form Header */
+        .form-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .form-header h2 {
+            margin: 0 0 0.5rem 0;
+            color: #1f2937;
+            font-size: 2rem;
+        }
+        
+        .form-header p {
+            color: #6b7280;
+            margin: 0;
+        }
+        
+        /* Form Sections */
+        .form-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0 0 1.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .required::after {
+            content: ' *';
+            color: #ef4444;
+        }
+        
+        .form-input,
+        .form-select,
+        .form-textarea {
+            padding: 0.75rem 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            background: white;
+        }
+        
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #6b7280;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .btn-secondary:hover {
+            background: #f9fafb;
+        }
+        
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        /* Help Text */
+        .help-text {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+        
+        /* Target Section */
+        .target-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .target-item {
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .target-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+        
+        .target-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        /* Info Box */
+        .info-box {
+            background: #eff6ff;
+            border: 1px solid #3b82f6;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            align-items: start;
+        }
+        
+        .info-box i {
+            color: #3b82f6;
+            font-size: 1.25rem;
+        }
+        
+        .info-content {
+            flex: 1;
+        }
+        
+        .info-content h4 {
+            margin: 0 0 0.5rem 0;
+            color: #1e40af;
+        }
+        
+        .info-content p {
+            margin: 0;
+            font-size: 0.875rem;
+            color: #1e40af;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1><i class="fas fa-shield-alt"></i> ERM Enterprise</h1>
+            <div class="nav-menu">
+                <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="risk-register.html"><i class="fas fa-clipboard-list"></i> Risk Register</a>
+                <a href="kri-monitoring.html"><i class="fas fa-chart-line"></i> KRI</a>
+                <a href="kpi-management.html" class="active"><i class="fas fa-tachometer-alt"></i> KPI</a>
+                <a href="risk-treatment.html"><i class="fas fa-tasks"></i> Treatment</a>
+                <a href="risk-dictionary.html"><i class="fas fa-book"></i> Dictionary</a>
+                <a href="event-loss-database.html"><i class="fas fa-database"></i> Loss DB</a>
+                <a href="reports.html"><i class="fas fa-file-alt"></i> Reports</a>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <select id="userRole" style="padding: 0.5rem 1rem; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; border-radius: 6px; font-size: 0.875rem;">
+                    <option value="management">Management (View All)</option>
+                    <option value="risk-owner">Risk Owner</option>
+                    <option value="unit-mr">Unit MR</option>
+                    <option value="auditor">Auditor</option>
+                </select>
+                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px;">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userName" style="font-size: 0.875rem;">John Doe</span>
+                </div>
+                <a href="login.html" style="color: white; text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span style="font-size: 0.875rem;">Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Form Header -->
+        <div class="form-header">
+            <h2><i class="fas fa-tachometer-alt"></i> Create New KPI</h2>
+            <p>Define key performance indicators aligned with strategic objectives</p>
+        </div>
+
+        <!-- Info Box -->
+        <div class="info-box">
+            <i class="fas fa-info-circle"></i>
+            <div class="info-content">
+                <h4>KPI Guidelines</h4>
+                <p>KPIs should be SMART: Specific, Measurable, Achievable, Relevant, and Time-bound. Each KPI must be linked to a strategic objective and have clear measurement criteria.</p>
+            </div>
+        </div>
+
+        <!-- Basic Information -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-info-circle"></i> Basic Information
+            </h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label required">KPI Code</label>
+                    <input type="text" class="form-input" placeholder="e.g., KPI-F-001" value="KPI-F-007" readonly>
+                    <span class="help-text">Auto-generated based on perspective and sequence</span>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">KPI Name</label>
+                    <input type="text" class="form-input" placeholder="e.g., Return on Equity (ROE)">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Perspective BSC</label>
+                    <select class="form-select" id="perspective">
+                        <option value="">Select Perspective</option>
+                        <option value="F">F - Financial</option>
+                        <option value="C">C - Customer</option>
+                        <option value="IBP">IBP - Internal Business Process</option>
+                        <option value="L&G">L&G - Learning & Growth</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Strategic Objective</label>
+                    <select class="form-select" id="strategicObjective">
+                        <option value="">Select Perspective First</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Department</label>
+                    <select class="form-select">
+                        <option value="">Select Department</option>
+                        <option value="BOD">BOD - Board of Directors</option>
+                        <option value="RATING">RATING - Credit Rating</option>
+                        <option value="MBD">MBD - Marketing & Business Dev</option>
+                        <option value="HRG">HRG - Human Resources</option>
+                        <option value="ITE">ITE - IT & Engineering</option>
+                        <option value="LCO">LCO - Legal & Compliance</option>
+                        <option value="FIN">FIN - Finance Division</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">KPI Owner</label>
+                    <select class="form-select">
+                        <option value="">Select KPI Owner</option>
+                        <option value="cfo">Chief Financial Officer</option>
+                        <option value="cmo">Chief Marketing Officer</option>
+                        <option value="cto">Chief Technology Officer</option>
+                        <option value="chro">Chief HR Officer</option>
+                    </select>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label required">KPI Description</label>
+                    <textarea class="form-textarea" placeholder="Describe what this KPI measures and why it's important..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Measurement Details -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-chart-line"></i> Measurement Details
+            </h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label required">Unit of Measure</label>
+                    <select class="form-select">
+                        <option value="">Select Unit</option>
+                        <option value="percentage">Percentage (%)</option>
+                        <option value="currency">Currency (Rp)</option>
+                        <option value="number">Number (#)</option>
+                        <option value="days">Days</option>
+                        <option value="hours">Hours</option>
+                        <option value="score">Score (1-5)</option>
+                        <option value="ratio">Ratio</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Frequency</label>
+                    <select class="form-select">
+                        <option value="">Select Frequency</option>
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="quarterly">Quarterly</option>
+                        <option value="annually">Annually</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Data Source</label>
+                    <input type="text" class="form-input" placeholder="e.g., Financial System, CRM, Survey">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Collection Method</label>
+                    <select class="form-select">
+                        <option value="">Select Method</option>
+                        <option value="automatic">Automatic System</option>
+                        <option value="manual">Manual Entry</option>
+                        <option value="survey">Survey/Questionnaire</option>
+                        <option value="calculation">Calculated from Other KPIs</option>
+                    </select>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label required">Calculation Formula</label>
+                    <input type="text" class="form-input" placeholder="e.g., (Net Income / Total Equity) × 100">
+                    <span class="help-text">Specify the exact formula used to calculate this KPI</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Targets & Thresholds -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-bullseye"></i> Targets & Thresholds
+            </h3>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label required">Period</label>
+                    <select class="form-select">
+                        <option value="">Select Period</option>
+                        <option value="2025">Year 2025</option>
+                        <option value="Q1-2025">Q1 2025</option>
+                        <option value="Q2-2025">Q2 2025</option>
+                        <option value="Q3-2025">Q3 2025</option>
+                        <option value="Q4-2025">Q4 2025</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Baseline (Previous Period)</label>
+                    <input type="text" class="form-input" placeholder="e.g., 8.5%">
+                </div>
+            </div>
+            
+            <div class="target-grid">
+                <div class="target-item">
+                    <div class="target-label">Target</div>
+                    <input type="text" class="target-input" placeholder="e.g., 10%" style="border-color: #3b82f6; background: #eff6ff;">
+                </div>
+                <div class="target-item">
+                    <div class="target-label">Upper Threshold</div>
+                    <input type="text" class="target-input" placeholder="e.g., 12%" style="border-color: #10b981;">
+                </div>
+                <div class="target-item">
+                    <div class="target-label">Lower Threshold</div>
+                    <input type="text" class="target-input" placeholder="e.g., 8%" style="border-color: #f59e0b;">
+                </div>
+                <div class="target-item">
+                    <div class="target-label">Critical Minimum</div>
+                    <input type="text" class="target-input" placeholder="e.g., 6%" style="border-color: #ef4444;">
+                </div>
+            </div>
+            
+            <p class="help-text" style="margin-top: 1rem;">
+                Define thresholds for performance evaluation: Green (≥Upper), Yellow (Lower-Upper), Red (<Lower)
+            </p>
+        </div>
+
+        <!-- Related Risks -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-exclamation-triangle"></i> Related Risks & KRIs
+            </h3>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label class="form-label">Associated Risks</label>
+                    <select class="form-select" multiple style="height: 100px;">
+                        <option value="RR-F-001">RR-F-001 - Revenue target not achieved</option>
+                        <option value="RR-F-002">RR-F-002 - Cash flow shortage</option>
+                        <option value="RR-F-003">RR-F-003 - Investment portfolio loss</option>
+                        <option value="RR-F-004">RR-F-004 - Budget overrun</option>
+                    </select>
+                    <span class="help-text">Hold Ctrl/Cmd to select multiple risks</span>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Key Risk Indicators (KRIs)</label>
+                    <textarea class="form-textarea" placeholder="List KRIs that serve as early warning indicators for this KPI..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+            <div>
+                <button class="btn btn-secondary">
+                    <i class="fas fa-save"></i> Save Draft
+                </button>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <a href="kpi-management.html" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+                <button class="btn btn-primary">
+                    <i class="fas fa-check"></i> Submit KPI
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Strategic objectives by perspective
+        const strategicObjectives = {
+            'F': [
+                'Increase Shareholders Value',
+                'Increase Sales Revenue',
+                'Optimize Cost Structure',
+                'Manage Liquidity Risk'
+            ],
+            'C': [
+                'Enhance Customer Satisfaction',
+                'Expand Market Share',
+                'Strengthen Brand Image',
+                'Improve Service Quality'
+            ],
+            'IBP': [
+                'Improve Operational Efficiency',
+                'Enhance IT Infrastructure',
+                'Strengthen Internal Controls',
+                'Optimize Business Process'
+            ],
+            'L&G': [
+                'Develop Employee Competency',
+                'Build Performance Culture',
+                'Enhance Innovation Capability',
+                'Improve Knowledge Management'
+            ]
+        };
+        
+        // Update strategic objectives based on perspective
+        document.getElementById('perspective').addEventListener('change', function(e) {
+            const perspective = e.target.value;
+            const soSelect = document.getElementById('strategicObjective');
+            
+            soSelect.innerHTML = '<option value="">Select Strategic Objective</option>';
+            
+            if (perspective && strategicObjectives[perspective]) {
+                strategicObjectives[perspective].forEach(so => {
+                    const option = document.createElement('option');
+                    option.value = so;
+                    option.textContent = so;
+                    soSelect.appendChild(option);
+                });
+            }
+        });
+        
+        // User role handling
+        document.getElementById('userRole').addEventListener('change', function(e) {
+            const role = e.target.value;
+            const userName = document.getElementById('userName');
+            
+            switch(role) {
+                case 'management':
+                    userName.textContent = 'John Doe (Management)';
+                    break;
+                case 'risk-owner':
+                    userName.textContent = 'Sarah Chen (Risk Owner - ITE)';
+                    break;
+                case 'unit-mr':
+                    userName.textContent = 'Ahmad Wijaya (Unit MR)';
+                    break;
+                case 'auditor':
+                    userName.textContent = 'Lisa Putri (Internal Audit)';
+                    break;
+            }
+        });
+    </script>
+</body>
+</html>

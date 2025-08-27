@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Register - ERM Enterprise</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Inline all critical styles to avoid CSS conflicts */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: #f5f5f5;
+        }
+        
+        .navbar {
+            background: #2563eb;
+            color: white;
+            padding: 1rem 0;
+        }
+        
+        .nav-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+        }
+        
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .main-container {
+            width: 100%;
+            max-width: 100%;
+            padding: 2rem;
+        }
+        
+        .page-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .page-header h2 {
+            margin: 0 0 0.5rem 0;
+            color: #1f2937;
+            font-size: 2rem;
+        }
+        
+        .page-header p {
+            color: #6b7280;
+            margin: 0;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            text-decoration: none;
+            background: white;
+            color: #6b7280;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .btn:hover {
+            background: #f9fafb;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+        
+        /* THE CRITICAL TABLE STYLES */
+        .table-section {
+            width: 100%;
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .table-scroll-container {
+            width: 100%;
+            overflow-x: auto;
+            border: 2px solid #e5e7eb;
+            border-radius: 4px;
+        }
+        
+        .risk-table {
+            min-width: 2000px; /* Force wide table */
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .risk-table th,
+        .risk-table td {
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            text-align: left;
+        }
+        
+        .risk-table th {
+            background: #f3f4f6;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .risk-table th.perspective-col {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .fixed-col {
+            position: sticky;
+            left: 0;
+            background: white;
+            z-index: 5;
+            font-weight: 600;
+            border-right: 2px solid #e5e7eb;
+        }
+        
+        .risk-table th.fixed-col {
+            background: #f3f4f6;
+            z-index: 11;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .badge-financial { background: #1e40af; }
+        .badge-customer { background: #7c3aed; }
+        .badge-process { background: #059669; }
+        .badge-learning { background: #ea580c; }
+        
+        .scroll-hint {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            color: #92400e;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1><i class="fas fa-shield-alt"></i> ERM Enterprise</h1>
+            <div class="nav-menu">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="risk-register.html" class="active">Risk Register</a>
+                <a href="kri-monitoring.html">KRI</a>
+                <a href="kpi-management.html">KPI</a>
+                <a href="risk-treatment.html">Treatment</a>
+                <a href="risk-dictionary.html">Dictionary</a>
+                <a href="event-loss-database.html">Loss DB</a>
+                <a href="reports.html">Reports</a>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <select id="userRole" style="padding: 0.5rem 1rem; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; border-radius: 6px; font-size: 0.875rem;">
+                    <option value="management">Management (View All)</option>
+                    <option value="risk-owner">Risk Owner</option>
+                    <option value="unit-mr">Unit MR</option>
+                    <option value="auditor">Auditor</option>
+                </select>
+                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px;">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userName" style="font-size: 0.875rem;">John Doe</span>
+                </div>
+                <a href="login.html" style="color: white; text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span style="font-size: 0.875rem;">Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="page-header">
+            <div>
+                <h2><i class="fas fa-clipboard-list"></i> Risk Register 2025</h2>
+                <p>Comprehensive risk identification and assessment matrix</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn">
+                    <i class="fas fa-filter"></i> Filter
+                </button>
+                <button class="btn">
+                    <i class="fas fa-download"></i> Export
+                </button>
+                <button class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Risk
+                </button>
+            </div>
+        </div>
+
+        <div class="table-section">
+            <div class="scroll-hint">
+                <i class="fas fa-arrow-right"></i>
+                <span>Scroll horizontally to view all 40+ columns including perspectives, assessments, controls, and treatment plans.</span>
+            </div>
+            
+            <div class="table-scroll-container">
+                <table class="risk-table">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" class="fixed-col">Risk Code</th>
+                            <th rowspan="2" class="perspective-col">Perspective</th>
+                            <th rowspan="2">Strategic Objective</th>
+                            <th rowspan="2">Risk Event</th>
+                            <th rowspan="2">Risk Owner</th>
+                            <th colspan="3" style="text-align: center; background: #fee2e2;">Inherent Risk</th>
+                            <th rowspan="2">Controls</th>
+                            <th colspan="3" style="text-align: center; background: #dcfce7;">Residual Risk</th>
+                            <th rowspan="2">Treatment</th>
+                            <th rowspan="2">Status</th>
+                            <th rowspan="2">Actions</th>
+                        </tr>
+                        <tr>
+                            <th style="background: #fee2e2;">L</th>
+                            <th style="background: #fee2e2;">I</th>
+                            <th style="background: #fee2e2;">Score</th>
+                            <th style="background: #dcfce7;">L</th>
+                            <th style="background: #dcfce7;">I</th>
+                            <th style="background: #dcfce7;">Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="fixed-col">RR-F-001</td>
+                            <td><span class="badge badge-financial">FINANCIAL</span></td>
+                            <td>Increase Shareholders Value</td>
+                            <td>Revenue target not achieved due to market downturn</td>
+                            <td>CFO</td>
+                            <td style="text-align: center;">4</td>
+                            <td style="text-align: center;">5</td>
+                            <td style="text-align: center; background: #dc2626; color: white; font-weight: bold;">20</td>
+                            <td><button style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">View Controls</button></td>
+                            <td style="text-align: center;">3</td>
+                            <td style="text-align: center;">4</td>
+                            <td style="text-align: center; background: #f59e0b; color: white; font-weight: bold;">12</td>
+                            <td>Mitigate</td>
+                            <td><span style="background: #10b981; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Approved</span></td>
+                            <td>
+                                <button style="padding: 0.25rem 0.5rem; margin: 0 0.125rem; font-size: 0.75rem; background: white; border: 1px solid #e5e7eb; border-radius: 4px; cursor: pointer;"><i class="fas fa-edit"></i></button>
+                                <button style="padding: 0.25rem 0.5rem; margin: 0 0.125rem; font-size: 0.75rem; background: white; border: 1px solid #e5e7eb; border-radius: 4px; cursor: pointer;"><i class="fas fa-eye"></i></button>
+                                <button style="padding: 0.25rem 0.5rem; margin: 0 0.125rem; font-size: 0.75rem; background: white; border: 1px solid #e5e7eb; border-radius: 4px; cursor: pointer;"><i class="fas fa-clipboard-check"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fixed-col">RR-C-002</td>
+                            <td><span class="badge badge-customer">CUSTOMER</span></td>
+                            <td>Enhance Customer Satisfaction</td>
+                            <td>Customer complaints increase due to service delays</td>
+                            <td>CMO</td>
+                            <td style="text-align: center;">3</td>
+                            <td style="text-align: center;">4</td>
+                            <td style="text-align: center; background: #f59e0b; color: white; font-weight: bold;">12</td>
+                            <td><button style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">View Controls</button></td>
+                            <td style="text-align: center;">2</td>
+                            <td style="text-align: center;">3</td>
+                            <td style="text-align: center; background: #22c55e; color: white; font-weight: bold;">6</td>
+                            <td>Mitigate</td>
+                            <td><span style="background: #f59e0b; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Draft</span></td>
+                            <td>
+                                <button style="padding: 0.25rem 0.5rem; margin: 0 0.125rem; font-size: 0.75rem; background: white; border: 1px solid #e5e7eb; border-radius: 4px; cursor: pointer;"><i class="fas fa-edit"></i></button>
+                                <button style="padding: 0.25rem 0.5rem; margin: 0 0.125rem; font-size: 0.75rem; background: white; border: 1px solid #e5e7eb; border-radius: 4px; cursor: pointer;"><i class="fas fa-eye"></i></button>
+                                <button style="padding: 0.25rem 0.5rem; margin: 0 0.125rem; font-size: 0.75rem; background: white; border: 1px solid #e5e7eb; border-radius: 4px; cursor: pointer;"><i class="fas fa-clipboard-check"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fixed-col">RR-IBP-003</td>
+                            <td><span class="badge badge-process">INTERNAL PROCESS</span></td>
+                            <td>Improve Operational Efficiency</td>
+                            <td>System downtime affecting business operations</td>
+                            <td>CTO</td>
+                            <td style="text-align: center;">3</td>
+                            <td style="text-align: center;">3</td>
+                            <td style="text-align: center; background: #f59e0b; color: white; font-weight: bold;">9</td>
+                            <td><button style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">View Controls</button></td>
+                            <td style="text-align: center;">2</td>
+                            <td style="text-align: center;">2</td>
+                            <td style="text-align: center; background: #22c55e; color: white; font-weight: bold;">4</td>
+                            <td>Accept</td>
+                            <td><span style="background: #10b981; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Approved</span></td>
+                            <td>
+                                <button style="padding: 0.25rem 0.5rem; margin: 0 0.125rem; font-size: 0.75rem; background: white; border: 1px solid #e5e7eb; border-radius: 4px; cursor: pointer;"><i class="fas fa-edit"></i></button>
+                                <button style="padding: 0.25rem 0.5rem; margin: 0 0.125rem; font-size: 0.75rem; background: white; border: 1px solid #e5e7eb; border-radius: 4px; cursor: pointer;"><i class="fas fa-eye"></i></button>
+                                <button style="padding: 0.25rem 0.5rem; margin: 0 0.125rem; font-size: 0.75rem; background: white; border: 1px solid #e5e7eb; border-radius: 4px; cursor: pointer;"><i class="fas fa-clipboard-check"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fixed-col">RR-LG-004</td>
+                            <td><span class="badge badge-learning">LEARNING & GROWTH</span></td>
+                            <td>Enhance Employee Capabilities</td>
+                            <td>Key talent retention challenges</td>
+                            <td>CHRO</td>
+                            <td style="text-align: center;">2</td>
+                            <td style="text-align: center;">4</td>
+                            <td style="text-align: center; background: #f59e0b; color: white; font-weight: bold;">8</td>
+                            <td><button style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">View Controls</button></td>
+                            <td style="text-align: center;">2</td>
+                            <td style="text-align: center;">3</td>
+                            <td style="text-align: center; background: #22c55e; color: white; font-weight: bold;">6</td>
+                            <td>Mitigate</td>
+                            <td><span style="background: #10b981; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">Approved</span></td>
+                            <td>
+                                <button style="padding: 0.25rem 0.5rem; margin: 0 0.125rem; font-size: 0.75rem; background: white; border: 1px solid #e5e7eb; border-radius: 4px; cursor: pointer;"><i class="fas fa-edit"></i></button>
+                                <button style="padding: 0.25rem 0.5rem; margin: 0 0.125rem; font-size: 0.75rem; background: white; border: 1px solid #e5e7eb; border-radius: 4px; cursor: pointer;"><i class="fas fa-eye"></i></button>
+                                <button style="padding: 0.25rem 0.5rem; margin: 0 0.125rem; font-size: 0.75rem; background: white; border: 1px solid #e5e7eb; border-radius: 4px; cursor: pointer;"><i class="fas fa-clipboard-check"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fixed-col">RR-F-005</td>
+                            <td><span class="badge badge-financial">FINANCIAL</span></td>
+                            <td>Manage Liquidity Risk</td>
+                            <td>Cash flow shortage due to delayed receivables</td>
+                            <td>CFO</td>
+                            <td style="text-align: center;">3</td>
+                            <td style="text-align: center;">5</td>
+                            <td style="text-align: center; background: #dc2626; color: white; font-weight: bold;">15</td>
+                            <td><button style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer;">View Controls</button></td>
+                            <td style="text-align: center;">2</td>
+                            <td style="text-align: center;">4</td>
+                            <td style="text-align: center; background: #f59e0b; color: white; font-weight: bold;">8</td>
+                            <td>Transfer</td>
+                            <td><span style="background: #3b82f6; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">In Review</span></td>
+                            <td>
+                                <button style="padding: 0.25rem 0.5rem; margin: 0 0.125rem; font-size: 0.75rem; background: white; border: 1px solid #e5e7eb; border-radius: 4px; cursor: pointer;"><i class="fas fa-edit"></i></button>
+                                <button style="padding: 0.25rem 0.5rem; margin: 0 0.125rem; font-size: 0.75rem; background: white; border: 1px solid #e5e7eb; border-radius: 4px; cursor: pointer;"><i class="fas fa-eye"></i></button>
+                                <button style="padding: 0.25rem 0.5rem; margin: 0 0.125rem; font-size: 0.75rem; background: white; border: 1px solid #e5e7eb; border-radius: 4px; cursor: pointer;"><i class="fas fa-clipboard-check"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

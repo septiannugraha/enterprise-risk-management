@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Register - ERM Enterprise</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; 
+            font-family: 'Inter', sans-serif; 
+            background: #f5f5f5; 
+            color: #1f2937;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: #2563eb;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 100%;
+            padding: 2rem;
+        }
+        
+        /* Page Header */
+        .page-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .page-header h2 {
+            margin: 0 0 0.5rem 0;
+            color: #1f2937;
+            font-size: 2rem;
+        }
+        
+        .page-header p {
+            color: #6b7280;
+            margin: 0;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            text-decoration: none;
+            background: white;
+            color: #6b7280;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .btn:hover {
+            background: #f9fafb;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+        
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+        }
+        
+        /* Summary Cards */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .summary-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-left: 4px solid;
+            transition: transform 0.2s;
+        }
+        
+        .summary-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .summary-card.total { border-left-color: #3b82f6; }
+        .summary-card.high { border-left-color: #ef4444; }
+        .summary-card.medium { border-left-color: #f59e0b; }
+        .summary-card.low { border-left-color: #10b981; }
+        .summary-card.mitigated { border-left-color: #8b5cf6; }
+        
+        .summary-card h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .summary-card.total h3 { color: #3b82f6; }
+        .summary-card.high h3 { color: #ef4444; }
+        .summary-card.medium h3 { color: #f59e0b; }
+        .summary-card.low h3 { color: #10b981; }
+        .summary-card.mitigated h3 { color: #8b5cf6; }
+        
+        .summary-card p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        
+        /* Filter Section */
+        .filter-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .filter-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            background: white;
+        }
+        
+        /* Risk Table Section */
+        .table-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .table-header h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: #1f2937;
+        }
+        
+        .view-toggle {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-icon {
+            padding: 0.5rem;
+            border: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-icon:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+        }
+        
+        .btn-icon.active {
+            background: #eff6ff;
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+        
+        /* Table Container */
+        .table-container {
+            overflow-x: auto;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+        
+        .risk-table {
+            width: 100%;
+            min-width: 1600px;
+            border-collapse: collapse;
+        }
+        
+        .risk-table th {
+            background: #f9fafb;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #6b7280;
+            font-size: 0.875rem;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .risk-table th.sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .risk-table th.sortable:hover {
+            background: #f3f4f6;
+        }
+        
+        .risk-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .risk-table tr:hover {
+            background: #f9fafb;
+        }
+        
+        /* Risk Code Column */
+        .risk-code {
+            font-weight: 600;
+            color: #1f2937;
+            font-family: 'Courier New', monospace;
+        }
+        
+        /* Perspective Badges */
+        .perspective-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .perspective-badge.financial { background: #3b82f6; }
+        .perspective-badge.customer { background: #8b5cf6; }
+        .perspective-badge.process { background: #10b981; }
+        .perspective-badge.learning { background: #f59e0b; }
+        
+        /* Risk Scores */
+        .risk-score {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            color: white;
+            text-align: center;
+            min-width: 2.5rem;
+        }
+        
+        .risk-score.high { background: #ef4444; }
+        .risk-score.medium { background: #f59e0b; }
+        .risk-score.low { background: #10b981; }
+        
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-badge.approved { 
+            background: #d1fae5; 
+            color: #065f46; 
+        }
+        
+        .status-badge.draft { 
+            background: #fef3c7; 
+            color: #92400e; 
+        }
+        
+        .status-badge.review { 
+            background: #dbeafe; 
+            color: #1e40af; 
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .action-btn {
+            padding: 0.5rem;
+            border: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #6b7280;
+        }
+        
+        .action-btn:hover {
+            background: #f9fafb;
+            color: #1f2937;
+            border-color: #d1d5db;
+        }
+        
+        /* Treatment Type */
+        .treatment-type {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+        }
+        
+        .modal-content {
+            position: relative;
+            background-color: white;
+            margin: 50px auto;
+            padding: 0;
+            width: 90%;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        }
+        
+        .modal-header {
+            background: #f9fafb;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .close {
+            color: #6b7280;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+            padding: 0.25rem 0.5rem;
+        }
+        
+        .close:hover {
+            color: #1f2937;
+        }
+        
+        .modal-body {
+            padding: 2rem;
+        }
+        
+        /* Risk Detail Grid */
+        .risk-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .detail-section {
+            background: #f9fafb;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .detail-section h3 {
+            margin: 0 0 1rem 0;
+            font-size: 1.125rem;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .detail-row {
+            display: flex;
+            margin-bottom: 0.75rem;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #6b7280;
+            min-width: 120px;
+            font-size: 0.875rem;
+        }
+        
+        .detail-value {
+            color: #1f2937;
+            font-size: 0.875rem;
+        }
+        
+        /* CIA Assessment */
+        .cia-assessment {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 2rem;
+        }
+        
+        .cia-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .cia-card {
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid;
+            transition: transform 0.2s;
+        }
+        
+        .cia-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .cia-card.confidentiality {
+            background: #eff6ff;
+            border-color: #3b82f6;
+        }
+        
+        .cia-card.integrity {
+            background: #f0fdf4;
+            border-color: #10b981;
+        }
+        
+        .cia-card.availability {
+            background: #fef3c7;
+            border-color: #f59e0b;
+        }
+        
+        .cia-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .cia-card.confidentiality .cia-icon { color: #3b82f6; }
+        .cia-card.integrity .cia-icon { color: #10b981; }
+        .cia-card.availability .cia-icon { color: #f59e0b; }
+        
+        .cia-title {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: #1f2937;
+        }
+        
+        .cia-score {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .cia-description {
+            font-size: 0.875rem;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+        
+        /* Risk Matrix Preview */
+        .risk-matrix-preview {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+        
+        .matrix-box {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+        
+        .matrix-box h4 {
+            margin: 0 0 0.5rem 0;
+            color: #6b7280;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .matrix-score {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .matrix-level {
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.25rem 1rem;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        /* Control List */
+        .control-list {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 2rem;
+        }
+        
+        .control-item {
+            display: flex;
+            align-items: start;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 6px;
+            margin-bottom: 0.75rem;
+        }
+        
+        .control-icon {
+            color: #10b981;
+            font-size: 1.25rem;
+            margin-top: 0.125rem;
+        }
+        
+        .control-content {
+            flex: 1;
+        }
+        
+        .control-name {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+        
+        .control-description {
+            font-size: 0.875rem;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+        
+        .control-effectiveness {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+        
+        .control-effectiveness.high {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .control-effectiveness.medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: start;
+            }
+            
+            .filter-section {
+                flex-direction: column;
+            }
+            
+            .filter-group {
+                width: 100%;
+            }
+            
+            .modal-content {
+                margin: 20px;
+                width: calc(100% - 40px);
+            }
+            
+            .cia-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .matrix-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1><i class="fas fa-shield-alt"></i> ERM Enterprise</h1>
+            <div class="nav-menu">
+                <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="risk-register.html" class="active"><i class="fas fa-clipboard-list"></i> Risk Register</a>
+                <a href="kri-monitoring.html"><i class="fas fa-chart-line"></i> KRI</a>
+                <a href="kpi-management.html"><i class="fas fa-tachometer-alt"></i> KPI</a>
+                <a href="risk-treatment.html"><i class="fas fa-tasks"></i> Treatment</a>
+                <a href="risk-dictionary.html"><i class="fas fa-book"></i> Dictionary</a>
+                <a href="event-loss-database.html"><i class="fas fa-database"></i> Loss DB</a>
+                <a href="reports.html"><i class="fas fa-file-alt"></i> Reports</a>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <select id="userRole" style="padding: 0.5rem 1rem; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; border-radius: 6px; font-size: 0.875rem;">
+                    <option value="management">Management (View All)</option>
+                    <option value="risk-owner">Risk Owner</option>
+                    <option value="unit-mr">Unit MR</option>
+                    <option value="auditor">Auditor</option>
+                </select>
+                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px;">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userName" style="font-size: 0.875rem;">John Doe</span>
+                </div>
+                <a href="login.html" style="color: white; text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span style="font-size: 0.875rem;">Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h2><i class="fas fa-clipboard-list"></i> Risk Register 2025</h2>
+                <p>Comprehensive risk identification and assessment matrix</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn">
+                    <i class="fas fa-download"></i> Export
+                </button>
+                <a href="risk-form.html" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Risk
+                </a>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+            <div class="summary-card total">
+                <h3>156</h3>
+                <p>Total Risks</p>
+            </div>
+            <div class="summary-card high">
+                <h3>23</h3>
+                <p>High (Inherent)</p>
+            </div>
+            <div class="summary-card medium">
+                <h3>67</h3>
+                <p>Medium (Inherent)</p>
+            </div>
+            <div class="summary-card low">
+                <h3>66</h3>
+                <p>Low (Inherent)</p>
+            </div>
+            <div class="summary-card mitigated">
+                <h3>142</h3>
+                <p>Mitigated</p>
+            </div>
+        </div>
+
+        <!-- Risk Process Flow -->
+        <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 2rem;">
+            <h3 style="margin: 0 0 1rem 0; font-size: 1.125rem; color: #1f2937;">Risk Management Process Flow</h3>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 200px;">
+                    <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #eff6ff; border-radius: 8px; border: 2px solid #3b82f6;">
+                        <div style="width: 40px; height: 40px; background: #3b82f6; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">1</div>
+                        <div>
+                            <div style="font-weight: 600; color: #1f2937;">Inherent Risk</div>
+                            <div style="font-size: 0.875rem; color: #6b7280;">Identify & assess raw risk</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="color: #9ca3af; font-size: 1.5rem;">→</div>
+                <div style="flex: 1; min-width: 200px;">
+                    <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #fef3c7; border-radius: 8px; border: 2px solid #f59e0b;">
+                        <div style="width: 40px; height: 40px; background: #f59e0b; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">2</div>
+                        <div>
+                            <div style="font-weight: 600; color: #1f2937;">Existing Treatment</div>
+                            <div style="font-size: 0.875rem; color: #6b7280;">Apply current controls</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="color: #9ca3af; font-size: 1.5rem;">→</div>
+                <div style="flex: 1; min-width: 200px;">
+                    <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #d1fae5; border-radius: 8px; border: 2px solid #10b981;">
+                        <div style="width: 40px; height: 40px; background: #10b981; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">3</div>
+                        <div>
+                            <div style="font-weight: 600; color: #1f2937;">Mitigation</div>
+                            <div style="font-size: 0.875rem; color: #6b7280;">Reduce residual risk</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="filter-group">
+                <label>Perspective</label>
+                <select>
+                    <option value="">All Perspectives</option>
+                    <option value="financial">Financial</option>
+                    <option value="customer">Customer</option>
+                    <option value="process">Internal Process</option>
+                    <option value="learning">Learning & Growth</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Risk Level</label>
+                <select>
+                    <option value="">All Levels</option>
+                    <option value="high">High Risk</option>
+                    <option value="medium">Medium Risk</option>
+                    <option value="low">Low Risk</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Status</label>
+                <select>
+                    <option value="">All Status</option>
+                    <option value="approved">Approved</option>
+                    <option value="draft">Draft</option>
+                    <option value="review">In Review</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Department</label>
+                <select>
+                    <option value="">All Departments</option>
+                    <option value="erc">ERC - Enterprise Risk Committee</option>
+                    <option value="rating">RATING - Credit Rating</option>
+                    <option value="lco">LCO - Legal & Compliance</option>
+                    <option value="bod">BOD - Board of Directors</option>
+                    <option value="mbd">MBD - Marketing & Business Dev</option>
+                    <option value="hrg">HRG - Human Resources</option>
+                    <option value="ite">ITE - IT & Engineering</option>
+                    <option value="iad">IAD - Internal Audit</option>
+                    <option value="qco">QCO - Quality Control</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Risk Owner</label>
+                <select>
+                    <option value="">All Owners</option>
+                    <option value="cfo">CFO</option>
+                    <option value="cto">CTO</option>
+                    <option value="cmo">CMO</option>
+                    <option value="chro">CHRO</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Search</label>
+                <input type="text" placeholder="Search risks...">
+            </div>
+        </div>
+
+        <!-- Risk Table -->
+        <div class="table-section">
+            <div class="table-header">
+                <h3>Risk Registry</h3>
+                <div class="view-toggle">
+                    <button class="btn-icon active" title="Table View">
+                        <i class="fas fa-table"></i>
+                    </button>
+                    <button class="btn-icon" title="Card View">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table class="risk-table">
+                    <thead>
+                        <tr>
+                            <th class="sortable">Risk Code <i class="fas fa-sort"></i></th>
+                            <th>Department</th>
+                            <th>Perspective</th>
+                            <th class="sortable">Risk Event <i class="fas fa-sort"></i></th>
+                            <th>Strategic Objective</th>
+                            <th>Risk Owner</th>
+                            <th class="sortable">Inherent <i class="fas fa-sort"></i></th>
+                            <th>Controls</th>
+                            <th class="sortable">Residual <i class="fas fa-sort"></i></th>
+                            <th>Treatment</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="risk-code">RR-F-001</td>
+                            <td><span style="font-size: 0.875rem; font-weight: 500;">BOD</span></td>
+                            <td><span class="perspective-badge financial">FINANCIAL</span></td>
+                            <td>Revenue target not achieved due to market downturn</td>
+                            <td>Increase Shareholders Value</td>
+                            <td>CFO</td>
+                            <td><span class="risk-score high">20</span></td>
+                            <td>
+                                <button class="btn-sm btn-secondary">
+                                    <i class="fas fa-shield-alt"></i> 5 Controls
+                                </button>
+                            </td>
+                            <td><span class="risk-score medium">12</span></td>
+                            <td><span class="treatment-type">Mitigate</span></td>
+                            <td><span class="status-badge approved">Approved</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="action-btn" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="action-btn" title="Treatment Plan">
+                                        <i class="fas fa-clipboard-check"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="risk-code">RR-C-002</td>
+                            <td><span style="font-size: 0.875rem; font-weight: 500;">MBD</span></td>
+                            <td><span class="perspective-badge customer">CUSTOMER</span></td>
+                            <td>Customer complaints increase due to service delays</td>
+                            <td>Enhance Customer Satisfaction</td>
+                            <td>CMO</td>
+                            <td><span class="risk-score medium">12</span></td>
+                            <td>
+                                <button class="btn-sm btn-secondary">
+                                    <i class="fas fa-shield-alt"></i> 3 Controls
+                                </button>
+                            </td>
+                            <td><span class="risk-score low">6</span></td>
+                            <td><span class="treatment-type">Mitigate</span></td>
+                            <td><span class="status-badge draft">Draft</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="action-btn" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="action-btn" title="Treatment Plan">
+                                        <i class="fas fa-clipboard-check"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="risk-code">RR-IBP-003</td>
+                            <td><span style="font-size: 0.875rem; font-weight: 500;">ITE</span></td>
+                            <td><span class="perspective-badge process">PROCESS</span></td>
+                            <td>System downtime affecting business operations</td>
+                            <td>Improve Operational Efficiency</td>
+                            <td>CTO</td>
+                            <td><span class="risk-score medium">9</span></td>
+                            <td>
+                                <button class="btn-sm btn-secondary">
+                                    <i class="fas fa-shield-alt"></i> 4 Controls
+                                </button>
+                            </td>
+                            <td><span class="risk-score low">4</span></td>
+                            <td><span class="treatment-type">Accept</span></td>
+                            <td><span class="status-badge approved">Approved</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="action-btn" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="action-btn" title="Treatment Plan">
+                                        <i class="fas fa-clipboard-check"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="risk-code">RR-LG-004</td>
+                            <td><span style="font-size: 0.875rem; font-weight: 500;">HRG</span></td>
+                            <td><span class="perspective-badge learning">LEARNING</span></td>
+                            <td>Key talent retention challenges</td>
+                            <td>Enhance Employee Capabilities</td>
+                            <td>CHRO</td>
+                            <td><span class="risk-score medium">8</span></td>
+                            <td>
+                                <button class="btn-sm btn-secondary">
+                                    <i class="fas fa-shield-alt"></i> 2 Controls
+                                </button>
+                            </td>
+                            <td><span class="risk-score low">6</span></td>
+                            <td><span class="treatment-type">Mitigate</span></td>
+                            <td><span class="status-badge approved">Approved</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="action-btn" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="action-btn" title="Treatment Plan">
+                                        <i class="fas fa-clipboard-check"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="risk-code">RR-F-005</td>
+                            <td><span style="font-size: 0.875rem; font-weight: 500;">BOD</span></td>
+                            <td><span class="perspective-badge financial">FINANCIAL</span></td>
+                            <td>Cash flow shortage due to delayed receivables</td>
+                            <td>Manage Liquidity Risk</td>
+                            <td>CFO</td>
+                            <td><span class="risk-score high">15</span></td>
+                            <td>
+                                <button class="btn-sm btn-secondary">
+                                    <i class="fas fa-shield-alt"></i> 3 Controls
+                                </button>
+                            </td>
+                            <td><span class="risk-score medium">8</span></td>
+                            <td><span class="treatment-type">Transfer</span></td>
+                            <td><span class="status-badge review">In Review</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="action-btn" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="action-btn" title="Treatment Plan">
+                                        <i class="fas fa-clipboard-check"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="risk-code">RR-C-006</td>
+                            <td><span style="font-size: 0.875rem; font-weight: 500;">ITE</span></td>
+                            <td><span class="perspective-badge customer">CUSTOMER</span></td>
+                            <td>Data breach affecting customer privacy</td>
+                            <td>Ensure Data Security</td>
+                            <td>CTO</td>
+                            <td><span class="risk-score high">20</span></td>
+                            <td>
+                                <button class="btn-sm btn-secondary">
+                                    <i class="fas fa-shield-alt"></i> 7 Controls
+                                </button>
+                            </td>
+                            <td><span class="risk-score medium">10</span></td>
+                            <td><span class="treatment-type">Mitigate</span></td>
+                            <td><span class="status-badge approved">Approved</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="action-btn" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="action-btn" title="Treatment Plan">
+                                        <i class="fas fa-clipboard-check"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Risk Detail Modal -->
+    <div id="riskDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-clipboard-list"></i> Risk Detail: <span id="modalRiskCode">RR-F-001</span></h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <!-- Basic Risk Information -->
+                <div class="risk-detail-grid">
+                    <div class="detail-section">
+                        <h3><i class="fas fa-info-circle"></i> Basic Information</h3>
+                        <div class="detail-row">
+                            <span class="detail-label">Risk Code:</span>
+                            <span class="detail-value" id="detailRiskCode">RR-F-001</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Department:</span>
+                            <span class="detail-value" id="detailDepartment">BOD</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Perspective:</span>
+                            <span class="detail-value" id="detailPerspective"><span class="perspective-badge financial">FINANCIAL</span></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Risk Owner:</span>
+                            <span class="detail-value" id="detailRiskOwner">CFO</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Status:</span>
+                            <span class="detail-value" id="detailStatus"><span class="status-badge approved">Approved</span></span>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Risk Details</h3>
+                        <div class="detail-row">
+                            <span class="detail-label">Risk Event:</span>
+                            <span class="detail-value" id="detailRiskEvent">Revenue target not achieved due to market downturn</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Root Cause:</span>
+                            <span class="detail-value" id="detailRootCause">Economic recession, decreased market demand, competitive pressure</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Impact:</span>
+                            <span class="detail-value" id="detailImpact">Reduced profitability, inability to meet shareholder expectations, potential layoffs</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Strategic Objective:</span>
+                            <span class="detail-value" id="detailObjective">Increase Shareholders Value</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CIA Assessment -->
+                <div class="cia-assessment">
+                    <h3><i class="fas fa-shield-alt"></i> CIA Triad Assessment</h3>
+                    <div class="cia-grid">
+                        <div class="cia-card confidentiality">
+                            <div class="cia-icon"><i class="fas fa-lock"></i></div>
+                            <div class="cia-title">Confidentiality</div>
+                            <div class="cia-score" id="ciaConfidentiality">3</div>
+                            <div class="cia-description">
+                                Financial data exposure could impact market position and investor confidence
+                            </div>
+                        </div>
+                        <div class="cia-card integrity">
+                            <div class="cia-icon"><i class="fas fa-check-circle"></i></div>
+                            <div class="cia-title">Integrity</div>
+                            <div class="cia-score" id="ciaIntegrity">4</div>
+                            <div class="cia-description">
+                                Accuracy of financial reporting is critical for regulatory compliance
+                            </div>
+                        </div>
+                        <div class="cia-card availability">
+                            <div class="cia-icon"><i class="fas fa-clock"></i></div>
+                            <div class="cia-title">Availability</div>
+                            <div class="cia-score" id="ciaAvailability">2</div>
+                            <div class="cia-description">
+                                Revenue generation must be continuous to maintain operations
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Risk Matrix Preview -->
+                <div class="risk-matrix-preview">
+                    <h3><i class="fas fa-th"></i> Risk Assessment Matrix</h3>
+                    <div class="matrix-grid">
+                        <div class="matrix-box">
+                            <h4>Inherent Risk</h4>
+                            <div class="matrix-score risk-score high" id="matrixInherent">20</div>
+                            <div class="matrix-level" style="background: #fee2e2; color: #991b1b;">HIGH RISK</div>
+                        </div>
+                        <div class="matrix-box">
+                            <h4>Residual Risk</h4>
+                            <div class="matrix-score risk-score medium" id="matrixResidual">12</div>
+                            <div class="matrix-level" style="background: #fef3c7; color: #92400e;">MEDIUM RISK</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Existing Controls -->
+                <div class="control-list">
+                    <h3><i class="fas fa-shield-alt"></i> Existing Controls</h3>
+                    <div id="controlsList">
+                        <div class="control-item">
+                            <div class="control-icon"><i class="fas fa-check-shield"></i></div>
+                            <div class="control-content">
+                                <div class="control-name">Monthly Revenue Monitoring</div>
+                                <div class="control-description">Real-time dashboard tracking revenue performance against targets with automated alerts</div>
+                                <span class="control-effectiveness high">High Effectiveness</span>
+                            </div>
+                        </div>
+                        <div class="control-item">
+                            <div class="control-icon"><i class="fas fa-check-shield"></i></div>
+                            <div class="control-content">
+                                <div class="control-name">Market Analysis Reports</div>
+                                <div class="control-description">Quarterly market intelligence reports to identify trends and opportunities</div>
+                                <span class="control-effectiveness medium">Medium Effectiveness</span>
+                            </div>
+                        </div>
+                        <div class="control-item">
+                            <div class="control-icon"><i class="fas fa-check-shield"></i></div>
+                            <div class="control-content">
+                                <div class="control-name">Customer Diversification Strategy</div>
+                                <div class="control-description">Active program to reduce dependency on major clients through market expansion</div>
+                                <span class="control-effectiveness high">High Effectiveness</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Treatment Plan -->
+                <div class="detail-section">
+                    <h3><i class="fas fa-tasks"></i> Treatment Plan</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">Strategy:</span>
+                        <span class="detail-value"><span class="treatment-type">Mitigate</span></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Action Plan:</span>
+                        <span class="detail-value">Implement advanced revenue forecasting models, expand into new market segments, strengthen client relationships</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Target Date:</span>
+                        <span class="detail-value">Q2 2025</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Responsible:</span>
+                        <span class="detail-value">CFO, CMO</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sorting functionality
+            const sortableHeaders = document.querySelectorAll('.sortable');
+            sortableHeaders.forEach(header => {
+                header.addEventListener('click', function() {
+                    const icon = this.querySelector('i');
+                    if (icon.classList.contains('fa-sort')) {
+                        icon.classList.replace('fa-sort', 'fa-sort-up');
+                    } else if (icon.classList.contains('fa-sort-up')) {
+                        icon.classList.replace('fa-sort-up', 'fa-sort-down');
+                    } else {
+                        icon.classList.replace('fa-sort-down', 'fa-sort-up');
+                    }
+                });
+            });
+
+            // View toggle
+            const viewButtons = document.querySelectorAll('.btn-icon');
+            viewButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    viewButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Modal functionality
+            const modal = document.getElementById('riskDetailModal');
+            const span = document.getElementsByClassName('close')[0];
+            
+            // Close modal when clicking X
+            span.onclick = function() {
+                modal.style.display = 'none';
+            }
+            
+            // Close modal when clicking outside
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            }
+            
+            // Function to update modal content
+            function updateModalContent(riskData) {
+                // Update basic information
+                document.getElementById('modalRiskCode').textContent = riskData.code;
+                document.getElementById('detailRiskCode').textContent = riskData.code;
+                document.getElementById('detailDepartment').textContent = riskData.department;
+                document.getElementById('detailRiskEvent').textContent = riskData.event;
+                document.getElementById('detailObjective').textContent = riskData.objective;
+                document.getElementById('detailRiskOwner').textContent = riskData.owner;
+                
+                // Update risk scores
+                document.getElementById('matrixInherent').textContent = riskData.inherent;
+                document.getElementById('matrixResidual').textContent = riskData.residual;
+                
+                // Update CIA scores based on risk type
+                if (riskData.perspective === 'FINANCIAL') {
+                    document.getElementById('ciaConfidentiality').textContent = '3';
+                    document.getElementById('ciaIntegrity').textContent = '4';
+                    document.getElementById('ciaAvailability').textContent = '2';
+                } else if (riskData.perspective === 'CUSTOMER') {
+                    document.getElementById('ciaConfidentiality').textContent = '4';
+                    document.getElementById('ciaIntegrity').textContent = '3';
+                    document.getElementById('ciaAvailability').textContent = '3';
+                } else if (riskData.perspective === 'PROCESS') {
+                    document.getElementById('ciaConfidentiality').textContent = '2';
+                    document.getElementById('ciaIntegrity').textContent = '3';
+                    document.getElementById('ciaAvailability').textContent = '5';
+                }
+            }
+            
+            // Action buttons
+            const actionButtons = document.querySelectorAll('.action-btn');
+            actionButtons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const row = this.closest('tr');
+                    const riskCode = row.querySelector('.risk-code').textContent;
+                    
+                    // Check if it's the view button
+                    if (this.title === 'View') {
+                        // Extract risk data from the row
+                        const riskData = {
+                            code: riskCode,
+                            department: row.cells[1].textContent.trim(),
+                            perspective: row.cells[2].textContent.trim(),
+                            event: row.cells[3].textContent.trim(),
+                            objective: row.cells[4].textContent.trim(),
+                            owner: row.cells[5].textContent.trim(),
+                            inherent: row.cells[6].textContent.trim(),
+                            residual: row.cells[8].textContent.trim()
+                        };
+                        
+                        // Update modal content and show it
+                        updateModalContent(riskData);
+                        modal.style.display = 'block';
+                    } else if (this.title === 'Treatment Plan') {
+                        // Navigate to treatment form with risk data
+                        const riskData = {
+                            code: riskCode,
+                            event: row.cells[3].textContent.trim(),
+                            objective: row.cells[4].textContent.trim(),
+                            owner: row.cells[5].textContent.trim(),
+                            inherent: row.cells[6].textContent.trim(),
+                            residual: row.cells[8].textContent.trim(),
+                            treatment: row.cells[9].textContent.trim()
+                        };
+                        
+                        // Store risk data in sessionStorage to pass to treatment form
+                        sessionStorage.setItem('selectedRisk', JSON.stringify(riskData));
+                        sessionStorage.setItem('fromRiskRegister', 'true');
+                        
+                        // Navigate to treatment form
+                        window.location.href = 'treatment-form.html';
+                    } else {
+                        console.log(`${this.title} clicked for ${riskCode}`);
+                    }
+                });
+            });
+
+            // Controls button
+            const controlButtons = document.querySelectorAll('.btn-secondary');
+            controlButtons.forEach(btn => {
+                if (btn.textContent.includes('Controls')) {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        // Trigger the view modal for the parent row
+                        const row = this.closest('tr');
+                        const viewBtn = row.querySelector('.action-btn[title="View"]');
+                        if (viewBtn) {
+                            viewBtn.click();
+                        }
+                    });
+                }
+            });
+            
+            // Add click handler to table rows for easy viewing
+            const tableRows = document.querySelectorAll('.risk-table tbody tr');
+            tableRows.forEach(row => {
+                row.style.cursor = 'pointer';
+                row.addEventListener('click', function(e) {
+                    // Don't trigger if clicking on action buttons
+                    if (!e.target.closest('.action-buttons') && !e.target.closest('.btn-secondary')) {
+                        const viewBtn = this.querySelector('.action-btn[title="View"]');
+                        if (viewBtn) {
+                            viewBtn.click();
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

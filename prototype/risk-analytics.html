@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Analytics - ERM Enterprise</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; 
+            font-family: 'Inter', sans-serif; 
+            background: #f5f5f5; 
+            color: #1f2937;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: #2563eb;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 100%;
+            padding: 2rem;
+        }
+        
+        /* Page Header */
+        .page-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .page-header h2 {
+            margin: 0 0 0.5rem 0;
+            color: #1f2937;
+            font-size: 2rem;
+        }
+        
+        .page-header p {
+            color: #6b7280;
+            margin: 0;
+        }
+        
+        /* Period Selector */
+        .period-selector {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .period-selector select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            background: white;
+        }
+        
+        /* Analytics Grid */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .analytics-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+        
+        .analytics-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .analytics-card.col-4 {
+            grid-column: span 4;
+        }
+        
+        .analytics-card.col-6 {
+            grid-column: span 6;
+        }
+        
+        .analytics-card.col-8 {
+            grid-column: span 8;
+        }
+        
+        .analytics-card.col-12 {
+            grid-column: span 12;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        /* Risk Matrix Styles */
+        .risk-matrix {
+            display: grid;
+            grid-template-columns: auto repeat(5, 1fr);
+            gap: 2px;
+            background: #e5e7eb;
+            padding: 2px;
+            border-radius: 8px;
+        }
+        
+        .matrix-header {
+            background: #f3f4f6;
+            padding: 0.5rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+        
+        .matrix-cell {
+            padding: 1rem;
+            text-align: center;
+            font-weight: 600;
+            color: white;
+            position: relative;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .matrix-cell:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+        
+        .matrix-cell.low {
+            background: #10b981;
+        }
+        
+        .matrix-cell.medium {
+            background: #f59e0b;
+        }
+        
+        .matrix-cell.high {
+            background: #ef4444;
+        }
+        
+        .matrix-cell.critical {
+            background: #991b1b;
+        }
+        
+        .matrix-label {
+            background: #374151;
+            color: white;
+            padding: 0.5rem;
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        
+        .chart-container.small {
+            height: 200px;
+        }
+        
+        /* Summary Stats */
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        /* Distribution List */
+        .distribution-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .distribution-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem;
+            background: #f9fafb;
+            border-radius: 6px;
+        }
+        
+        .distribution-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .distribution-bar {
+            flex: 1;
+            height: 20px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            margin: 0 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .distribution-fill {
+            height: 100%;
+            background: #3b82f6;
+            transition: width 0.3s;
+        }
+        
+        .distribution-value {
+            font-weight: 600;
+            color: #1f2937;
+            min-width: 40px;
+            text-align: right;
+        }
+        
+        /* Filter Section */
+        .filter-section {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .filter-group label {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .analytics-card.col-4,
+            .analytics-card.col-6,
+            .analytics-card.col-8 {
+                grid-column: span 12;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .summary-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1><i class="fas fa-shield-alt"></i> ERM Enterprise</h1>
+            <div class="nav-menu">
+                <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="risk-register.html"><i class="fas fa-clipboard-list"></i> Risk Register</a>
+                <a href="risk-analytics.html" class="active"><i class="fas fa-chart-pie"></i> Analytics</a>
+                <a href="kri-monitoring.html"><i class="fas fa-chart-line"></i> KRI</a>
+                <a href="kpi-management.html"><i class="fas fa-tachometer-alt"></i> KPI</a>
+                <a href="risk-treatment.html"><i class="fas fa-tasks"></i> Treatment</a>
+                <a href="risk-dictionary.html"><i class="fas fa-book"></i> Dictionary</a>
+                <a href="event-loss-database.html"><i class="fas fa-database"></i> Loss DB</a>
+                <a href="reports.html"><i class="fas fa-file-alt"></i> Reports</a>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <select id="userRole" style="padding: 0.5rem 1rem; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; border-radius: 6px; font-size: 0.875rem;">
+                    <option value="management">Management (View All)</option>
+                    <option value="risk-owner">Risk Owner</option>
+                    <option value="unit-mr">Unit MR</option>
+                    <option value="auditor">Auditor</option>
+                </select>
+                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px;">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userName" style="font-size: 0.875rem;">John Doe</span>
+                </div>
+                <a href="login.html" style="color: white; text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span style="font-size: 0.875rem;">Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h2><i class="fas fa-chart-pie"></i> Risk Analytics Dashboard</h2>
+                <p>Comprehensive risk analysis and insights based on current risk data</p>
+            </div>
+            <button onclick="openCompareModal()" style="padding: 0.75rem 1.5rem; background: #7c3aed; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
+                <i class="fas fa-balance-scale"></i> Compare Periods
+            </button>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="filter-group">
+                <label>Period:</label>
+                <select id="periodFilter">
+                    <option value="q1-2025" selected>Q1 2025</option>
+                    <option value="q4-2024">Q4 2024</option>
+                    <option value="q3-2024">Q3 2024</option>
+                    <option value="q2-2024">Q2 2024</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Department:</label>
+                <select id="deptFilter">
+                    <option value="">All Departments</option>
+                    <option value="BOD">BOD</option>
+                    <option value="ERC">ERC</option>
+                    <option value="RATING">RATING</option>
+                    <option value="LCO">LCO</option>
+                    <option value="MBD">MBD</option>
+                    <option value="HRG">HRG</option>
+                    <option value="ITE">ITE</option>
+                    <option value="IAD">IAD</option>
+                    <option value="QCO">QCO</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Risk Type:</label>
+                <select id="typeFilter">
+                    <option value="">All Types</option>
+                    <option value="corporate">Corporate</option>
+                    <option value="division">Division</option>
+                    <option value="project">Project</option>
+                </select>
+            </div>
+            <button style="margin-left: auto; padding: 0.5rem 1rem; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer;" onclick="window.location.reload()">
+                <i class="fas fa-sync"></i> Refresh
+            </button>
+            <div style="position: relative; display: inline-block;">
+                <button style="padding: 0.5rem 1rem; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer;" onclick="toggleExportMenu()">
+                    <i class="fas fa-download"></i> Export
+                </button>
+                <div id="exportMenu" style="display: none; position: absolute; right: 0; top: 100%; margin-top: 0.5rem; background: white; border: 1px solid #e5e7eb; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000;">
+                    <a href="#" onclick="exportAnalytics('pdf')" style="display: block; padding: 0.75rem 1.5rem; color: #374151; text-decoration: none; hover: background: #f3f4f6;">
+                        <i class="fas fa-file-pdf" style="color: #dc2626; margin-right: 0.5rem;"></i> Export as PDF
+                    </a>
+                    <a href="#" onclick="exportAnalytics('excel')" style="display: block; padding: 0.75rem 1.5rem; color: #374151; text-decoration: none; border-top: 1px solid #e5e7eb;">
+                        <i class="fas fa-file-excel" style="color: #059669; margin-right: 0.5rem;"></i> Export as Excel
+                    </a>
+                    <a href="#" onclick="exportAnalytics('ppt')" style="display: block; padding: 0.75rem 1.5rem; color: #374151; text-decoration: none; border-top: 1px solid #e5e7eb;">
+                        <i class="fas fa-file-powerpoint" style="color: #d97706; margin-right: 0.5rem;"></i> Export as PowerPoint
+                    </a>
+                    <a href="#" onclick="exportAnalytics('image')" style="display: block; padding: 0.75rem 1.5rem; color: #374151; text-decoration: none; border-top: 1px solid #e5e7eb; border-radius: 0 0 6px 6px;">
+                        <i class="fas fa-file-image" style="color: #8b5cf6; margin-right: 0.5rem;"></i> Export as Image
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Grid -->
+        <div class="analytics-grid">
+            <!-- Risk Summary Stats -->
+            <div class="analytics-card col-12">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-chart-bar"></i> Risk Summary</h3>
+                </div>
+                <div class="summary-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" style="color: #3b82f6;">47</div>
+                        <div class="stat-label">Total Risks</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" style="color: #10b981;">22</div>
+                        <div class="stat-label">Low Risk</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" style="color: #f59e0b;">25</div>
+                        <div class="stat-label">Medium Risk</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" style="color: #ef4444;">0</div>
+                        <div class="stat-label">High/Critical</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Matrix Heat Map -->
+            <div class="analytics-card col-6">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-th"></i> Risk Matrix Heat Map</h3>
+                </div>
+                <div class="risk-matrix">
+                    <!-- Headers -->
+                    <div></div>
+                    <div class="matrix-header">1-Very Low</div>
+                    <div class="matrix-header">2-Low</div>
+                    <div class="matrix-header">3-Medium</div>
+                    <div class="matrix-header">4-High</div>
+                    <div class="matrix-header">5-Very High</div>
+                    
+                    <!-- Row 5 - Almost Certain -->
+                    <div class="matrix-label">5-Almost Certain</div>
+                    <div class="matrix-cell medium">0</div>
+                    <div class="matrix-cell medium">0</div>
+                    <div class="matrix-cell high">4</div>
+                    <div class="matrix-cell critical">9</div>
+                    <div class="matrix-cell critical">21</div>
+                    
+                    <!-- Row 4 - Likely -->
+                    <div class="matrix-label">4-Likely</div>
+                    <div class="matrix-cell low">0</div>
+                    <div class="matrix-cell medium">2</div>
+                    <div class="matrix-cell medium">2</div>
+                    <div class="matrix-cell high">1</div>
+                    <div class="matrix-cell critical">2</div>
+                    
+                    <!-- Row 3 - Possible -->
+                    <div class="matrix-label">3-Possible</div>
+                    <div class="matrix-cell low">2</div>
+                    <div class="matrix-cell low">2</div>
+                    <div class="matrix-cell medium">1</div>
+                    <div class="matrix-cell high">0</div>
+                    <div class="matrix-cell high">0</div>
+                    
+                    <!-- Row 2 - Unlikely -->
+                    <div class="matrix-label">2-Unlikely</div>
+                    <div class="matrix-cell low">1</div>
+                    <div class="matrix-cell low">9</div>
+                    <div class="matrix-cell medium">11</div>
+                    <div class="matrix-cell medium">0</div>
+                    <div class="matrix-cell high">0</div>
+                    
+                    <!-- Row 1 - Rare -->
+                    <div class="matrix-label">1-Rare</div>
+                    <div class="matrix-cell low">3</div>
+                    <div class="matrix-cell low">9</div>
+                    <div class="matrix-cell low">6</div>
+                    <div class="matrix-cell medium">4</div>
+                    <div class="matrix-cell medium">0</div>
+                </div>
+            </div>
+
+            <!-- Risk Source Distribution -->
+            <div class="analytics-card col-6">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-chart-pie"></i> Risk Source Distribution</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="sourceChart"></canvas>
+                </div>
+                <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div style="width: 12px; height: 12px; background: #f59e0b; border-radius: 2px;"></div>
+                        <span style="font-size: 0.875rem;">Internal: 34 (77%)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div style="width: 12px; height: 12px; background: #3b82f6; border-radius: 2px;"></div>
+                        <span style="font-size: 0.875rem;">External: 10 (23%)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Type Distribution -->
+            <div class="analytics-card col-4">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-layer-group"></i> Risk Type</h3>
+                </div>
+                <div class="chart-container small">
+                    <canvas id="typeChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Risk Owner Distribution -->
+            <div class="analytics-card col-8">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-users"></i> Risk Owner Distribution</h3>
+                </div>
+                <div class="distribution-list">
+                    <div class="distribution-item">
+                        <span class="distribution-label">MBD</span>
+                        <div class="distribution-bar">
+                            <div class="distribution-fill" style="width: 90%; background: #3b82f6;"></div>
+                        </div>
+                        <span class="distribution-value">9</span>
+                    </div>
+                    <div class="distribution-item">
+                        <span class="distribution-label">RTG</span>
+                        <div class="distribution-bar">
+                            <div class="distribution-fill" style="width: 60%; background: #8b5cf6;"></div>
+                        </div>
+                        <span class="distribution-value">6</span>
+                    </div>
+                    <div class="distribution-item">
+                        <span class="distribution-label">QCO</span>
+                        <div class="distribution-bar">
+                            <div class="distribution-fill" style="width: 50%; background: #10b981;"></div>
+                        </div>
+                        <span class="distribution-value">5</span>
+                    </div>
+                    <div class="distribution-item">
+                        <span class="distribution-label">ACC</span>
+                        <div class="distribution-bar">
+                            <div class="distribution-fill" style="width: 40%; background: #f59e0b;"></div>
+                        </div>
+                        <span class="distribution-value">4</span>
+                    </div>
+                    <div class="distribution-item">
+                        <span class="distribution-label">ITR</span>
+                        <div class="distribution-bar">
+                            <div class="distribution-fill" style="width: 40%; background: #ef4444;"></div>
+                        </div>
+                        <span class="distribution-value">4</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Control Effectiveness -->
+            <div class="analytics-card col-4">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-shield-alt"></i> Control Effectiveness</h3>
+                </div>
+                <div class="distribution-list">
+                    <div class="distribution-item">
+                        <span class="distribution-label">Efektif</span>
+                        <span class="distribution-value" style="color: #10b981;">42</span>
+                    </div>
+                    <div class="distribution-item">
+                        <span class="distribution-label">Cukup Efektif</span>
+                        <span class="distribution-value" style="color: #f59e0b;">2</span>
+                    </div>
+                    <div class="distribution-item">
+                        <span class="distribution-label">Kurang Efektif</span>
+                        <span class="distribution-value" style="color: #ef4444;">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Trend Analysis -->
+            <div class="analytics-card col-12">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-chart-line"></i> Risk Assessment Trend</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Impact Area Analysis -->
+            <div class="analytics-card col-12">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-bullseye"></i> Impact Area Analysis by BSC Perspective</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="impactChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Risk Detail Modal -->
+    <div id="riskDetailModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(4px);">
+        <div style="position: relative; background-color: white; margin: 50px auto; padding: 0; width: 90%; max-width: 1200px; max-height: 90vh; overflow-y: auto; border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);">
+            <div style="background: #f9fafb; padding: 1.5rem; border-bottom: 1px solid #e5e7eb; border-radius: 12px 12px 0 0; display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="margin: 0; font-size: 1.5rem; color: #1f2937; display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-layer-group"></i> <span id="modalTitle">Risk Details</span>
+                </h2>
+                <span onclick="closeRiskModal()" style="color: #6b7280; font-size: 1.5rem; font-weight: bold; cursor: pointer; padding: 0.25rem 0.5rem;">&times;</span>
+            </div>
+            <div id="modalContent" style="padding: 2rem;">
+                <!-- Content will be dynamically loaded -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Period Comparison Modal -->
+    <div id="compareModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(4px);">
+        <div style="position: relative; background-color: white; margin: 50px auto; padding: 0; width: 90%; max-width: 1400px; max-height: 90vh; overflow-y: auto; border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);">
+            <div style="background: #f9fafb; padding: 1.5rem; border-bottom: 1px solid #e5e7eb; border-radius: 12px 12px 0 0; display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="margin: 0; font-size: 1.5rem; color: #1f2937; display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-chart-line"></i> Period Comparison
+                </h2>
+                <span onclick="closeCompareModal()" style="color: #6b7280; font-size: 1.5rem; font-weight: bold; cursor: pointer; padding: 0.25rem 0.5rem;">&times;</span>
+            </div>
+            <div style="padding: 2rem;">
+                <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+                    <select id="period1Select" style="padding: 0.5rem 1rem; border: 1px solid #e5e7eb; border-radius: 6px;">
+                        <option value="q1-2025">Q1 2025</option>
+                        <option value="q4-2024" selected>Q4 2024</option>
+                        <option value="q3-2024">Q3 2024</option>
+                    </select>
+                    <span style="padding: 0.5rem;">vs</span>
+                    <select id="period2Select" style="padding: 0.5rem 1rem; border: 1px solid #e5e7eb; border-radius: 6px;">
+                        <option value="q1-2025" selected>Q1 2025</option>
+                        <option value="q4-2024">Q4 2024</option>
+                        <option value="q3-2024">Q3 2024</option>
+                    </select>
+                    <button onclick="updateComparison()" style="padding: 0.5rem 1rem; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                        <i class="fas fa-sync"></i> Update
+                    </button>
+                </div>
+                <div id="comparisonContent">
+                    <!-- Comparison charts will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Dashboard Builder -->
+    <button onclick="openDashboardBuilder()" style="position: fixed; bottom: 2rem; right: 2rem; width: 56px; height: 56px; border-radius: 50%; background: #8b5cf6; color: white; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; font-size: 1.25rem;">
+        <i class="fas fa-cog"></i>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="risk-analytics.js"></script>
+</body>
+</html>

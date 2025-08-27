@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Register - ERM Enterprise</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Remove external CSS to avoid conflicts -->
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+    <!-- <link rel="stylesheet" href="risk-register.css"> -->
+    <style>
+        /* Essential inline styles to ensure proper display */
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: 'Inter', -apple-system, sans-serif; background: #f5f5f5; }
+        
+        /* Navbar */
+        .navbar { background: #2563eb; color: white; padding: 1rem 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .nav-container { max-width: 100%; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .navbar h1 { margin: 0; font-size: 1.5rem; display: flex; align-items: center; gap: 0.5rem; }
+        .nav-menu { display: flex; gap: 2rem; }
+        .nav-menu a { color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px; transition: all 0.3s; }
+        .nav-menu a:hover, .nav-menu a.active { background: rgba(255,255,255,0.2); }
+        .user-info { display: flex; align-items: center; gap: 1rem; }
+        
+        /* Container */
+        .container { max-width: 100%; width: 100%; padding: 2rem; }
+        
+        /* Page Header */
+        .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; padding: 1.5rem; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header-content h2 { margin: 0 0 1rem 0; color: #2563eb; }
+        .header-stats { display: flex; gap: 2rem; }
+        .stat-item { text-align: center; }
+        .stat-value { display: block; font-size: 2rem; font-weight: bold; color: #2563eb; }
+        .stat-label { display: block; font-size: 0.875rem; color: #666; margin-top: 0.25rem; }
+        .header-actions { display: flex; gap: 1rem; }
+        
+        /* Perspective Summary */
+        .perspective-summary { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #e9ecef; }
+        .perspective-summary h4 { margin: 0 0 0.75rem 0; color: #495057; font-size: 0.95rem; }
+        .perspective-stats { display: flex; gap: 1rem; flex-wrap: wrap; }
+        
+        /* Filters */
+        .filters-section { display: flex; gap: 1rem; margin-bottom: 1.5rem; padding: 1rem; background: white; border-radius: 8px; flex-wrap: wrap; }
+        .filter-group { flex: 1; min-width: 150px; }
+        .filter-group label { display: block; margin-bottom: 0.25rem; font-size: 0.875rem; color: #666; }
+        .filter-group select, .filter-group input { width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; font-size: 0.875rem; }
+        
+        /* Table Wrapper - CRITICAL */
+        .table-wrapper { width: 100%; position: relative; margin-bottom: 2rem; }
+        .scroll-indicator { background: #fff3cd; color: #856404; padding: 0.5rem 1rem; border-radius: 4px; font-size: 0.875rem; margin-bottom: 1rem; display: inline-block; }
+        .table-container { overflow-x: auto; width: 100%; border: 1px solid #dee2e6; background: white; border-radius: 8px; display: block; }
+        
+        /* Table - CRITICAL */
+        .risk-table { min-width: 2000px; width: 100%; border-collapse: collapse; display: table; }
+        .risk-table thead { background: #f8f9fa; }
+        .risk-table th { padding: 0.75rem; text-align: left; font-weight: 600; color: #495057; border: 1px solid #dee2e6; position: sticky; top: 0; background: #f8f9fa; z-index: 10; }
+        .risk-table th:nth-child(2) { background: #e3f2fd; color: #1565c0; }
+        .risk-table td { padding: 0.75rem; border: 1px solid #dee2e6; white-space: nowrap; }
+        .risk-table td:nth-child(4) { white-space: normal; min-width: 300px; max-width: 400px; }
+        
+        /* Fixed Column */
+        .fixed-col { position: sticky; left: 0; background: white; z-index: 5; font-weight: 600; border-right: 2px solid #dee2e6; }
+        .risk-table th.fixed-col { background: #f8f9fa; z-index: 11; }
+        
+        /* Badges */
+        .badge { display: inline-block; padding: 0.35rem 0.75rem; border-radius: 20px; font-size: 0.875rem; font-weight: 700; color: white; }
+        .badge-financial { background: #1565c0; }
+        .badge-customer { background: #6a1b9a; }
+        .badge-process { background: #2e7d32; }
+        .badge-learning { background: #e65100; }
+        .badge-mitigate { background: #f59e0b; color: #333; }
+        .badge-accept { background: #22c55e; }
+        .badge-approved { background: #22c55e; }
+        .badge-draft { background: #6b7280; }
+        
+        /* Risk Scores */
+        .risk-score { display: inline-block; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: bold; font-size: 0.875rem; }
+        .risk-score.very-high { background: #dc2626; color: white; }
+        .risk-score.high { background: #f59e0b; color: white; }
+        .risk-score.medium { background: #eab308; color: #333; }
+        .risk-score.low { background: #22c55e; color: white; }
+        
+        /* Buttons */
+        .btn { padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.875rem; transition: all 0.2s; }
+        .btn-primary { background: #2563eb; color: white; }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-secondary { background: #6b7280; color: white; }
+        .btn-secondary:hover { background: #4b5563; }
+        .btn-sm { padding: 0.25rem 0.75rem; font-size: 0.75rem; background: transparent; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; }
+        .btn-icon { background: transparent; border: 1px solid #ddd; padding: 0.25rem 0.5rem; border-radius: 4px; cursor: pointer; margin: 0 0.25rem; }
+        .btn-icon:hover { background: #f3f4f6; }
+        
+        /* Action Buttons */
+        .action-buttons { display: flex; gap: 0.25rem; }
+        
+        /* Modal */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+        .modal-content { background-color: white; margin: 2% auto; padding: 0; border-radius: 8px; width: 90%; max-width: 1200px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; background: #f8f9fa; border-bottom: 1px solid #dee2e6; }
+        .modal-body { padding: 1.5rem; overflow-y: auto; flex: 1; }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 1rem; padding: 1rem 1.5rem; background: #f8f9fa; border-top: 1px solid #dee2e6; }
+        
+        /* Other essential styles */
+        .text-center { text-align: center; }
+        .group-header { text-align: center; background: #e9ecef; }
+        .close { font-size: 1.5rem; font-weight: bold; cursor: pointer; background: none; border: none; color: #aaa; }
+        .pagination { display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 2rem; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1><i class="fas fa-shield-alt"></i> ERM Enterprise</h1>
+            <div class="nav-menu">
+                <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="risk-register.html" class="active"><i class="fas fa-clipboard-list"></i> Risk Register</a>
+                <a href="kri-monitoring.html"><i class="fas fa-chart-line"></i> KRI</a>
+                <a href="kpi-management.html"><i class="fas fa-tachometer-alt"></i> KPI</a>
+                <a href="risk-treatment.html"><i class="fas fa-tasks"></i> Treatment</a>
+                <a href="risk-dictionary.html"><i class="fas fa-book"></i> Dictionary</a>
+                <a href="event-loss-database.html"><i class="fas fa-database"></i> Loss DB</a>
+                <a href="reports.html"><i class="fas fa-file-alt"></i> Reports</a>
+            </div>
+            <div class="user-info">
+                <span><i class="fas fa-user"></i> Risk Officer</span>
+                <button class="btn-sm"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <select id="userRole" style="padding: 0.5rem 1rem; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; border-radius: 6px; font-size: 0.875rem;">
+                    <option value="management">Management (View All)</option>
+                    <option value="risk-owner">Risk Owner</option>
+                    <option value="unit-mr">Unit MR</option>
+                    <option value="auditor">Auditor</option>
+                </select>
+                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px;">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userName" style="font-size: 0.875rem;">John Doe</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" style="max-width: 100%; width: 100%; padding: 0 2rem;">
+        <!-- Header Section -->
+        <div class="page-header">
+            <div class="header-content">
+                <h2><i class="fas fa-clipboard-list"></i> Risk Register 2025</h2>
+                <div class="header-stats">
+                    <div class="stat-item">
+                        <span class="stat-value">45</span>
+                        <span class="stat-label">Total Risks</span>
+                    </div>
+                    <div class="stat-item high-risk">
+                        <span class="stat-value">12</span>
+                        <span class="stat-label">High Risks</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">8</span>
+                        <span class="stat-label">Open RTPs</span>
+                    </div>
+                </div>
+                <!-- Perspective Summary -->
+                <div class="perspective-summary">
+                    <h4>Risk Distribution by Perspective:</h4>
+                    <div class="perspective-stats">
+                        <span class="badge badge-financial">Financial: 15</span>
+                        <span class="badge badge-customer">Customer: 10</span>
+                        <span class="badge badge-process">Internal Process: 12</span>
+                        <span class="badge badge-learning">Learning & Growth: 8</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="exportToExcel()">
+                    <i class="fas fa-download"></i> Export Excel
+                </button>
+                <button class="btn btn-primary" onclick="showAddRiskModal()">
+                    <i class="fas fa-plus"></i> Add New Risk
+                </button>
+            </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <div class="filter-group">
+                <label>Perspective</label>
+                <select id="perspectiveFilter" onchange="applyFilters()">
+                    <option value="">All Perspectives</option>
+                    <option value="F">Financial</option>
+                    <option value="C">Customer</option>
+                    <option value="IBP">Internal Business Process</option>
+                    <option value="LG">Learning & Growth</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Risk Level</label>
+                <select id="riskLevelFilter" onchange="applyFilters()">
+                    <option value="">All Levels</option>
+                    <option value="very-high">Very High</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                    <option value="very-low">Very Low</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Risk Owner</label>
+                <select id="ownerFilter" onchange="applyFilters()">
+                    <option value="">All Owners</option>
+                    <option value="ERC">ERC</option>
+                    <option value="LCO">LCO</option>
+                    <option value="RATING">RATING</option>
+                    <option value="BOD">BOD</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Status</label>
+                <select id="statusFilter" onchange="applyFilters()">
+                    <option value="">All Status</option>
+                    <option value="draft">Draft</option>
+                    <option value="review">Under Review</option>
+                    <option value="approved">Approved</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Search</label>
+                <input type="text" id="searchFilter" placeholder="Search risks..." onkeyup="applyFilters()">
+            </div>
+        </div>
+
+        <!-- Risk Register Table -->
+        <div class="table-wrapper" style="width: 100%; position: relative; margin-bottom: 2rem;">
+            <div class="scroll-indicator" style="background: #fff3cd; color: #856404; padding: 0.5rem 1rem; border-radius: 4px; font-size: 0.875rem; margin-bottom: 1rem; display: inline-block;">
+                <i class="fas fa-arrow-right"></i> Scroll horizontally to view all columns
+            </div>
+            <div class="table-container" style="overflow-x: auto; width: 100%; border: 1px solid #dee2e6; background: white; border-radius: 8px; display: block;">
+                <table class="risk-table" style="min-width: 1800px; width: 100%; border-collapse: collapse; display: table;">
+                <thead style="background: #f8f9fa;">
+                    <tr>
+                        <th rowspan="2" class="fixed-col" style="position: sticky; left: 0; background: #f8f9fa; z-index: 10; padding: 0.75rem; border: 1px solid #dee2e6; min-width: 120px;">Risk Code</th>
+                        <th rowspan="2" style="padding: 0.75rem; border: 1px solid #dee2e6; background: #e3f2fd; color: #1565c0; font-weight: bold; min-width: 150px;">Perspective</th>
+                        <th rowspan="2" style="padding: 0.75rem; border: 1px solid #dee2e6; min-width: 200px;">Strategic Objective</th>
+                        <th rowspan="2" style="padding: 0.75rem; border: 1px solid #dee2e6; min-width: 300px;">Risk Event</th>
+                        <th rowspan="2">Risk Owner</th>
+                        <th colspan="3" class="group-header">Inherent Risk</th>
+                        <th rowspan="2">Controls</th>
+                        <th colspan="3" class="group-header">Residual Risk</th>
+                        <th rowspan="2">Treatment</th>
+                        <th rowspan="2">Status</th>
+                        <th rowspan="2">Actions</th>
+                    </tr>
+                    <tr>
+                        <th>L</th>
+                        <th>I</th>
+                        <th>Score</th>
+                        <th>L</th>
+                        <th>I</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody id="riskTableBody">
+                    <!-- Sample risk data -->
+                    <tr>
+                        <td class="fixed-col" style="position: sticky; left: 0; background: white; z-index: 5; padding: 0.75rem; border: 1px solid #dee2e6; font-weight: 600;">RR-F-001</td>
+                        <td style="padding: 0.75rem; border: 1px solid #dee2e6;"><span class="badge badge-financial" style="background: #1565c0; color: white; padding: 0.35rem 0.75rem; border-radius: 4px; font-weight: 700;">FINANCIAL</span></td>
+                        <td style="padding: 0.75rem; border: 1px solid #dee2e6;">Increase Shareholders Value</td>
+                        <td style="padding: 0.75rem; border: 1px solid #dee2e6;">Revenue target not achieved due to market downturn</td>
+                        <td style="padding: 0.75rem; border: 1px solid #dee2e6;">CFO</td>
+                        <td class="text-center">4</td>
+                        <td class="text-center">5</td>
+                        <td class="text-center"><span class="risk-score very-high">20</span></td>
+                        <td>
+                            <button class="btn-sm" onclick="viewControls('RR-F-001')">
+                                <i class="fas fa-shield-alt"></i> View
+                            </button>
+                        </td>
+                        <td class="text-center">3</td>
+                        <td class="text-center">4</td>
+                        <td class="text-center"><span class="risk-score high">12</span></td>
+                        <td><span class="badge badge-mitigate">Mitigate</span></td>
+                        <td><span class="badge badge-approved">Approved</span></td>
+                        <td class="action-buttons">
+                            <button class="btn-icon" title="Edit" onclick="editRisk('RR-F-001')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-icon" title="View Details" onclick="viewRiskDetails('RR-F-001')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn-icon" title="Create RTP" onclick="createRTP('RR-F-001')">
+                                <i class="fas fa-clipboard-check"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="fixed-col">RR-C-002</td>
+                        <td><span class="badge badge-customer">CUSTOMER</span></td>
+                        <td>Enhance Customer Satisfaction</td>
+                        <td>Customer complaints increase due to service delays</td>
+                        <td>CMO</td>
+                        <td class="text-center">3</td>
+                        <td class="text-center">4</td>
+                        <td class="text-center"><span class="risk-score high">12</span></td>
+                        <td>
+                            <button class="btn-sm" onclick="viewControls('RR-C-002')">
+                                <i class="fas fa-shield-alt"></i> View
+                            </button>
+                        </td>
+                        <td class="text-center">2</td>
+                        <td class="text-center">3</td>
+                        <td class="text-center"><span class="risk-score medium">6</span></td>
+                        <td><span class="badge badge-mitigate">Mitigate</span></td>
+                        <td><span class="badge badge-draft">Draft</span></td>
+                        <td class="action-buttons">
+                            <button class="btn-icon" title="Edit" onclick="editRisk('RR-C-002')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-icon" title="View Details" onclick="viewRiskDetails('RR-C-002')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn-icon" title="Create RTP" onclick="createRTP('RR-C-002')">
+                                <i class="fas fa-clipboard-check"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="fixed-col">RR-IBP-003</td>
+                        <td><span class="badge badge-process">INTERNAL PROCESS</span></td>
+                        <td>Improve Operational Efficiency</td>
+                        <td>System downtime affecting business operations</td>
+                        <td>CTO</td>
+                        <td class="text-center">3</td>
+                        <td class="text-center">3</td>
+                        <td class="text-center"><span class="risk-score medium">9</span></td>
+                        <td>
+                            <button class="btn-sm" onclick="viewControls('RR-IBP-003')">
+                                <i class="fas fa-shield-alt"></i> View
+                            </button>
+                        </td>
+                        <td class="text-center">2</td>
+                        <td class="text-center">2</td>
+                        <td class="text-center"><span class="risk-score low">4</span></td>
+                        <td><span class="badge badge-accept">Accept</span></td>
+                        <td><span class="badge badge-approved">Approved</span></td>
+                        <td class="action-buttons">
+                            <button class="btn-icon" title="Edit" onclick="editRisk('RR-IBP-003')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-icon" title="View Details" onclick="viewRiskDetails('RR-IBP-003')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn-icon" title="Create RTP" onclick="createRTP('RR-IBP-003')">
+                                <i class="fas fa-clipboard-check"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="fixed-col">RR-LG-004</td>
+                        <td><span class="badge badge-learning">LEARNING & GROWTH</span></td>
+                        <td>Enhance Employee Capabilities</td>
+                        <td>Key talent retention challenges</td>
+                        <td>CHRO</td>
+                        <td class="text-center">2</td>
+                        <td class="text-center">4</td>
+                        <td class="text-center"><span class="risk-score medium">8</span></td>
+                        <td>
+                            <button class="btn-sm" onclick="viewControls('RR-LG-004')">
+                                <i class="fas fa-shield-alt"></i> View
+                            </button>
+                        </td>
+                        <td class="text-center">2</td>
+                        <td class="text-center">3</td>
+                        <td class="text-center"><span class="risk-score medium">6</span></td>
+                        <td><span class="badge badge-mitigate">Mitigate</span></td>
+                        <td><span class="badge badge-approved">Approved</span></td>
+                        <td class="action-buttons">
+                            <button class="btn-icon" title="Edit" onclick="editRisk('RR-LG-004')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-icon" title="View Details" onclick="viewRiskDetails('RR-LG-004')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn-icon" title="Create RTP" onclick="createRTP('RR-LG-004')">
+                                <i class="fas fa-clipboard-check"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <button class="btn-sm" disabled><i class="fas fa-chevron-left"></i> Previous</button>
+            <span>Page 1 of 5</span>
+            <button class="btn-sm">Next <i class="fas fa-chevron-right"></i></button>
+        </div>
+    </div>
+
+    <!-- Add/Edit Risk Modal -->
+    <div id="riskModal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Risk</h3>
+                <button class="close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="riskForm">
+                    <!-- Tab Navigation -->
+                    <div class="tabs">
+                        <button type="button" class="tab-btn active" onclick="showTab('basic')">
+                            <i class="fas fa-info-circle"></i> Basic Information
+                        </button>
+                        <button type="button" class="tab-btn" onclick="showTab('assessment')">
+                            <i class="fas fa-chart-line"></i> Risk Assessment
+                        </button>
+                        <button type="button" class="tab-btn" onclick="showTab('controls')">
+                            <i class="fas fa-shield-alt"></i> Controls
+                        </button>
+                        <button type="button" class="tab-btn" onclick="showTab('treatment')">
+                            <i class="fas fa-tasks"></i> Treatment Plan
+                        </button>
+                    </div>
+
+                    <!-- Tab Content -->
+                    <div id="basicTab" class="tab-content active">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Perspective <span class="required">*</span></label>
+                                <select id="perspective" required onchange="loadStrategicObjectives()">
+                                    <option value="">Select Perspective</option>
+                                    <option value="F">Financial</option>
+                                    <option value="C">Customer</option>
+                                    <option value="IBP">Internal Business Process</option>
+                                    <option value="LG">Learning & Growth</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Strategic Objective <span class="required">*</span></label>
+                                <select id="strategicObjective" required onchange="loadKPIs()">
+                                    <option value="">Select Strategic Objective</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>KPI</label>
+                                <select id="kpi" onchange="loadKRIs()">
+                                    <option value="">Select KPI</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>KRI</label>
+                                <select id="kri">
+                                    <option value="">Select KRI</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Directorate <span class="required">*</span></label>
+                                <select id="directorate" required onchange="loadRiskOwners()">
+                                    <option value="">Select Directorate</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Risk Owner <span class="required">*</span></label>
+                                <select id="riskOwner" required>
+                                    <option value="">Select Risk Owner</option>
+                                </select>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Risk Event <span class="required">*</span></label>
+                                <textarea id="riskEvent" rows="3" required placeholder="Describe the risk event..."></textarea>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Risk Category <span class="required">*</span></label>
+                                <select id="riskCategory" required>
+                                    <option value="">Select Risk Category</option>
+                                    <option value="strategic">Strategic Risk</option>
+                                    <option value="operational">Operational Risk</option>
+                                    <option value="financial">Financial Risk</option>
+                                    <option value="compliance">Compliance Risk</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Information Asset Section -->
+                        <div class="form-section">
+                            <h4><i class="fas fa-database"></i> Information Asset (if applicable)</h4>
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="isInfoAsset" onchange="toggleInfoAsset()">
+                                    Related to Information Asset
+                                </label>
+                            </div>
+                            <div id="infoAssetFields" class="form-grid" style="display: none;">
+                                <div class="form-group">
+                                    <label>Asset Name</label>
+                                    <input type="text" id="assetName" placeholder="Enter asset name">
+                                </div>
+                                <div class="form-group">
+                                    <label>SMKI Aspect</label>
+                                    <select id="smkiAspect">
+                                        <option value="">Select Aspect</option>
+                                        <option value="C">Confidentiality</option>
+                                        <option value="I">Integrity</option>
+                                        <option value="A">Availability</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>ISMS Control Reference</label>
+                                    <input type="text" id="ismsControl" placeholder="e.g., A.12.1.1">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="assessmentTab" class="tab-content">
+                        <div class="assessment-section">
+                            <h4><i class="fas fa-exclamation-triangle"></i> Inherent Risk Assessment</h4>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Likelihood <span class="required">*</span></label>
+                                    <select id="inherentLikelihood" required onchange="calculateInherentRisk()">
+                                        <option value="">Select Likelihood</option>
+                                        <option value="1">1 - Very Low</option>
+                                        <option value="2">2 - Low</option>
+                                        <option value="3">3 - Medium</option>
+                                        <option value="4">4 - High</option>
+                                        <option value="5">5 - Very High</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Impact <span class="required">*</span></label>
+                                    <select id="inherentImpact" required onchange="calculateInherentRisk()">
+                                        <option value="">Select Impact</option>
+                                        <option value="1">1 - Very Low</option>
+                                        <option value="2">2 - Low</option>
+                                        <option value="3">3 - Medium</option>
+                                        <option value="4">4 - High</option>
+                                        <option value="5">5 - Very High</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Risk Score</label>
+                                    <div id="inherentRiskScore" class="risk-score-display">-</div>
+                                </div>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Source</label>
+                                <input type="text" id="riskSource" placeholder="Source of risk">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Cause</label>
+                                <textarea id="riskCause" rows="3" placeholder="Root cause of the risk..."></textarea>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Impact Description</label>
+                                <textarea id="riskImpact" rows="3" placeholder="Potential impact if risk materializes..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Risk Matrix Visualization -->
+                        <div class="risk-matrix-container">
+                            <h4><i class="fas fa-th"></i> Risk Matrix</h4>
+                            <div id="riskMatrix" class="risk-matrix"></div>
+                        </div>
+                    </div>
+
+                    <div id="controlsTab" class="tab-content">
+                        <h4><i class="fas fa-shield-alt"></i> Existing Controls</h4>
+                        <div class="form-group full-width">
+                            <label>Control Description</label>
+                            <textarea id="existingControls" rows="4" placeholder="Describe existing controls..."></textarea>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Implementation</label>
+                                <select id="controlImplementation">
+                                    <option value="">Select</option>
+                                    <option value="fully">Fully Implemented</option>
+                                    <option value="partial">Partially Implemented</option>
+                                    <option value="not">Not Implemented</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Adequacy</label>
+                                <select id="controlAdequacy">
+                                    <option value="">Select</option>
+                                    <option value="adequate">Adequate</option>
+                                    <option value="partial">Partially Adequate</option>
+                                    <option value="inadequate">Inadequate</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Effectiveness</label>
+                                <select id="controlEffectiveness">
+                                    <option value="">Select</option>
+                                    <option value="effective">Effective</option>
+                                    <option value="partial">Partially Effective</option>
+                                    <option value="ineffective">Ineffective</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <h4><i class="fas fa-chart-line"></i> Residual Risk Assessment</h4>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Likelihood</label>
+                                <select id="residualLikelihood" onchange="calculateResidualRisk()">
+                                    <option value="">Select Likelihood</option>
+                                    <option value="1">1 - Very Low</option>
+                                    <option value="2">2 - Low</option>
+                                    <option value="3">3 - Medium</option>
+                                    <option value="4">4 - High</option>
+                                    <option value="5">5 - Very High</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Impact</label>
+                                <select id="residualImpact" onchange="calculateResidualRisk()">
+                                    <option value="">Select Impact</option>
+                                    <option value="1">1 - Very Low</option>
+                                    <option value="2">2 - Low</option>
+                                    <option value="3">3 - Medium</option>
+                                    <option value="4">4 - High</option>
+                                    <option value="5">5 - Very High</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Risk Score</label>
+                                <div id="residualRiskScore" class="risk-score-display">-</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="treatmentTab" class="tab-content">
+                        <h4><i class="fas fa-tasks"></i> Risk Treatment Decision</h4>
+                        <div class="form-group">
+                            <label>Treatment Option <span class="required">*</span></label>
+                            <select id="treatmentOption" required onchange="toggleTreatmentFields()">
+                                <option value="">Select Treatment Option</option>
+                                <option value="accept">Accept</option>
+                                <option value="mitigate">Mitigate</option>
+                                <option value="transfer">Transfer</option>
+                                <option value="avoid">Avoid</option>
+                            </select>
+                        </div>
+
+                        <div id="treatmentFields" style="display: none;">
+                            <div class="form-group full-width">
+                                <label>Proposed Additional Controls</label>
+                                <textarea id="proposedControls" rows="3" placeholder="Describe proposed controls..."></textarea>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Activity Plan</label>
+                                <textarea id="activityPlan" rows="3" placeholder="Detailed activity plan..."></textarea>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Person In Charge</label>
+                                    <input type="text" id="personInCharge" placeholder="Responsible person">
+                                </div>
+                                <div class="form-group">
+                                    <label>Target Completion</label>
+                                    <input type="date" id="targetCompletion">
+                                </div>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Expected Output</label>
+                                <textarea id="expectedOutput" rows="2" placeholder="Expected deliverables..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveRisk()">
+                    <i class="fas fa-save"></i> Save Risk
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="data-validation.js?v=1"></script>
+    <script src="risk-register.js"></script>
+</body>
+</html>

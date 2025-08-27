@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Loss Entry - ERM Enterprise</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; 
+            font-family: 'Inter', sans-serif; 
+            background: #f5f5f5; 
+            color: #1f2937;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: #2563eb;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Form Header */
+        .form-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .form-header h2 {
+            margin: 0 0 0.5rem 0;
+            color: #1f2937;
+            font-size: 2rem;
+        }
+        
+        .form-header p {
+            color: #6b7280;
+            margin: 0;
+        }
+        
+        /* Alert Box */
+        .alert {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            align-items: start;
+        }
+        
+        .alert i {
+            color: #dc2626;
+            font-size: 1.25rem;
+        }
+        
+        .alert-content {
+            flex: 1;
+        }
+        
+        .alert-content h4 {
+            margin: 0 0 0.5rem 0;
+            color: #991b1b;
+        }
+        
+        .alert-content p {
+            margin: 0;
+            font-size: 0.875rem;
+            color: #991b1b;
+        }
+        
+        /* Form Sections */
+        .form-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0 0 1.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .required::after {
+            content: ' *';
+            color: #ef4444;
+        }
+        
+        .form-input,
+        .form-select,
+        .form-textarea {
+            padding: 0.75rem 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            background: white;
+        }
+        
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        /* Currency Input */
+        .currency-group {
+            position: relative;
+        }
+        
+        .currency-prefix {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        .currency-input {
+            padding-left: 3rem !important;
+            text-align: right;
+            font-weight: 600;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #6b7280;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .btn-secondary:hover {
+            background: #f9fafb;
+        }
+        
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        /* Help Text */
+        .help-text {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+        
+        /* File Upload */
+        .file-upload {
+            border: 2px dashed #e5e7eb;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .file-upload:hover {
+            border-color: #3b82f6;
+            background: #f9fafb;
+        }
+        
+        .file-upload i {
+            font-size: 3rem;
+            color: #9ca3af;
+            margin-bottom: 1rem;
+        }
+        
+        .file-upload p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        
+        .file-list {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            background: #f9fafb;
+            border-radius: 6px;
+        }
+        
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .file-info i {
+            color: #6b7280;
+        }
+        
+        /* Recovery Timeline */
+        .recovery-timeline {
+            margin-top: 1rem;
+        }
+        
+        .recovery-item {
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .recovery-item input {
+            padding: 0.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+        
+        /* Impact Areas */
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .impact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .impact-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .impact-item label {
+            font-size: 0.875rem;
+        }
+        
+        /* Status Badge Preview */
+        .status-preview {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        
+        .status-preview.open { background: #fee2e2; color: #991b1b; }
+        .status-preview.investigation { background: #fef3c7; color: #92400e; }
+        .status-preview.closed { background: #d1fae5; color: #065f46; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1><i class="fas fa-shield-alt"></i> ERM Enterprise</h1>
+            <div class="nav-menu">
+                <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="risk-register.html"><i class="fas fa-clipboard-list"></i> Risk Register</a>
+                <a href="kri-monitoring.html"><i class="fas fa-chart-line"></i> KRI</a>
+                <a href="kpi-management.html"><i class="fas fa-tachometer-alt"></i> KPI</a>
+                <a href="risk-treatment.html"><i class="fas fa-tasks"></i> Treatment</a>
+                <a href="risk-dictionary.html"><i class="fas fa-book"></i> Dictionary</a>
+                <a href="event-loss-database.html" class="active"><i class="fas fa-database"></i> Loss DB</a>
+                <a href="reports.html"><i class="fas fa-file-alt"></i> Reports</a>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <select id="userRole" style="padding: 0.5rem 1rem; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; border-radius: 6px; font-size: 0.875rem;">
+                    <option value="management">Management (View All)</option>
+                    <option value="risk-owner">Risk Owner</option>
+                    <option value="unit-mr">Unit MR</option>
+                    <option value="auditor">Auditor</option>
+                </select>
+                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px;">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userName" style="font-size: 0.875rem;">John Doe</span>
+                </div>
+                <a href="login.html" style="color: white; text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span style="font-size: 0.875rem;">Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Form Header -->
+        <div class="form-header">
+            <h2><i class="fas fa-exclamation-circle"></i> Record Loss Event</h2>
+            <p>Document operational losses and risk events for analysis and reporting</p>
+        </div>
+
+        <!-- Alert -->
+        <div class="alert">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div class="alert-content">
+                <h4>Important: Timely Reporting</h4>
+                <p>Loss events must be reported within 24 hours of discovery. Late reporting may result in compliance violations.</p>
+            </div>
+        </div>
+
+        <!-- Event Information -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-info-circle"></i> Event Information
+            </h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label required">Event ID</label>
+                    <input type="text" class="form-input" value="EVT-2025-0125" readonly>
+                    <span class="help-text">Auto-generated event identifier</span>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Event Date</label>
+                    <input type="date" class="form-input">
+                    <span class="help-text">Date when the event occurred</span>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Discovery Date</label>
+                    <input type="date" class="form-input">
+                    <span class="help-text">Date when the event was discovered</span>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Reporting Date</label>
+                    <input type="date" class="form-input" value="2025-01-26" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Department</label>
+                    <select class="form-select">
+                        <option value="">Select Department</option>
+                        <option value="ITE">ITE - Information Technology</option>
+                        <option value="MBD">MBD - Marketing & Business Dev</option>
+                        <option value="RATING">RATING - Credit Rating</option>
+                        <option value="LCO">LCO - Legal & Compliance</option>
+                        <option value="BOD">BOD - Board of Directors</option>
+                        <option value="HRG">HRG - Human Resources</option>
+                        <option value="IAD">IAD - Internal Audit</option>
+                        <option value="FIN">FIN - Finance Division</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Event Type</label>
+                    <select class="form-select" id="eventType">
+                        <option value="">Select Event Type</option>
+                        <option value="operational">Operational</option>
+                        <option value="fraud">Fraud</option>
+                        <option value="credit">Credit</option>
+                        <option value="market">Market</option>
+                        <option value="compliance">Compliance</option>
+                        <option value="reputation">Reputation</option>
+                        <option value="technology">Technology</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Sub-Category</label>
+                    <select class="form-select" id="eventSubCategory">
+                        <option value="">Select Event Type First</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Related Risk</label>
+                    <select class="form-select">
+                        <option value="">Select Related Risk</option>
+                        <option value="RR-F-001">RR-F-001 - Revenue target not achieved</option>
+                        <option value="RR-C-002">RR-C-002 - Customer complaints increase</option>
+                        <option value="RR-IBP-003">RR-IBP-003 - System downtime</option>
+                        <option value="RR-L-004">RR-L-004 - Key talent retention</option>
+                    </select>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label required">Event Title</label>
+                    <input type="text" class="form-input" placeholder="Brief title describing the event">
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label required">Event Description</label>
+                    <textarea class="form-textarea" rows="4" placeholder="Detailed description of what happened, including timeline and immediate impacts..."></textarea>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label required">Root Cause Analysis</label>
+                    <textarea class="form-textarea" rows="3" placeholder="Identify the root causes that led to this event..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Financial Impact -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-coins"></i> Financial Impact
+            </h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label required">Gross Loss Amount</label>
+                    <div class="currency-group">
+                        <span class="currency-prefix">Rp</span>
+                        <input type="text" class="form-input currency-input" placeholder="0" onkeyup="formatCurrency(this); calculateNetLoss()">
+                    </div>
+                    <span class="help-text">Total loss amount before any recovery</span>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Recovery Amount</label>
+                    <div class="currency-group">
+                        <span class="currency-prefix">Rp</span>
+                        <input type="text" class="form-input currency-input" placeholder="0" onkeyup="formatCurrency(this); calculateNetLoss()">
+                    </div>
+                    <span class="help-text">Amount recovered (insurance, legal, etc.)</span>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Net Loss Amount</label>
+                    <div class="currency-group">
+                        <span class="currency-prefix">Rp</span>
+                        <input type="text" class="form-input currency-input" id="netLoss" placeholder="0" readonly style="background: #f9fafb;">
+                    </div>
+                    <span class="help-text">Gross loss minus recovery</span>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Loss Currency</label>
+                    <select class="form-select">
+                        <option value="IDR">IDR - Indonesian Rupiah</option>
+                        <option value="USD">USD - US Dollar</option>
+                        <option value="EUR">EUR - Euro</option>
+                        <option value="SGD">SGD - Singapore Dollar</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group full-width">
+                <label class="form-label">Recovery Details</label>
+                <div class="recovery-timeline">
+                    <div class="recovery-item">
+                        <input type="date" placeholder="Recovery Date">
+                        <select>
+                            <option value="">Recovery Type</option>
+                            <option value="insurance">Insurance Claim</option>
+                            <option value="legal">Legal Settlement</option>
+                            <option value="operational">Operational Recovery</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <input type="text" placeholder="Amount (Rp)" style="text-align: right;">
+                        <button class="btn btn-secondary btn-sm" style="padding: 0.5rem;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="addRecovery()">
+                    <i class="fas fa-plus"></i> Add Recovery
+                </button>
+            </div>
+        </div>
+
+        <!-- Non-Financial Impact -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-chart-line"></i> Non-Financial Impact
+            </h3>
+            <div class="form-group full-width">
+                <label class="form-label">Impact Areas</label>
+                <div class="impact-grid">
+                    <div class="impact-item">
+                        <input type="checkbox" id="impact1" value="reputation">
+                        <label for="impact1">Reputation/Brand Damage</label>
+                    </div>
+                    <div class="impact-item">
+                        <input type="checkbox" id="impact2" value="customer">
+                        <label for="impact2">Customer Dissatisfaction</label>
+                    </div>
+                    <div class="impact-item">
+                        <input type="checkbox" id="impact3" value="regulatory">
+                        <label for="impact3">Regulatory Scrutiny</label>
+                    </div>
+                    <div class="impact-item">
+                        <input type="checkbox" id="impact4" value="operational">
+                        <label for="impact4">Operational Disruption</label>
+                    </div>
+                    <div class="impact-item">
+                        <input type="checkbox" id="impact5" value="employee">
+                        <label for="impact5">Employee Morale</label>
+                    </div>
+                    <div class="impact-item">
+                        <input type="checkbox" id="impact6" value="strategic">
+                        <label for="impact6">Strategic Setback</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Number of Customers Affected</label>
+                    <input type="number" class="form-input" placeholder="0">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Downtime (Hours)</label>
+                    <input type="number" class="form-input" placeholder="0" step="0.5">
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Non-Financial Impact Description</label>
+                    <textarea class="form-textarea" placeholder="Describe reputation damage, customer impact, regulatory issues, etc..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Response & Status -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-tasks"></i> Response & Status
+            </h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label required">Event Status</label>
+                    <select class="form-select" onchange="updateStatusPreview(this)">
+                        <option value="">Select Status</option>
+                        <option value="open">Open - Active Investigation</option>
+                        <option value="investigation">Under Investigation</option>
+                        <option value="closed">Closed - Resolved</option>
+                    </select>
+                    <span class="status-preview" id="statusPreview"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Severity Level</label>
+                    <select class="form-select">
+                        <option value="">Select Severity</option>
+                        <option value="critical">Critical - Major Business Impact</option>
+                        <option value="high">High - Significant Impact</option>
+                        <option value="medium">Medium - Moderate Impact</option>
+                        <option value="low">Low - Minor Impact</option>
+                    </select>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label required">Immediate Actions Taken</label>
+                    <textarea class="form-textarea" placeholder="List immediate actions taken to contain the event..."></textarea>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Preventive Measures</label>
+                    <textarea class="form-textarea" placeholder="Describe measures to prevent recurrence..."></textarea>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Lessons Learned</label>
+                    <textarea class="form-textarea" placeholder="Key takeaways and improvements identified..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documentation -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-paperclip"></i> Supporting Documentation
+            </h3>
+            <div class="file-upload" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Click to upload or drag and drop</p>
+                <p style="font-size: 0.75rem; color: #9ca3af;">PDF, DOC, XLS, JPG up to 10MB each</p>
+                <input type="file" id="fileInput" style="display: none;" multiple onchange="handleFiles(this.files)">
+            </div>
+            <div class="file-list" id="fileList"></div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+            <div>
+                <button class="btn btn-secondary">
+                    <i class="fas fa-save"></i> Save Draft
+                </button>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <a href="event-loss-database.html" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+                <button class="btn btn-danger">
+                    <i class="fas fa-exclamation-circle"></i> Submit Event Report
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Event sub-categories
+        const eventSubCategories = {
+            'operational': ['Process Failure', 'System Failure', 'Human Error', 'External Events'],
+            'fraud': ['Internal Fraud', 'External Fraud', 'Theft', 'Corruption'],
+            'credit': ['Default', 'Counterparty Failure', 'Settlement Risk', 'Concentration Risk'],
+            'market': ['Interest Rate', 'Foreign Exchange', 'Equity', 'Commodity'],
+            'compliance': ['Regulatory Breach', 'Policy Violation', 'Reporting Failure', 'Sanctions'],
+            'reputation': ['Media Coverage', 'Social Media', 'Customer Complaints', 'Stakeholder Concerns'],
+            'technology': ['Cyber Attack', 'Data Breach', 'System Outage', 'Technology Failure']
+        };
+        
+        // Update sub-categories based on event type
+        document.getElementById('eventType').addEventListener('change', function(e) {
+            const type = e.target.value;
+            const subSelect = document.getElementById('eventSubCategory');
+            
+            subSelect.innerHTML = '<option value="">Select Sub-Category</option>';
+            
+            if (type && eventSubCategories[type]) {
+                eventSubCategories[type].forEach(sub => {
+                    const option = document.createElement('option');
+                    option.value = sub;
+                    option.textContent = sub;
+                    subSelect.appendChild(option);
+                });
+            }
+        });
+        
+        // Format currency input
+        function formatCurrency(input) {
+            let value = input.value.replace(/[^\d]/g, '');
+            if (value) {
+                value = parseInt(value).toLocaleString('id-ID');
+                input.value = value;
+            }
+        }
+        
+        // Calculate net loss
+        function calculateNetLoss() {
+            const grossLoss = document.querySelector('.currency-input').value.replace(/[^\d]/g, '') || 0;
+            const recovery = document.querySelectorAll('.currency-input')[1].value.replace(/[^\d]/g, '') || 0;
+            const netLoss = parseInt(grossLoss) - parseInt(recovery);
+            document.getElementById('netLoss').value = netLoss.toLocaleString('id-ID');
+        }
+        
+        // Add recovery row
+        function addRecovery() {
+            const container = document.querySelector('.recovery-timeline');
+            const item = document.createElement('div');
+            item.className = 'recovery-item';
+            item.innerHTML = `
+                <input type="date" placeholder="Recovery Date">
+                <select>
+                    <option value="">Recovery Type</option>
+                    <option value="insurance">Insurance Claim</option>
+                    <option value="legal">Legal Settlement</option>
+                    <option value="operational">Operational Recovery</option>
+                    <option value="other">Other</option>
+                </select>
+                <input type="text" placeholder="Amount (Rp)" style="text-align: right;">
+                <button class="btn btn-secondary btn-sm" style="padding: 0.5rem;" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            container.appendChild(item);
+        }
+        
+        // Update status preview
+        function updateStatusPreview(select) {
+            const preview = document.getElementById('statusPreview');
+            preview.className = 'status-preview ' + select.value;
+            preview.textContent = select.options[select.selectedIndex].text.split(' - ')[0];
+        }
+        
+        // Handle file uploads
+        function handleFiles(files) {
+            const fileList = document.getElementById('fileList');
+            for (let file of files) {
+                const item = document.createElement('div');
+                item.className = 'file-item';
+                item.innerHTML = `
+                    <div class="file-info">
+                        <i class="fas fa-file"></i>
+                        <span>${file.name}</span>
+                        <span style="color: #9ca3af; font-size: 0.75rem;">(${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" style="padding: 0.25rem 0.5rem;" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                fileList.appendChild(item);
+            }
+        }
+        
+        // User role handling
+        document.getElementById('userRole').addEventListener('change', function(e) {
+            const role = e.target.value;
+            const userName = document.getElementById('userName');
+            
+            switch(role) {
+                case 'management':
+                    userName.textContent = 'John Doe (Management)';
+                    break;
+                case 'risk-owner':
+                    userName.textContent = 'Sarah Chen (Risk Owner - ITE)';
+                    break;
+                case 'unit-mr':
+                    userName.textContent = 'Ahmad Wijaya (Unit MR)';
+                    break;
+                case 'auditor':
+                    userName.textContent = 'Lisa Putri (Internal Audit)';
+                    break;
+            }
+        });
+    </script>
+</body>
+</html>

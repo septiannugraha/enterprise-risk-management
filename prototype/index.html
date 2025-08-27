@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERM Enterprise - Risk Management System</title>
+    <meta http-equiv="refresh" content="0; url=login.html">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div style="display: flex; align-items: center; justify-content: center; height: 100vh; font-family: 'Inter', sans-serif;">
+        <div style="text-align: center;">
+            <h2>Redirecting to Login...</h2>
+            <p>If you are not redirected, <a href="login.html">click here</a>.</p>
+        </div>
+    </div>
+    <div class="container" style="display: none;">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">P</div>
+                <div>
+                    <h1>Enterprise ERM System</h1>
+                    <p>Enterprise Risk Management</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn-secondary">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+                <div class="user-info">
+                    <img src="https://via.placeholder.com/40" alt="User" class="user-avatar">
+                    <span>Admin User</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="sidebar">
+            <div class="nav-item active" data-module="dashboard">
+                <i class="fas fa-chart-line"></i>
+                <span>Dashboard</span>
+            </div>
+            <div class="nav-item" data-module="context">
+                <i class="fas fa-cog"></i>
+                <span>Context & Criteria</span>
+            </div>
+            <div class="nav-item" data-module="identification">
+                <i class="fas fa-search"></i>
+                <span>Risk Identification</span>
+            </div>
+            <div class="nav-item" data-module="analysis">
+                <i class="fas fa-chart-bar"></i>
+                <span>Risk Analysis</span>
+            </div>
+            <div class="nav-item" data-module="monitoring">
+                <i class="fas fa-eye"></i>
+                <span>Monitoring & Review</span>
+            </div>
+            <div class="nav-item" data-module="reporting">
+                <i class="fas fa-file-alt"></i>
+                <span>Reporting</span>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Module -->
+            <div id="dashboard" class="module-content active">
+                <div class="module-header">
+                    <h2>Risk Management Dashboard</h2>
+                    <button class="btn-primary">
+                        <i class="fas fa-download"></i> Export Report
+                    </button>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #ff6b6b;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>24</h3>
+                            <p>High Risk Items</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #feca57;">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>45</h3>
+                            <p>Medium Risk Items</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #48dbfb;">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>12</h3>
+                            <p>Low Risk Items</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: #1dd1a1;">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>89%</h3>
+                            <p>Risk Mitigation Rate</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-card">
+                        <h3>Risk Trend Analysis</h3>
+                        <div style="position: relative; height: 320px;">
+                            <canvas id="riskTrendChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Risk by Category</h3>
+                        <div style="position: relative; height: 320px;">
+                            <canvas id="riskCategoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Context & Criteria Module -->
+            <div id="context" class="module-content">
+                <div class="module-header">
+                    <h2>Context & Criteria Management</h2>
+                    <button class="btn-primary">
+                        <i class="fas fa-plus"></i> New Policy
+                    </button>
+                </div>
+
+                <div class="policy-list">
+                    <div class="policy-card">
+                        <div class="policy-header">
+                            <h3>Risk Management Framework 2024</h3>
+                            <span class="status-badge active">Active</span>
+                        </div>
+                        <p>Comprehensive framework for enterprise risk management aligned with ISO 31000</p>
+                        <div class="policy-meta">
+                            <span><i class="fas fa-calendar"></i> Updated: Jan 15, 2024</span>
+                            <span><i class="fas fa-user"></i> ERM Committee</span>
+                        </div>
+                        <div class="policy-actions">
+                            <button class="btn-secondary">View</button>
+                            <button class="btn-secondary">Edit</button>
+                        </div>
+                    </div>
+                    <div class="policy-card">
+                        <div class="policy-header">
+                            <h3>Credit Risk Criteria</h3>
+                            <span class="status-badge active">Active</span>
+                        </div>
+                        <p>Specific criteria for credit risk assessment and evaluation</p>
+                        <div class="policy-meta">
+                            <span><i class="fas fa-calendar"></i> Updated: Dec 20, 2023</span>
+                            <span><i class="fas fa-user"></i> Board of Directors</span>
+                        </div>
+                        <div class="policy-actions">
+                            <button class="btn-secondary">View</button>
+                            <button class="btn-secondary">Edit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Identification Module -->
+            <div id="identification" class="module-content">
+                <div class="module-header">
+                    <h2>Risk Register</h2>
+                    <div class="header-actions">
+                        <button class="btn-secondary">
+                            <i class="fas fa-filter"></i> Filter
+                        </button>
+                        <button class="btn-primary">
+                            <i class="fas fa-plus"></i> Add Risk
+                        </button>
+                    </div>
+                </div>
+
+                <div class="risk-table-container">
+                    <table class="risk-table">
+                        <thead>
+                            <tr>
+                                <th>Risk ID</th>
+                                <th>Risk Description</th>
+                                <th>Category</th>
+                                <th>KRI Status</th>
+                                <th>Owner</th>
+                                <th>Last Updated</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>R-2024-001</td>
+                                <td>Credit concentration risk in manufacturing sector</td>
+                                <td><span class="category-badge credit">Credit Risk</span></td>
+                                <td><span class="kri-status high">Above Threshold</span></td>
+                                <td>John Doe</td>
+                                <td>2024-01-15</td>
+                                <td>
+                                    <button class="btn-icon"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-icon"><i class="fas fa-eye"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>R-2024-002</td>
+                                <td>Cybersecurity breach in customer database</td>
+                                <td><span class="category-badge operational">Operational Risk</span></td>
+                                <td><span class="kri-status medium">Near Threshold</span></td>
+                                <td>Jane Smith</td>
+                                <td>2024-01-14</td>
+                                <td>
+                                    <button class="btn-icon"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-icon"><i class="fas fa-eye"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>R-2024-003</td>
+                                <td>Interest rate volatility impact on portfolio</td>
+                                <td><span class="category-badge market">Market Risk</span></td>
+                                <td><span class="kri-status low">Within Limits</span></td>
+                                <td>Mike Johnson</td>
+                                <td>2024-01-13</td>
+                                <td>
+                                    <button class="btn-icon"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-icon"><i class="fas fa-eye"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Risk Analysis Module -->
+            <div id="analysis" class="module-content">
+                <div class="module-header">
+                    <h2>Risk Analysis & Evaluation</h2>
+                    <button class="btn-primary">
+                        <i class="fas fa-calculator"></i> New Assessment
+                    </button>
+                </div>
+
+                <div class="risk-matrix">
+                    <h3>Risk Heat Map</h3>
+                    <div class="matrix-grid">
+                        <div class="matrix-cell high" data-impact="5" data-likelihood="5">
+                            <span class="risk-count">2</span>
+                        </div>
+                        <div class="matrix-cell high" data-impact="5" data-likelihood="4">
+                            <span class="risk-count">3</span>
+                        </div>
+                        <div class="matrix-cell medium" data-impact="5" data-likelihood="3">
+                            <span class="risk-count">1</span>
+                        </div>
+                        <div class="matrix-cell medium" data-impact="5" data-likelihood="2">
+                            <span class="risk-count">0</span>
+                        </div>
+                        <div class="matrix-cell low" data-impact="5" data-likelihood="1">
+                            <span class="risk-count">0</span>
+                        </div>
+                        
+                        <div class="matrix-cell high" data-impact="4" data-likelihood="5">
+                            <span class="risk-count">4</span>
+                        </div>
+                        <div class="matrix-cell high" data-impact="4" data-likelihood="4">
+                            <span class="risk-count">5</span>
+                        </div>
+                        <div class="matrix-cell medium" data-impact="4" data-likelihood="3">
+                            <span class="risk-count">3</span>
+                        </div>
+                        <div class="matrix-cell medium" data-impact="4" data-likelihood="2">
+                            <span class="risk-count">2</span>
+                        </div>
+                        <div class="matrix-cell low" data-impact="4" data-likelihood="1">
+                            <span class="risk-count">1</span>
+                        </div>
+                        
+                        <div class="matrix-cell medium" data-impact="3" data-likelihood="5">
+                            <span class="risk-count">2</span>
+                        </div>
+                        <div class="matrix-cell medium" data-impact="3" data-likelihood="4">
+                            <span class="risk-count">4</span>
+                        </div>
+                        <div class="matrix-cell medium" data-impact="3" data-likelihood="3">
+                            <span class="risk-count">6</span>
+                        </div>
+                        <div class="matrix-cell low" data-impact="3" data-likelihood="2">
+                            <span class="risk-count">3</span>
+                        </div>
+                        <div class="matrix-cell low" data-impact="3" data-likelihood="1">
+                            <span class="risk-count">1</span>
+                        </div>
+                        
+                        <div class="matrix-cell medium" data-impact="2" data-likelihood="5">
+                            <span class="risk-count">1</span>
+                        </div>
+                        <div class="matrix-cell medium" data-impact="2" data-likelihood="4">
+                            <span class="risk-count">2</span>
+                        </div>
+                        <div class="matrix-cell low" data-impact="2" data-likelihood="3">
+                            <span class="risk-count">3</span>
+                        </div>
+                        <div class="matrix-cell low" data-impact="2" data-likelihood="2">
+                            <span class="risk-count">2</span>
+                        </div>
+                        <div class="matrix-cell low" data-impact="2" data-likelihood="1">
+                            <span class="risk-count">1</span>
+                        </div>
+                        
+                        <div class="matrix-cell low" data-impact="1" data-likelihood="5">
+                            <span class="risk-count">0</span>
+                        </div>
+                        <div class="matrix-cell low" data-impact="1" data-likelihood="4">
+                            <span class="risk-count">1</span>
+                        </div>
+                        <div class="matrix-cell low" data-impact="1" data-likelihood="3">
+                            <span class="risk-count">2</span>
+                        </div>
+                        <div class="matrix-cell low" data-impact="1" data-likelihood="2">
+                            <span class="risk-count">1</span>
+                        </div>
+                        <div class="matrix-cell low" data-impact="1" data-likelihood="1">
+                            <span class="risk-count">3</span>
+                        </div>
+                    </div>
+                    <div class="matrix-labels">
+                        <div class="impact-label">Impact →</div>
+                        <div class="likelihood-label">↑ Likelihood</div>
+                    </div>
+                </div>
+
+                <div class="assessment-list">
+                    <h3>Recent Assessments</h3>
+                    <div class="assessment-card">
+                        <h4>Q4 2023 Risk Assessment</h4>
+                        <p>Comprehensive quarterly risk assessment covering all business units</p>
+                        <div class="assessment-stats">
+                            <span><i class="fas fa-chart-pie"></i> 81 Risks Assessed</span>
+                            <span><i class="fas fa-users"></i> 12 Assessors</span>
+                            <span><i class="fas fa-calendar"></i> Completed: Dec 28, 2023</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monitoring Module -->
+            <div id="monitoring" class="module-content">
+                <div class="module-header">
+                    <h2>Risk Monitoring & Review</h2>
+                    <button class="btn-primary">
+                        <i class="fas fa-sync"></i> Refresh Data
+                    </button>
+                </div>
+
+                <div class="monitoring-grid">
+                    <div class="monitor-card">
+                        <h3>Active Risk Treatments</h3>
+                        <div class="treatment-list">
+                            <div class="treatment-item">
+                                <div class="treatment-header">
+                                    <span class="treatment-title">Credit Limit Review</span>
+                                    <span class="progress-badge">75%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 75%;"></div>
+                                </div>
+                                <span class="due-date">Due: Feb 15, 2024</span>
+                            </div>
+                            <div class="treatment-item">
+                                <div class="treatment-header">
+                                    <span class="treatment-title">IT Security Upgrade</span>
+                                    <span class="progress-badge">40%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 40%;"></div>
+                                </div>
+                                <span class="due-date">Due: Mar 01, 2024</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="monitor-card">
+                        <h3>KRI Alerts</h3>
+                        <div class="alert-list">
+                            <div class="alert-item high">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <div class="alert-content">
+                                    <strong>Credit Concentration</strong>
+                                    <p>Manufacturing sector exposure exceeds 30% threshold</p>
+                                </div>
+                            </div>
+                            <div class="alert-item medium">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <div class="alert-content">
+                                    <strong>Operational Risk</strong>
+                                    <p>System downtime approaching monthly limit</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reporting Module -->
+            <div id="reporting" class="module-content">
+                <div class="module-header">
+                    <h2>Risk Reports</h2>
+                    <button class="btn-primary">
+                        <i class="fas fa-plus"></i> Generate Report
+                    </button>
+                </div>
+
+                <div class="report-templates">
+                    <h3>Report Templates</h3>
+                    <div class="template-grid">
+                        <div class="template-card">
+                            <i class="fas fa-file-pdf"></i>
+                            <h4>Executive Summary</h4>
+                            <p>High-level risk overview for board presentation</p>
+                            <button class="btn-secondary">Generate</button>
+                        </div>
+                        <div class="template-card">
+                            <i class="fas fa-file-excel"></i>
+                            <h4>Risk Register Export</h4>
+                            <p>Complete risk register with all details</p>
+                            <button class="btn-secondary">Generate</button>
+                        </div>
+                        <div class="template-card">
+                            <i class="fas fa-file-powerpoint"></i>
+                            <h4>Monthly Risk Profile</h4>
+                            <p>Monthly risk profile presentation</p>
+                            <button class="btn-secondary">Generate</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-reports">
+                    <h3>Recent Reports</h3>
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Report Name</th>
+                                <th>Type</th>
+                                <th>Generated By</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Q4 2023 Risk Summary</td>
+                                <td>Executive Summary</td>
+                                <td>Admin User</td>
+                                <td>2024-01-10</td>
+                                <td>
+                                    <button class="btn-icon"><i class="fas fa-download"></i></button>
+                                    <button class="btn-icon"><i class="fas fa-eye"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>December Risk Register</td>
+                                <td>Full Register</td>
+                                <td>Risk Officer</td>
+                                <td>2024-01-05</td>
+                                <td>
+                                    <button class="btn-icon"><i class="fas fa-download"></i></button>
+                                    <button class="btn-icon"><i class="fas fa-eye"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Risk Modal -->
+    <div id="riskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Risk</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="riskForm">
+                    <div class="form-group">
+                        <label>Risk Description</label>
+                        <textarea placeholder="Describe the risk..." rows="3"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select>
+                                <option>Credit Risk</option>
+                                <option>Market Risk</option>
+                                <option>Operational Risk</option>
+                                <option>Liquidity Risk</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Risk Owner</label>
+                            <input type="text" placeholder="Enter risk owner name">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Impact (1-5)</label>
+                            <input type="number" min="1" max="5" value="3">
+                        </div>
+                        <div class="form-group">
+                            <label>Likelihood (1-5)</label>
+                            <input type="number" min="1" max="5" value="3">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn-primary">Save Risk</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Assessment Form - ERM Enterprise</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; 
+            font-family: 'Inter', sans-serif; 
+            background: #f5f5f5; 
+            color: #1f2937;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: #2563eb;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Form Header */
+        .form-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .form-header h2 {
+            margin: 0 0 0.5rem 0;
+            color: #1f2937;
+            font-size: 2rem;
+        }
+        
+        .form-header p {
+            color: #6b7280;
+            margin: 0;
+        }
+        
+        /* Process Steps */
+        .process-steps {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 1rem;
+            position: relative;
+        }
+        
+        .step::after {
+            content: '→';
+            position: absolute;
+            right: -1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #d1d5db;
+            font-size: 1.5rem;
+        }
+        
+        .step:last-child::after {
+            display: none;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: #e5e7eb;
+            color: #6b7280;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            font-weight: 700;
+        }
+        
+        .step.active .step-number {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .step.completed .step-number {
+            background: #10b981;
+            color: white;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        
+        .step.active .step-title {
+            color: #1f2937;
+        }
+        
+        /* Form Sections */
+        .form-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0 0 1.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .required::after {
+            content: ' *';
+            color: #ef4444;
+        }
+        
+        .form-input,
+        .form-select,
+        .form-textarea {
+            padding: 0.75rem 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            background: white;
+        }
+        
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        /* Risk Matrix */
+        .risk-matrix {
+            display: grid;
+            grid-template-columns: auto repeat(5, 1fr);
+            gap: 4px;
+            margin: 1rem 0;
+        }
+        
+        .matrix-cell {
+            padding: 0.5rem;
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 4px;
+        }
+        
+        .matrix-header {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+        
+        .matrix-label {
+            background: #f3f4f6;
+            color: #6b7280;
+            text-align: right;
+            padding-right: 1rem;
+        }
+        
+        .risk-low { background: #d1fae5; color: #065f46; }
+        .risk-medium { background: #fef3c7; color: #92400e; }
+        .risk-high { background: #fee2e2; color: #991b1b; }
+        
+        /* Score Display */
+        .score-display {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+        
+        .score-item {
+            flex: 1;
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .score-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+        
+        .score-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #6b7280;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .btn-secondary:hover {
+            background: #f9fafb;
+        }
+        
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #059669;
+        }
+        
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        /* Help Text */
+        .help-text {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+        
+        /* SMKI Checkboxes */
+        .checkbox-group {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .checkbox-item label {
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1><i class="fas fa-shield-alt"></i> ERM Enterprise</h1>
+            <div class="nav-menu">
+                <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="risk-register.html"><i class="fas fa-clipboard-list"></i> Risk Register</a>
+                <a href="kri-monitoring.html"><i class="fas fa-chart-line"></i> KRI</a>
+                <a href="kpi-management.html"><i class="fas fa-tachometer-alt"></i> KPI</a>
+                <a href="risk-treatment.html"><i class="fas fa-tasks"></i> Treatment</a>
+                <a href="risk-dictionary.html"><i class="fas fa-book"></i> Dictionary</a>
+                <a href="event-loss-database.html"><i class="fas fa-database"></i> Loss DB</a>
+                <a href="reports.html"><i class="fas fa-file-alt"></i> Reports</a>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <select id="userRole" style="padding: 0.5rem 1rem; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; border-radius: 6px; font-size: 0.875rem;">
+                    <option value="management">Management (View All)</option>
+                    <option value="risk-owner">Risk Owner</option>
+                    <option value="unit-mr">Unit MR</option>
+                    <option value="auditor">Auditor</option>
+                </select>
+                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px;">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userName" style="font-size: 0.875rem;">John Doe</span>
+                </div>
+                <a href="login.html" style="color: white; text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span style="font-size: 0.875rem;">Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Form Header -->
+        <div class="form-header">
+            <h2><i class="fas fa-edit"></i> Risk Assessment Form</h2>
+            <p>Create new risk assessment following ISO 31000:2018 standards</p>
+        </div>
+
+        <!-- Process Steps -->
+        <div class="process-steps">
+            <div class="step completed">
+                <div class="step-number">1</div>
+                <div class="step-title">Inherent Risk</div>
+            </div>
+            <div class="step active">
+                <div class="step-number">2</div>
+                <div class="step-title">Existing Treatment</div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-title">Mitigation Plan</div>
+            </div>
+        </div>
+
+        <!-- Basic Information -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-info-circle"></i> Basic Information
+            </h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label required">Perspective BSC</label>
+                    <select class="form-select" id="perspective">
+                        <option value="">Select Perspective</option>
+                        <option value="F">F - Financial</option>
+                        <option value="C">C - Customer</option>
+                        <option value="IBP">IBP - Internal Business Process</option>
+                        <option value="L&G">L&G - Learning & Growth</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Strategic Objective</label>
+                    <select class="form-select" id="strategicObjective">
+                        <option value="">Select Perspective First</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">KPI</label>
+                    <select class="form-select" id="kpi">
+                        <option value="">Select Strategic Objective First</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">KRI</label>
+                    <input type="text" class="form-input" placeholder="Enter Key Risk Indicator">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Risk Type</label>
+                    <select class="form-select" id="riskType">
+                        <option value="">Select Risk Type</option>
+                        <option value="strategic">Strategic Risk</option>
+                        <option value="operational">Operational Risk</option>
+                        <option value="financial">Financial Risk</option>
+                        <option value="compliance">Compliance Risk</option>
+                        <option value="reputational">Reputational Risk</option>
+                        <option value="credit">Credit Risk</option>
+                        <option value="market">Market Risk</option>
+                        <option value="liquidity">Liquidity Risk</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Risk Sub-Category</label>
+                    <select class="form-select" id="riskSubCategory">
+                        <option value="">Select Risk Type First</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Directorate</label>
+                    <select class="form-select" id="directorate">
+                        <option value="">Select Directorate</option>
+                        <option value="ERC">ERC - Enterprise Risk Committee</option>
+                        <option value="LCO">LCO - Legal & Compliance Office</option>
+                        <option value="RATING">RATING - Rating Division</option>
+                        <option value="BOD">BOD - Board of Directors</option>
+                        <option value="MBD">MBD - Marketing & Business Development</option>
+                        <option value="HRG">HRG - Human Resources & General Affairs</option>
+                        <option value="ITE">ITE - Information Technology</option>
+                        <option value="IAD">IAD - Internal Audit Division</option>
+                        <option value="FIN">FIN - Finance Division</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Risk Owner</label>
+                    <select class="form-select" id="riskOwner">
+                        <option value="">Select Directorate First</option>
+                    </select>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label required">Risk Event</label>
+                    <textarea class="form-textarea" placeholder="Describe the risk event that may occur..."></textarea>
+                    <span class="help-text">Be specific about what could go wrong and its potential impact</span>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label required">Risk Cause</label>
+                    <textarea class="form-textarea" placeholder="Describe the root causes of this risk..."></textarea>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label required">Risk Impact</label>
+                    <textarea class="form-textarea" placeholder="Describe the potential impact if this risk occurs..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inherent Risk Assessment -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-exclamation-triangle"></i> Inherent Risk Assessment
+            </h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label required">Impact Score</label>
+                    <select class="form-select" id="impactScore">
+                        <option value="">Select Impact Level</option>
+                        <option value="1">1 - Very Low (< Rp 10M)</option>
+                        <option value="2">2 - Low (Rp 10M - 50M)</option>
+                        <option value="3">3 - Medium (Rp 50M - 100M)</option>
+                        <option value="4">4 - High (Rp 100M - 500M)</option>
+                        <option value="5">5 - Very High (> Rp 500M)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Likelihood Score</label>
+                    <select class="form-select" id="likelihoodScore">
+                        <option value="">Select Likelihood Level</option>
+                        <option value="1">1 - Very Low (< 5%)</option>
+                        <option value="2">2 - Low (5% - 25%)</option>
+                        <option value="3">3 - Medium (25% - 50%)</option>
+                        <option value="4">4 - High (50% - 75%)</option>
+                        <option value="5">5 - Very High (> 75%)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="score-display">
+                <div class="score-item">
+                    <div class="score-label">Inherent Risk Score</div>
+                    <div class="score-value" id="inherentScore">-</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">Risk Level</div>
+                    <div class="score-value" id="riskLevel" style="font-size: 1.5rem;">-</div>
+                </div>
+            </div>
+            
+            <div class="risk-matrix">
+                <div class="matrix-cell matrix-header">L/I</div>
+                <div class="matrix-cell matrix-header">1</div>
+                <div class="matrix-cell matrix-header">2</div>
+                <div class="matrix-cell matrix-header">3</div>
+                <div class="matrix-cell matrix-header">4</div>
+                <div class="matrix-cell matrix-header">5</div>
+                
+                <div class="matrix-cell matrix-label">5</div>
+                <div class="matrix-cell risk-low">5</div>
+                <div class="matrix-cell risk-medium">10</div>
+                <div class="matrix-cell risk-medium">15</div>
+                <div class="matrix-cell risk-high">20</div>
+                <div class="matrix-cell risk-high">25</div>
+                
+                <div class="matrix-cell matrix-label">4</div>
+                <div class="matrix-cell risk-low">4</div>
+                <div class="matrix-cell risk-medium">8</div>
+                <div class="matrix-cell risk-medium">12</div>
+                <div class="matrix-cell risk-high">16</div>
+                <div class="matrix-cell risk-high">20</div>
+                
+                <div class="matrix-cell matrix-label">3</div>
+                <div class="matrix-cell risk-low">3</div>
+                <div class="matrix-cell risk-low">6</div>
+                <div class="matrix-cell risk-medium">9</div>
+                <div class="matrix-cell risk-medium">12</div>
+                <div class="matrix-cell risk-high">15</div>
+                
+                <div class="matrix-cell matrix-label">2</div>
+                <div class="matrix-cell risk-low">2</div>
+                <div class="matrix-cell risk-low">4</div>
+                <div class="matrix-cell risk-low">6</div>
+                <div class="matrix-cell risk-medium">8</div>
+                <div class="matrix-cell risk-medium">10</div>
+                
+                <div class="matrix-cell matrix-label">1</div>
+                <div class="matrix-cell risk-low">1</div>
+                <div class="matrix-cell risk-low">2</div>
+                <div class="matrix-cell risk-low">3</div>
+                <div class="matrix-cell risk-low">4</div>
+                <div class="matrix-cell risk-low">5</div>
+            </div>
+        </div>
+
+        <!-- SMKI/ISMS -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-shield-alt"></i> SMKI/ISMS Aspects
+            </h3>
+            <div class="form-group">
+                <label class="form-label">Related Information Security Aspects</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="confidentiality" value="C">
+                        <label for="confidentiality">C - Confidentiality</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="integrity" value="I">
+                        <label for="integrity">I - Integrity</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="availability" value="A">
+                        <label for="availability">A - Availability</label>
+                    </div>
+                </div>
+                <span class="help-text">Check all applicable information security aspects for this risk</span>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+            <div>
+                <button class="btn btn-secondary">
+                    <i class="fas fa-save"></i> Save Draft
+                </button>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button class="btn btn-primary" onclick="goToTreatment()">
+                    Next: Existing Treatment <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Validation References (from D Val sheet)
+        const dataValidation = {
+            strategicObjectives: {
+                'F': [
+                    'Increase Shareholders Value',
+                    'Increase Sales Revenue',
+                    'Optimize Cost Structure',
+                    'Manage Liquidity Risk'
+                ],
+                'C': [
+                    'Enhance Customer Satisfaction',
+                    'Expand Market Share',
+                    'Strengthen Brand Image',
+                    'Improve Service Quality'
+                ],
+                'IBP': [
+                    'Improve Operational Efficiency',
+                    'Enhance IT Infrastructure',
+                    'Strengthen Internal Controls',
+                    'Optimize Business Process'
+                ],
+                'L&G': [
+                    'Develop Employee Competency',
+                    'Build Performance Culture',
+                    'Enhance Innovation Capability',
+                    'Improve Knowledge Management'
+                ]
+            },
+            
+            kpis: {
+                'Increase Shareholders Value': ['Return on Equity (ROE)', 'Economic Value Added (EVA)'],
+                'Enhance Customer Satisfaction': ['Customer Satisfaction Score', 'Net Promoter Score (NPS)'],
+                'Improve Operational Efficiency': ['Process Cycle Time', 'Cost per Transaction'],
+                'Develop Employee Competency': ['Training Hours per Employee', 'Competency Gap Score']
+            },
+            
+            riskSubCategories: {
+                'strategic': ['Business Model', 'Competition', 'Customer Preferences', 'Industry Changes'],
+                'operational': ['Process Failure', 'System Failure', 'Human Error', 'External Events'],
+                'financial': ['Market Volatility', 'Credit Default', 'Currency Fluctuation', 'Interest Rate'],
+                'compliance': ['Regulatory Changes', 'Legal Violations', 'Policy Non-compliance', 'Contractual Breach']
+            },
+            
+            riskOwners: {
+                'ERC': ['Chief Risk Officer', 'Risk Manager', 'Risk Analyst'],
+                'LCO': ['Chief Legal Officer', 'Compliance Manager', 'Legal Counsel'],
+                'RATING': ['Rating Director', 'Senior Analyst', 'Rating Manager'],
+                'BOD': ['President Director', 'Director', 'Corporate Secretary'],
+                'MBD': ['Marketing Director', 'Business Dev Manager', 'Sales Manager'],
+                'HRG': ['HR Director', 'HR Manager', 'GA Manager'],
+                'ITE': ['IT Director', 'IT Manager', 'System Administrator'],
+                'IAD': ['Chief Audit Executive', 'Audit Manager', 'Senior Auditor'],
+                'FIN': ['Finance Director', 'Finance Manager', 'Treasury Manager']
+            }
+        };
+        
+        // Cascading dropdowns
+        document.getElementById('perspective').addEventListener('change', function(e) {
+            const perspective = e.target.value;
+            const soSelect = document.getElementById('strategicObjective');
+            
+            soSelect.innerHTML = '<option value="">Select Strategic Objective</option>';
+            
+            if (perspective && dataValidation.strategicObjectives[perspective]) {
+                dataValidation.strategicObjectives[perspective].forEach(so => {
+                    const option = document.createElement('option');
+                    option.value = so;
+                    option.textContent = so;
+                    soSelect.appendChild(option);
+                });
+            }
+        });
+        
+        document.getElementById('strategicObjective').addEventListener('change', function(e) {
+            const so = e.target.value;
+            const kpiSelect = document.getElementById('kpi');
+            
+            kpiSelect.innerHTML = '<option value="">Select KPI</option>';
+            
+            if (so && dataValidation.kpis[so]) {
+                dataValidation.kpis[so].forEach(kpi => {
+                    const option = document.createElement('option');
+                    option.value = kpi;
+                    option.textContent = kpi;
+                    kpiSelect.appendChild(option);
+                });
+            }
+        });
+        
+        document.getElementById('riskType').addEventListener('change', function(e) {
+            const type = e.target.value;
+            const subSelect = document.getElementById('riskSubCategory');
+            
+            subSelect.innerHTML = '<option value="">Select Sub-Category</option>';
+            
+            if (type && dataValidation.riskSubCategories[type]) {
+                dataValidation.riskSubCategories[type].forEach(sub => {
+                    const option = document.createElement('option');
+                    option.value = sub;
+                    option.textContent = sub;
+                    subSelect.appendChild(option);
+                });
+            }
+        });
+        
+        document.getElementById('directorate').addEventListener('change', function(e) {
+            const dir = e.target.value;
+            const ownerSelect = document.getElementById('riskOwner');
+            
+            ownerSelect.innerHTML = '<option value="">Select Risk Owner</option>';
+            
+            if (dir && dataValidation.riskOwners[dir]) {
+                dataValidation.riskOwners[dir].forEach(owner => {
+                    const option = document.createElement('option');
+                    option.value = owner;
+                    option.textContent = owner;
+                    ownerSelect.appendChild(option);
+                });
+            }
+        });
+        
+        // Risk score calculation
+        function calculateRiskScore() {
+            const impact = parseInt(document.getElementById('impactScore').value) || 0;
+            const likelihood = parseInt(document.getElementById('likelihoodScore').value) || 0;
+            
+            if (impact && likelihood) {
+                const score = impact * likelihood;
+                document.getElementById('inherentScore').textContent = score;
+                
+                let level = 'Low';
+                let color = '#059669';
+                if (score >= 15) {
+                    level = 'High';
+                    color = '#dc2626';
+                } else if (score >= 8) {
+                    level = 'Medium';
+                    color = '#d97706';
+                }
+                
+                const levelEl = document.getElementById('riskLevel');
+                levelEl.textContent = level;
+                levelEl.style.color = color;
+            } else {
+                document.getElementById('inherentScore').textContent = '-';
+                document.getElementById('riskLevel').textContent = '-';
+            }
+        }
+        
+        document.getElementById('impactScore').addEventListener('change', calculateRiskScore);
+        document.getElementById('likelihoodScore').addEventListener('change', calculateRiskScore);
+        
+        // Navigation
+        function goToTreatment() {
+            alert('In a real implementation, this would save the current data and move to the Existing Treatment step');
+        }
+        
+        // User role simulation (same as dashboard)
+        document.getElementById('userRole').addEventListener('change', function(e) {
+            const role = e.target.value;
+            const userName = document.getElementById('userName');
+            
+            switch(role) {
+                case 'management':
+                    userName.textContent = 'John Doe (Management)';
+                    break;
+                case 'risk-owner':
+                    userName.textContent = 'Sarah Chen (Risk Owner - ITE)';
+                    break;
+                case 'unit-mr':
+                    userName.textContent = 'Ahmad Wijaya (Unit MR)';
+                    break;
+                case 'auditor':
+                    userName.textContent = 'Lisa Putri (Internal Audit)';
+                    break;
+            }
+        });
+    </script>
+</body>
+</html>

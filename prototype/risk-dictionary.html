@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Dictionary - ERM Enterprise</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; 
+            font-family: 'Inter', sans-serif; 
+            background: #f5f5f5; 
+            color: #1f2937;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: #2563eb;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 100%;
+            padding: 2rem;
+        }
+        
+        /* Page Header */
+        .page-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .page-header h2 {
+            margin: 0 0 0.5rem 0;
+            color: #1f2937;
+            font-size: 2rem;
+        }
+        
+        .page-header p {
+            color: #6b7280;
+            margin: 0;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            text-decoration: none;
+            background: white;
+            color: #6b7280;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .btn:hover {
+            background: #f9fafb;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+        
+        /* Search Section */
+        .search-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .filter-chips {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .chip {
+            padding: 0.5rem 1rem;
+            background: #f3f4f6;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        
+        .chip:hover {
+            background: #e5e7eb;
+        }
+        
+        .chip.active {
+            background: #eff6ff;
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+        
+        /* Risk Categories Grid */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .category-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .category-card:hover {
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .category-header {
+            padding: 1.5rem;
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .category-header h3 {
+            margin: 0 0 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.125rem;
+        }
+        
+        .category-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+        
+        .category-icon.strategic { background: #fee2e2; color: #dc2626; }
+        .category-icon.operational { background: #fef3c7; color: #d97706; }
+        .category-icon.financial { background: #dbeafe; color: #1e40af; }
+        .category-icon.compliance { background: #ede9fe; color: #7c3aed; }
+        .category-icon.technology { background: #d1fae5; color: #059669; }
+        .category-icon.reputation { background: #fce7f3; color: #ec4899; }
+        
+        .category-count {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .risk-list {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+        
+        .risk-item {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f3f4f6;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .risk-item:hover {
+            background: #f9fafb;
+        }
+        
+        .risk-item:last-child {
+            border-bottom: none;
+        }
+        
+        .risk-name {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+        
+        .risk-description {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+        
+        .risk-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .risk-tag {
+            padding: 0.25rem 0.5rem;
+            background: #f3f4f6;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+        
+        /* Risk Detail Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+        }
+        
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        .modal-header {
+            padding: 2rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        
+        .modal-close {
+            font-size: 1.5rem;
+            color: #6b7280;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .modal-close:hover {
+            color: #1f2937;
+        }
+        
+        .modal-body {
+            padding: 2rem;
+        }
+        
+        .detail-section {
+            margin-bottom: 2rem;
+        }
+        
+        .detail-section h4 {
+            margin: 0 0 1rem 0;
+            color: #1f2937;
+            font-size: 1.125rem;
+        }
+        
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .detail-item {
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+        
+        .detail-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.25rem;
+        }
+        
+        .detail-value {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        /* Statistics Section */
+        .stats-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+        
+        .stat-item h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2.5rem;
+            color: #3b82f6;
+        }
+        
+        .stat-item p {
+            margin: 0;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1><i class="fas fa-shield-alt"></i> ERM Enterprise</h1>
+            <div class="nav-menu">
+                <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="risk-register.html"><i class="fas fa-clipboard-list"></i> Risk Register</a>
+                <a href="kri-monitoring.html"><i class="fas fa-chart-line"></i> KRI</a>
+                <a href="kpi-management.html"><i class="fas fa-tachometer-alt"></i> KPI</a>
+                <a href="risk-treatment.html"><i class="fas fa-tasks"></i> Treatment</a>
+                <a href="risk-dictionary.html" class="active"><i class="fas fa-book"></i> Dictionary</a>
+                <a href="event-loss-database.html"><i class="fas fa-database"></i> Loss DB</a>
+                <a href="reports.html"><i class="fas fa-file-alt"></i> Reports</a>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <select id="userRole" style="padding: 0.5rem 1rem; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; border-radius: 6px; font-size: 0.875rem;">
+                    <option value="management">Management (View All)</option>
+                    <option value="risk-owner">Risk Owner</option>
+                    <option value="unit-mr">Unit MR</option>
+                    <option value="auditor">Auditor</option>
+                </select>
+                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px;">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userName" style="font-size: 0.875rem;">John Doe</span>
+                </div>
+                <a href="login.html" style="color: white; text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span style="font-size: 0.875rem;">Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h2><i class="fas fa-book"></i> Risk Dictionary (Kamus Risiko)</h2>
+                <p>Comprehensive risk taxonomy and standardized definitions</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn">
+                    <i class="fas fa-download"></i> Export
+                </button>
+                <a href="dictionary-form.html" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Definition
+                </a>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>156</h3>
+                    <p>Total Risk Definitions</p>
+                </div>
+                <div class="stat-item">
+                    <h3>6</h3>
+                    <p>Risk Categories</p>
+                </div>
+                <div class="stat-item">
+                    <h3>24</h3>
+                    <p>Sub-Categories</p>
+                </div>
+                <div class="stat-item">
+                    <h3>89%</h3>
+                    <p>Coverage Rate</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search risk definitions, categories, or keywords...">
+                <button class="btn btn-primary">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+            <div class="filter-chips">
+                <div class="chip active">All Categories</div>
+                <div class="chip">Strategic</div>
+                <div class="chip">Operational</div>
+                <div class="chip">Financial</div>
+                <div class="chip">Compliance</div>
+                <div class="chip">Technology</div>
+                <div class="chip">Reputation</div>
+            </div>
+        </div>
+
+        <!-- Risk Categories Grid -->
+        <div class="categories-grid">
+            <!-- Strategic Risk -->
+            <div class="category-card">
+                <div class="category-header">
+                    <h3>
+                        <div class="category-icon strategic">
+                            <i class="fas fa-chess"></i>
+                        </div>
+                        Strategic Risk
+                    </h3>
+                    <p class="category-count">28 definitions</p>
+                </div>
+                <ul class="risk-list">
+                    <li class="risk-item" onclick="showRiskDetail('Market Competition Risk')">
+                        <div class="risk-name">Market Competition Risk</div>
+                        <div class="risk-description">Risk of losing market share due to competitive pressures</div>
+                        <div class="risk-tags">
+                            <span class="risk-tag">External</span>
+                            <span class="risk-tag">High Impact</span>
+                        </div>
+                    </li>
+                    <li class="risk-item" onclick="showRiskDetail('Business Model Risk')">
+                        <div class="risk-name">Business Model Risk</div>
+                        <div class="risk-description">Risk of business model becoming obsolete or ineffective</div>
+                        <div class="risk-tags">
+                            <span class="risk-tag">Internal</span>
+                            <span class="risk-tag">Strategic</span>
+                        </div>
+                    </li>
+                    <li class="risk-item" onclick="showRiskDetail('Merger & Acquisition Risk')">
+                        <div class="risk-name">Merger & Acquisition Risk</div>
+                        <div class="risk-description">Risk associated with M&A activities and integration</div>
+                        <div class="risk-tags">
+                            <span class="risk-tag">Project</span>
+                            <span class="risk-tag">High Complexity</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Operational Risk -->
+            <div class="category-card">
+                <div class="category-header">
+                    <h3>
+                        <div class="category-icon operational">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        Operational Risk
+                    </h3>
+                    <p class="category-count">42 definitions</p>
+                </div>
+                <ul class="risk-list">
+                    <li class="risk-item" onclick="showRiskDetail('Process Failure Risk')">
+                        <div class="risk-name">Process Failure Risk</div>
+                        <div class="risk-description">Risk of internal process breakdown affecting operations</div>
+                        <div class="risk-tags">
+                            <span class="risk-tag">Internal</span>
+                            <span class="risk-tag">Process</span>
+                        </div>
+                    </li>
+                    <li class="risk-item" onclick="showRiskDetail('Supply Chain Risk')">
+                        <div class="risk-name">Supply Chain Risk</div>
+                        <div class="risk-description">Risk of disruption in supply chain affecting service delivery</div>
+                        <div class="risk-tags">
+                            <span class="risk-tag">External</span>
+                            <span class="risk-tag">Third Party</span>
+                        </div>
+                    </li>
+                    <li class="risk-item" onclick="showRiskDetail('Human Error Risk')">
+                        <div class="risk-name">Human Error Risk</div>
+                        <div class="risk-description">Risk of mistakes or negligence by employees</div>
+                        <div class="risk-tags">
+                            <span class="risk-tag">People</span>
+                            <span class="risk-tag">Preventable</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Financial Risk -->
+            <div class="category-card">
+                <div class="category-header">
+                    <h3>
+                        <div class="category-icon financial">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        Financial Risk
+                    </h3>
+                    <p class="category-count">35 definitions</p>
+                </div>
+                <ul class="risk-list">
+                    <li class="risk-item" onclick="showRiskDetail('Credit Risk')">
+                        <div class="risk-name">Credit Risk</div>
+                        <div class="risk-description">Risk of loss due to counterparty default</div>
+                        <div class="risk-tags">
+                            <span class="risk-tag">Financial</span>
+                            <span class="risk-tag">Quantifiable</span>
+                        </div>
+                    </li>
+                    <li class="risk-item" onclick="showRiskDetail('Liquidity Risk')">
+                        <div class="risk-name">Liquidity Risk</div>
+                        <div class="risk-description">Risk of inability to meet short-term financial obligations</div>
+                        <div class="risk-tags">
+                            <span class="risk-tag">Financial</span>
+                            <span class="risk-tag">Critical</span>
+                        </div>
+                    </li>
+                    <li class="risk-item" onclick="showRiskDetail('Market Risk')">
+                        <div class="risk-name">Market Risk</div>
+                        <div class="risk-description">Risk of losses due to market price movements</div>
+                        <div class="risk-tags">
+                            <span class="risk-tag">External</span>
+                            <span class="risk-tag">Volatile</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Compliance Risk -->
+            <div class="category-card">
+                <div class="category-header">
+                    <h3>
+                        <div class="category-icon compliance">
+                            <i class="fas fa-balance-scale"></i>
+                        </div>
+                        Compliance Risk
+                    </h3>
+                    <p class="category-count">22 definitions</p>
+                </div>
+                <ul class="risk-list">
+                    <li class="risk-item" onclick="showRiskDetail('Regulatory Risk')">
+                        <div class="risk-name">Regulatory Risk</div>
+                        <div class="risk-description">Risk of non-compliance with laws and regulations</div>
+                        <div class="risk-tags">
+                            <span class="risk-tag">Legal</span>
+                            <span class="risk-tag">Mandatory</span>
+                        </div>
+                    </li>
+                    <li class="risk-item" onclick="showRiskDetail('Data Privacy Risk')">
+                        <div class="risk-name">Data Privacy Risk</div>
+                        <div class="risk-description">Risk of violating data protection regulations</div>
+                        <div class="risk-tags">
+                            <span class="risk-tag">GDPR</span>
+                            <span class="risk-tag">High Fine</span>
+                        </div>
+                    </li>
+                    <li class="risk-item" onclick="showRiskDetail('Anti-Money Laundering Risk')">
+                        <div class="risk-name">Anti-Money Laundering Risk</div>
+                        <div class="risk-description">Risk of facilitating money laundering activities</div>
+                        <div class="risk-tags">
+                            <span class="risk-tag">AML/CFT</span>
+                            <span class="risk-tag">Criminal</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Technology Risk -->
+            <div class="category-card">
+                <div class="category-header">
+                    <h3>
+                        <div class="category-icon technology">
+                            <i class="fas fa-laptop-code"></i>
+                        </div>
+                        Technology Risk
+                    </h3>
+                    <p class="category-count">18 definitions</p>
+                </div>
+                <ul class="risk-list">
+                    <li class="risk-item" onclick="showRiskDetail('Cyber Security Risk')">
+                        <div class="risk-name">Cyber Security Risk</div>
+                        <div class="risk-description">Risk of cyber attacks and data breaches</div>
+                        <div class="risk-tags">
+                            <span class="risk-tag">Security</span>
+                            <span class="risk-tag">Emerging</span>
+                        </div>
+                    </li>
+                    <li class="risk-item" onclick="showRiskDetail('System Failure Risk')">
+                        <div class="risk-name">System Failure Risk</div>
+                        <div class="risk-description">Risk of IT system downtime or malfunction</div>
+                        <div class="risk-tags">
+                            <span class="risk-tag">Infrastructure</span>
+                            <span class="risk-tag">Operational</span>
+                        </div>
+                    </li>
+                    <li class="risk-item" onclick="showRiskDetail('Technology Obsolescence Risk')">
+                        <div class="risk-name">Technology Obsolescence Risk</div>
+                        <div class="risk-description">Risk of technology becoming outdated</div>
+                        <div class="risk-tags">
+                            <span class="risk-tag">Strategic</span>
+                            <span class="risk-tag">Long-term</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Reputation Risk -->
+            <div class="category-card">
+                <div class="category-header">
+                    <h3>
+                        <div class="category-icon reputation">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        Reputation Risk
+                    </h3>
+                    <p class="category-count">11 definitions</p>
+                </div>
+                <ul class="risk-list">
+                    <li class="risk-item" onclick="showRiskDetail('Brand Damage Risk')">
+                        <div class="risk-name">Brand Damage Risk</div>
+                        <div class="risk-description">Risk of negative impact on brand value and perception</div>
+                        <div class="risk-tags">
+                            <span class="risk-tag">Intangible</span>
+                            <span class="risk-tag">High Impact</span>
+                        </div>
+                    </li>
+                    <li class="risk-item" onclick="showRiskDetail('Social Media Risk')">
+                        <div class="risk-name">Social Media Risk</div>
+                        <div class="risk-description">Risk of negative publicity through social media</div>
+                        <div class="risk-tags">
+                            <span class="risk-tag">External</span>
+                            <span class="risk-tag">Fast Spreading</span>
+                        </div>
+                    </li>
+                    <li class="risk-item" onclick="showRiskDetail('Stakeholder Trust Risk')">
+                        <div class="risk-name">Stakeholder Trust Risk</div>
+                        <div class="risk-description">Risk of losing stakeholder confidence</div>
+                        <div class="risk-tags">
+                            <span class="risk-tag">Relationship</span>
+                            <span class="risk-tag">Long Recovery</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Risk Detail Modal -->
+    <div id="riskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Risk Details</h3>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="detail-section">
+                    <h4>Risk Information</h4>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Risk Category</div>
+                            <div class="detail-value" id="riskCategory">Strategic Risk</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Risk Type</div>
+                            <div class="detail-value" id="riskType">External</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Impact Level</div>
+                            <div class="detail-value" id="impactLevel">High</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Frequency</div>
+                            <div class="detail-value" id="frequency">Medium</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <h4>Definition</h4>
+                    <p id="riskDefinition">Comprehensive definition of the risk...</p>
+                </div>
+                <div class="detail-section">
+                    <h4>Examples</h4>
+                    <ul id="riskExamples">
+                        <li>Example scenario 1</li>
+                        <li>Example scenario 2</li>
+                    </ul>
+                </div>
+                <div class="detail-section">
+                    <h4>Key Risk Indicators</h4>
+                    <ul id="riskIndicators">
+                        <li>KRI 1: Metric name</li>
+                        <li>KRI 2: Another metric</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showRiskDetail(riskName) {
+            document.getElementById('modalTitle').textContent = riskName;
+            document.getElementById('riskModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('riskModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('riskModal')) {
+                closeModal();
+            }
+        }
+
+        // Filter functionality
+        document.querySelectorAll('.chip').forEach(chip => {
+            chip.addEventListener('click', function() {
+                document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

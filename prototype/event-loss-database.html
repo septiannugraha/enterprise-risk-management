@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Loss Database - ERM Enterprise</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; 
+            font-family: 'Inter', sans-serif; 
+            background: #f5f5f5; 
+            color: #1f2937;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: #2563eb;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 100%;
+            padding: 2rem;
+        }
+        
+        /* Page Header */
+        .page-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .page-header h2 {
+            margin: 0 0 0.5rem 0;
+            color: #1f2937;
+            font-size: 2rem;
+        }
+        
+        .page-header p {
+            color: #6b7280;
+            margin: 0;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            text-decoration: none;
+            background: white;
+            color: #6b7280;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .btn:hover {
+            background: #f9fafb;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+        
+        /* Summary Cards */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .summary-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-left: 4px solid;
+            transition: transform 0.2s;
+        }
+        
+        .summary-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .summary-card.total { border-left-color: #3b82f6; }
+        .summary-card.financial { border-left-color: #ef4444; }
+        .summary-card.operational { border-left-color: #f59e0b; }
+        .summary-card.recovered { border-left-color: #10b981; }
+        .summary-card.average { border-left-color: #8b5cf6; }
+        
+        .summary-card h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .summary-card.total h3 { color: #3b82f6; }
+        .summary-card.financial h3 { color: #ef4444; }
+        .summary-card.operational h3 { color: #f59e0b; }
+        .summary-card.recovered h3 { color: #10b981; }
+        .summary-card.average h3 { color: #8b5cf6; }
+        
+        .summary-card p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        
+        .summary-trend {
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            margin-top: 0.5rem;
+        }
+        
+        .summary-trend.up { color: #ef4444; }
+        .summary-trend.down { color: #10b981; }
+        
+        /* Filter Section */
+        .filter-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .filter-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            background: white;
+        }
+        
+        /* Table Section */
+        .table-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .table-header h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: #1f2937;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+        
+        .event-table {
+            width: 100%;
+            min-width: 1200px;
+            border-collapse: collapse;
+        }
+        
+        .event-table th {
+            background: #f9fafb;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #6b7280;
+            font-size: 0.875rem;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .event-table th.sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .event-table th.sortable:hover {
+            background: #f3f4f6;
+        }
+        
+        .event-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .event-table tr:hover {
+            background: #f9fafb;
+        }
+        
+        /* Event ID */
+        .event-id {
+            font-weight: 600;
+            color: #1f2937;
+            font-family: 'Courier New', monospace;
+        }
+        
+        /* Event Type Badge */
+        .event-type {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .event-type.operational { background: #f59e0b; }
+        .event-type.fraud { background: #dc2626; }
+        .event-type.credit { background: #7c3aed; }
+        .event-type.market { background: #3b82f6; }
+        .event-type.compliance { background: #10b981; }
+        
+        /* Loss Amount */
+        .loss-amount {
+            font-weight: 600;
+            color: #dc2626;
+        }
+        
+        .recovered-amount {
+            font-size: 0.875rem;
+            color: #10b981;
+        }
+        
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-badge.closed { 
+            background: #d1fae5; 
+            color: #065f46; 
+        }
+        
+        .status-badge.open { 
+            background: #fee2e2; 
+            color: #991b1b; 
+        }
+        
+        .status-badge.investigation { 
+            background: #fef3c7; 
+            color: #92400e; 
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .action-btn {
+            padding: 0.5rem;
+            border: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #6b7280;
+        }
+        
+        .action-btn:hover {
+            background: #f9fafb;
+            color: #1f2937;
+            border-color: #d1d5db;
+        }
+        
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .chart-header h3 {
+            margin: 0;
+            font-size: 1.125rem;
+            color: #1f2937;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        
+        /* Department Badge */
+        .dept-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: #f3f4f6;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #4b5563;
+        }
+        
+        /* Date Range */
+        .date-range {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1><i class="fas fa-shield-alt"></i> ERM Enterprise</h1>
+            <div class="nav-menu">
+                <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="risk-register.html"><i class="fas fa-clipboard-list"></i> Risk Register</a>
+                <a href="kri-monitoring.html"><i class="fas fa-chart-line"></i> KRI</a>
+                <a href="kpi-management.html"><i class="fas fa-tachometer-alt"></i> KPI</a>
+                <a href="risk-treatment.html"><i class="fas fa-tasks"></i> Treatment</a>
+                <a href="risk-dictionary.html"><i class="fas fa-book"></i> Dictionary</a>
+                <a href="event-loss-database.html" class="active"><i class="fas fa-database"></i> Loss DB</a>
+                <a href="reports.html"><i class="fas fa-file-alt"></i> Reports</a>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <select id="userRole" style="padding: 0.5rem 1rem; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; border-radius: 6px; font-size: 0.875rem;">
+                    <option value="management">Management (View All)</option>
+                    <option value="risk-owner">Risk Owner</option>
+                    <option value="unit-mr">Unit MR</option>
+                    <option value="auditor">Auditor</option>
+                </select>
+                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px;">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userName" style="font-size: 0.875rem;">John Doe</span>
+                </div>
+                <a href="login.html" style="color: white; text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span style="font-size: 0.875rem;">Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h2><i class="fas fa-database"></i> Event Loss Database</h2>
+                <p>Historical loss events tracking and analysis</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn">
+                    <i class="fas fa-download"></i> Export
+                </button>
+                <a href="event-loss-form.html" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Record Event
+                </a>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+            <div class="summary-card total">
+                <h3>124</h3>
+                <p>Total Events (2024-2025)</p>
+                <div class="summary-trend up">
+                    <i class="fas fa-arrow-up"></i> 12% from last year
+                </div>
+            </div>
+            <div class="summary-card financial">
+                <h3>Rp 2.8B</h3>
+                <p>Total Gross Loss</p>
+                <div class="summary-trend up">
+                    <i class="fas fa-arrow-up"></i> Rp 450M from Q3
+                </div>
+            </div>
+            <div class="summary-card operational">
+                <h3>Rp 1.6B</h3>
+                <p>Operational Losses</p>
+                <div class="summary-trend down">
+                    <i class="fas fa-arrow-down"></i> 15% reduction
+                </div>
+            </div>
+            <div class="summary-card recovered">
+                <h3>Rp 820M</h3>
+                <p>Amount Recovered</p>
+                <div class="summary-trend up">
+                    <i class="fas fa-arrow-up"></i> 29% recovery rate
+                </div>
+            </div>
+            <div class="summary-card average">
+                <h3>Rp 22.5M</h3>
+                <p>Average Loss per Event</p>
+                <div class="summary-trend down">
+                    <i class="fas fa-arrow-down"></i> Improving
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="filter-group">
+                <label>Event Type</label>
+                <select>
+                    <option value="">All Types</option>
+                    <option value="operational">Operational</option>
+                    <option value="fraud">Fraud</option>
+                    <option value="credit">Credit</option>
+                    <option value="market">Market</option>
+                    <option value="compliance">Compliance</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Department</label>
+                <select>
+                    <option value="">All Departments</option>
+                    <option value="rating">RATING</option>
+                    <option value="ite">ITE</option>
+                    <option value="mbd">MBD</option>
+                    <option value="lco">LCO</option>
+                    <option value="bod">BOD</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Loss Range</label>
+                <select>
+                    <option value="">All Amounts</option>
+                    <option value="small">< Rp 10M</option>
+                    <option value="medium">Rp 10M - 100M</option>
+                    <option value="large">Rp 100M - 1B</option>
+                    <option value="critical">> Rp 1B</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Date Range</label>
+                <input type="date" value="2024-01-01">
+            </div>
+            <div class="filter-group">
+                <label>To</label>
+                <input type="date" value="2025-01-26">
+            </div>
+            <div class="filter-group">
+                <label>Status</label>
+                <select>
+                    <option value="">All Status</option>
+                    <option value="open">Open</option>
+                    <option value="investigation">Under Investigation</option>
+                    <option value="closed">Closed</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Loss Events Trend (Monthly)</h3>
+                    <select style="padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 6px;">
+                        <option>Last 12 Months</option>
+                        <option>Last 6 Months</option>
+                        <option>YTD</option>
+                    </select>
+                </div>
+                <div class="chart-container">
+                    <canvas id="lossTrendChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Loss Distribution by Type</h3>
+                    <span class="date-range">Jan 2024 - Jan 2025</span>
+                </div>
+                <div class="chart-container">
+                    <canvas id="lossTypeChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Table -->
+        <div class="table-section">
+            <div class="table-header">
+                <h3>Loss Event Records</h3>
+                <div class="btn-group">
+                    <button class="btn btn-sm">
+                        <i class="fas fa-filter"></i> Advanced Filter
+                    </button>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table class="event-table">
+                    <thead>
+                        <tr>
+                            <th class="sortable">Event ID <i class="fas fa-sort"></i></th>
+                            <th class="sortable">Date <i class="fas fa-sort"></i></th>
+                            <th>Department</th>
+                            <th>Event Type</th>
+                            <th>Description</th>
+                            <th class="sortable">Gross Loss <i class="fas fa-sort"></i></th>
+                            <th>Recovery</th>
+                            <th class="sortable">Net Loss <i class="fas fa-sort"></i></th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="event-id">EVT-2025-0124</td>
+                            <td>Jan 24, 2025</td>
+                            <td><span class="dept-badge">ITE</span></td>
+                            <td><span class="event-type operational">Operational</span></td>
+                            <td>System outage due to server failure</td>
+                            <td class="loss-amount">Rp 85,000,000</td>
+                            <td class="recovered-amount">Rp 25,000,000</td>
+                            <td class="loss-amount">Rp 60,000,000</td>
+                            <td><span class="status-badge investigation">Investigation</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="action-btn" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="action-btn" title="Add Recovery">
+                                        <i class="fas fa-plus-circle"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="event-id">EVT-2025-0089</td>
+                            <td>Jan 15, 2025</td>
+                            <td><span class="dept-badge">MBD</span></td>
+                            <td><span class="event-type fraud">Fraud</span></td>
+                            <td>Internal fraud - unauthorized transactions</td>
+                            <td class="loss-amount">Rp 320,000,000</td>
+                            <td class="recovered-amount">Rp 180,000,000</td>
+                            <td class="loss-amount">Rp 140,000,000</td>
+                            <td><span class="status-badge closed">Closed</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="action-btn" title="Report">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="event-id">EVT-2024-1205</td>
+                            <td>Dec 28, 2024</td>
+                            <td><span class="dept-badge">RATING</span></td>
+                            <td><span class="event-type credit">Credit</span></td>
+                            <td>Client default on rating services</td>
+                            <td class="loss-amount">Rp 45,000,000</td>
+                            <td class="recovered-amount">Rp 0</td>
+                            <td class="loss-amount">Rp 45,000,000</td>
+                            <td><span class="status-badge open">Open</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="action-btn" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="action-btn" title="Add Recovery">
+                                        <i class="fas fa-plus-circle"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="event-id">EVT-2024-1156</td>
+                            <td>Dec 15, 2024</td>
+                            <td><span class="dept-badge">LCO</span></td>
+                            <td><span class="event-type compliance">Compliance</span></td>
+                            <td>Regulatory fine for late reporting</td>
+                            <td class="loss-amount">Rp 150,000,000</td>
+                            <td class="recovered-amount">Rp 0</td>
+                            <td class="loss-amount">Rp 150,000,000</td>
+                            <td><span class="status-badge closed">Closed</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="action-btn" title="Report">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="event-id">EVT-2024-1098</td>
+                            <td>Nov 20, 2024</td>
+                            <td><span class="dept-badge">ITE</span></td>
+                            <td><span class="event-type operational">Operational</span></td>
+                            <td>Data processing error causing rework</td>
+                            <td class="loss-amount">Rp 28,000,000</td>
+                            <td class="recovered-amount">Rp 5,000,000</td>
+                            <td class="loss-amount">Rp 23,000,000</td>
+                            <td><span class="status-badge closed">Closed</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="action-btn" title="Report">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="event-id">EVT-2024-0987</td>
+                            <td>Oct 10, 2024</td>
+                            <td><span class="dept-badge">BOD</span></td>
+                            <td><span class="event-type market">Market</span></td>
+                            <td>Investment loss due to market volatility</td>
+                            <td class="loss-amount">Rp 450,000,000</td>
+                            <td class="recovered-amount">Rp 120,000,000</td>
+                            <td class="loss-amount">Rp 330,000,000</td>
+                            <td><span class="status-badge closed">Closed</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="action-btn" title="Report">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Loss Trend Chart
+        const trendCtx = document.getElementById('lossTrendChart').getContext('2d');
+        new Chart(trendCtx, {
+            type: 'line',
+            data: {
+                labels: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan'],
+                datasets: [{
+                    label: 'Number of Events',
+                    data: [8, 12, 10, 15, 11, 9, 13, 14, 11, 10, 12, 9],
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    tension: 0.4,
+                    borderWidth: 2,
+                    yAxisID: 'y'
+                }, {
+                    label: 'Total Loss (Billions)',
+                    data: [0.18, 0.25, 0.21, 0.32, 0.19, 0.15, 0.28, 0.30, 0.22, 0.20, 0.24, 0.16],
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    tension: 0.4,
+                    borderWidth: 2,
+                    yAxisID: 'y1'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Number of Events'
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Loss Amount (Rp Billions)'
+                        },
+                        grid: {
+                            drawOnChartArea: false,
+                        }
+                    }
+                }
+            }
+        });
+
+        // Loss Type Distribution Chart
+        const typeCtx = document.getElementById('lossTypeChart').getContext('2d');
+        new Chart(typeCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Operational', 'Fraud', 'Credit', 'Market', 'Compliance'],
+                datasets: [{
+                    data: [1600, 450, 320, 280, 150],
+                    backgroundColor: [
+                        '#f59e0b',
+                        '#dc2626',
+                        '#7c3aed',
+                        '#3b82f6',
+                        '#10b981'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += 'Rp ' + context.parsed + 'M';
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

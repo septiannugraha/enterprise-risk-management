@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Dictionary Entry - ERM Enterprise</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; 
+            font-family: 'Inter', sans-serif; 
+            background: #f5f5f5; 
+            color: #1f2937;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: #2563eb;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Form Header */
+        .form-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .form-header h2 {
+            margin: 0 0 0.5rem 0;
+            color: #1f2937;
+            font-size: 2rem;
+        }
+        
+        .form-header p {
+            color: #6b7280;
+            margin: 0;
+        }
+        
+        /* Form Sections */
+        .form-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0 0 1.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .required::after {
+            content: ' *';
+            color: #ef4444;
+        }
+        
+        .form-input,
+        .form-select,
+        .form-textarea {
+            padding: 0.75rem 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            background: white;
+        }
+        
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #6b7280;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .btn-secondary:hover {
+            background: #f9fafb;
+        }
+        
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        /* Help Text */
+        .help-text {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+        
+        /* Category Icon Selection */
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .icon-option {
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .icon-option:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+        
+        .icon-option.selected {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+        
+        .icon-option i {
+            font-size: 1.5rem;
+            color: #6b7280;
+        }
+        
+        .icon-option.selected i {
+            color: #3b82f6;
+        }
+        
+        /* Tags Input */
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            min-height: 42px;
+            align-items: center;
+        }
+        
+        .tag {
+            background: #e5e7eb;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .tag button {
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 0;
+            font-size: 1rem;
+        }
+        
+        .tag-input {
+            border: none;
+            outline: none;
+            flex: 1;
+            min-width: 100px;
+            font-size: 0.875rem;
+        }
+        
+        /* Examples Section */
+        .example-item {
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .example-number {
+            width: 30px;
+            height: 30px;
+            background: #e5e7eb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #6b7280;
+        }
+        
+        .example-input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+        
+        .add-example {
+            margin-top: 0.5rem;
+        }
+        
+        /* KRI List */
+        .kri-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .kri-item {
+            padding: 0.75rem;
+            background: #f9fafb;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .kri-text {
+            flex: 1;
+        }
+        
+        .kri-metric {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1><i class="fas fa-shield-alt"></i> ERM Enterprise</h1>
+            <div class="nav-menu">
+                <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="risk-register.html"><i class="fas fa-clipboard-list"></i> Risk Register</a>
+                <a href="kri-monitoring.html"><i class="fas fa-chart-line"></i> KRI</a>
+                <a href="kpi-management.html"><i class="fas fa-tachometer-alt"></i> KPI</a>
+                <a href="risk-treatment.html"><i class="fas fa-tasks"></i> Treatment</a>
+                <a href="risk-dictionary.html" class="active"><i class="fas fa-book"></i> Dictionary</a>
+                <a href="event-loss-database.html"><i class="fas fa-database"></i> Loss DB</a>
+                <a href="reports.html"><i class="fas fa-file-alt"></i> Reports</a>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <select id="userRole" style="padding: 0.5rem 1rem; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; border-radius: 6px; font-size: 0.875rem;">
+                    <option value="management">Management (View All)</option>
+                    <option value="risk-owner">Risk Owner</option>
+                    <option value="unit-mr">Unit MR</option>
+                    <option value="auditor">Auditor</option>
+                </select>
+                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px;">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userName" style="font-size: 0.875rem;">John Doe</span>
+                </div>
+                <a href="login.html" style="color: white; text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span style="font-size: 0.875rem;">Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Form Header -->
+        <div class="form-header">
+            <h2><i class="fas fa-book"></i> Add Risk Dictionary Entry</h2>
+            <p>Create standardized risk definitions for the risk taxonomy</p>
+        </div>
+
+        <!-- Basic Information -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-info-circle"></i> Basic Information
+            </h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label required">Risk Name</label>
+                    <input type="text" class="form-input" placeholder="e.g., Cyber Security Risk">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Risk Code</label>
+                    <input type="text" class="form-input" placeholder="e.g., TECH-001" value="DICT-157" readonly>
+                    <span class="help-text">Auto-generated based on category and sequence</span>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Risk Category</label>
+                    <select class="form-select" id="riskCategory">
+                        <option value="">Select Category</option>
+                        <option value="strategic">Strategic Risk</option>
+                        <option value="operational">Operational Risk</option>
+                        <option value="financial">Financial Risk</option>
+                        <option value="compliance">Compliance Risk</option>
+                        <option value="technology">Technology Risk</option>
+                        <option value="reputation">Reputation Risk</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Risk Sub-Category</label>
+                    <select class="form-select" id="riskSubCategory">
+                        <option value="">Select Category First</option>
+                    </select>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label required">Brief Description</label>
+                    <input type="text" class="form-input" placeholder="One-line description of the risk">
+                    <span class="help-text">Maximum 100 characters</span>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label required">Detailed Definition</label>
+                    <textarea class="form-textarea" rows="4" placeholder="Provide a comprehensive definition of this risk type, including what it encompasses and its boundaries..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Icon -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-icons"></i> Visual Representation
+            </h3>
+            <div class="form-group">
+                <label class="form-label">Select Icon</label>
+                <div class="icon-grid">
+                    <div class="icon-option selected" data-icon="shield-alt">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="icon-option" data-icon="exclamation-triangle">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="icon-option" data-icon="chart-line">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="icon-option" data-icon="balance-scale">
+                        <i class="fas fa-balance-scale"></i>
+                    </div>
+                    <div class="icon-option" data-icon="laptop-code">
+                        <i class="fas fa-laptop-code"></i>
+                    </div>
+                    <div class="icon-option" data-icon="users">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="icon-option" data-icon="coins">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <div class="icon-option" data-icon="building">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="icon-option" data-icon="globe">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div class="icon-option" data-icon="lock">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="icon-option" data-icon="fire">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <div class="icon-option" data-icon="bolt">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Characteristics -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-list-ul"></i> Risk Characteristics
+            </h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label required">Risk Type</label>
+                    <select class="form-select">
+                        <option value="">Select Type</option>
+                        <option value="internal">Internal</option>
+                        <option value="external">External</option>
+                        <option value="both">Both Internal & External</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Typical Impact Level</label>
+                    <select class="form-select">
+                        <option value="">Select Level</option>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                        <option value="variable">Variable</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Frequency</label>
+                    <select class="form-select">
+                        <option value="">Select Frequency</option>
+                        <option value="rare">Rare</option>
+                        <option value="occasional">Occasional</option>
+                        <option value="frequent">Frequent</option>
+                        <option value="continuous">Continuous</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Time Horizon</label>
+                    <select class="form-select">
+                        <option value="">Select Horizon</option>
+                        <option value="immediate">Immediate (< 1 month)</option>
+                        <option value="short">Short-term (1-6 months)</option>
+                        <option value="medium">Medium-term (6-12 months)</option>
+                        <option value="long">Long-term (> 1 year)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Tags</label>
+                    <div class="tags-container">
+                        <span class="tag">
+                            Emerging Risk
+                            <button onclick="this.parentElement.remove()">×</button>
+                        </span>
+                        <span class="tag">
+                            High Impact
+                            <button onclick="this.parentElement.remove()">×</button>
+                        </span>
+                        <input type="text" class="tag-input" placeholder="Add tag..." onkeypress="if(event.key==='Enter') addTag(this)">
+                    </div>
+                    <span class="help-text">Press Enter to add tags</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Examples -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-lightbulb"></i> Examples & Scenarios
+            </h3>
+            <div id="examplesContainer">
+                <div class="example-item">
+                    <div class="example-number">1</div>
+                    <input type="text" class="example-input" placeholder="Example scenario where this risk might occur">
+                </div>
+                <div class="example-item">
+                    <div class="example-number">2</div>
+                    <input type="text" class="example-input" placeholder="Another example scenario">
+                </div>
+            </div>
+            <button class="btn btn-secondary add-example" onclick="addExample()">
+                <i class="fas fa-plus"></i> Add Example
+            </button>
+        </div>
+
+        <!-- Key Risk Indicators -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-tachometer-alt"></i> Key Risk Indicators (KRIs)
+            </h3>
+            <ul class="kri-list">
+                <li class="kri-item">
+                    <div class="kri-text">
+                        <strong>Number of security incidents</strong>
+                        <div class="kri-metric">Threshold: > 5 per month</div>
+                    </div>
+                </li>
+                <li class="kri-item">
+                    <div class="kri-text">
+                        <strong>System downtime hours</strong>
+                        <div class="kri-metric">Threshold: > 4 hours per month</div>
+                    </div>
+                </li>
+            </ul>
+            <div class="form-group full-width" style="margin-top: 1rem;">
+                <label class="form-label">Add KRI</label>
+                <div style="display: flex; gap: 0.5rem;">
+                    <input type="text" class="form-input" placeholder="KRI name" style="flex: 2;">
+                    <input type="text" class="form-input" placeholder="Threshold" style="flex: 1;">
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-plus"></i> Add
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Information -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-link"></i> Related Information
+            </h3>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label class="form-label">Common Controls</label>
+                    <textarea class="form-textarea" placeholder="List common controls used to mitigate this risk type..."></textarea>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Reference Documents</label>
+                    <textarea class="form-textarea" placeholder="List relevant policies, procedures, or standards..."></textarea>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Related Risks</label>
+                    <select class="form-select" multiple style="height: 100px;">
+                        <option value="1">Market Competition Risk</option>
+                        <option value="2">Business Model Risk</option>
+                        <option value="3">Technology Obsolescence Risk</option>
+                        <option value="4">Data Privacy Risk</option>
+                    </select>
+                    <span class="help-text">Hold Ctrl/Cmd to select multiple related risks</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+            <div>
+                <button class="btn btn-secondary">
+                    <i class="fas fa-save"></i> Save Draft
+                </button>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <a href="risk-dictionary.html" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+                <button class="btn btn-primary">
+                    <i class="fas fa-check"></i> Add to Dictionary
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Risk sub-categories
+        const subCategories = {
+            'strategic': ['Business Model', 'Competition', 'Customer Preferences', 'Industry Changes'],
+            'operational': ['Process Failure', 'System Failure', 'Human Error', 'External Events'],
+            'financial': ['Market Risk', 'Credit Risk', 'Liquidity Risk', 'Currency Risk'],
+            'compliance': ['Regulatory Changes', 'Legal Violations', 'Policy Non-compliance', 'Contractual Breach'],
+            'technology': ['Cyber Security', 'System Failure', 'Data Loss', 'Technology Obsolescence'],
+            'reputation': ['Brand Damage', 'Social Media', 'Stakeholder Trust', 'Public Perception']
+        };
+        
+        // Update sub-categories based on category selection
+        document.getElementById('riskCategory').addEventListener('change', function(e) {
+            const category = e.target.value;
+            const subSelect = document.getElementById('riskSubCategory');
+            
+            subSelect.innerHTML = '<option value="">Select Sub-Category</option>';
+            
+            if (category && subCategories[category]) {
+                subCategories[category].forEach(sub => {
+                    const option = document.createElement('option');
+                    option.value = sub;
+                    option.textContent = sub;
+                    subSelect.appendChild(option);
+                });
+            }
+        });
+        
+        // Icon selection
+        document.querySelectorAll('.icon-option').forEach(icon => {
+            icon.addEventListener('click', function() {
+                document.querySelectorAll('.icon-option').forEach(i => i.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+        
+        // Add tag functionality
+        function addTag(input) {
+            if (input.value.trim()) {
+                const tag = document.createElement('span');
+                tag.className = 'tag';
+                tag.innerHTML = `
+                    ${input.value}
+                    <button onclick="this.parentElement.remove()">×</button>
+                `;
+                input.parentElement.insertBefore(tag, input);
+                input.value = '';
+            }
+        }
+        
+        // Add example functionality
+        let exampleCount = 2;
+        function addExample() {
+            exampleCount++;
+            const container = document.getElementById('examplesContainer');
+            const example = document.createElement('div');
+            example.className = 'example-item';
+            example.innerHTML = `
+                <div class="example-number">${exampleCount}</div>
+                <input type="text" class="example-input" placeholder="Example scenario">
+            `;
+            container.appendChild(example);
+        }
+        
+        // User role handling
+        document.getElementById('userRole').addEventListener('change', function(e) {
+            const role = e.target.value;
+            const userName = document.getElementById('userName');
+            
+            switch(role) {
+                case 'management':
+                    userName.textContent = 'John Doe (Management)';
+                    break;
+                case 'risk-owner':
+                    userName.textContent = 'Sarah Chen (Risk Owner - ITE)';
+                    break;
+                case 'unit-mr':
+                    userName.textContent = 'Ahmad Wijaya (Unit MR)';
+                    break;
+                case 'auditor':
+                    userName.textContent = 'Lisa Putri (Internal Audit)';
+                    break;
+            }
+        });
+    </script>
+</body>
+</html>

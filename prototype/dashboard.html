@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - ERM Enterprise</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; 
+            font-family: 'Inter', sans-serif; 
+            background: #f5f5f5; 
+            color: #1f2937;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: #2563eb;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 100%;
+            padding: 2rem;
+        }
+        
+        /* Dashboard Header */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .dashboard-header h2 {
+            margin: 0;
+            font-size: 2rem;
+            color: #1f2937;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #6b7280;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .btn-secondary:hover {
+            background: #f9fafb;
+        }
+        
+        /* Executive Summary Cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .summary-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-left: 4px solid;
+            transition: transform 0.2s;
+        }
+        
+        .summary-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .summary-card.risks { border-left-color: #3b82f6; }
+        .summary-card.critical { border-left-color: #ef4444; }
+        .summary-card.kris { border-left-color: #f59e0b; }
+        .summary-card.treatments { border-left-color: #10b981; }
+        .summary-card.compliance { border-left-color: #8b5cf6; }
+        
+        .summary-card h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .summary-card.risks h3 { color: #3b82f6; }
+        .summary-card.critical h3 { color: #ef4444; }
+        .summary-card.kris h3 { color: #f59e0b; }
+        .summary-card.treatments h3 { color: #10b981; }
+        .summary-card.compliance h3 { color: #8b5cf6; }
+        
+        .summary-card p {
+            margin: 0 0 0.5rem 0;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        
+        .summary-trend {
+            font-size: 0.75rem;
+            color: #10b981;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .summary-trend.down {
+            color: #ef4444;
+        }
+        
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .chart-header h3 {
+            margin: 0;
+            font-size: 1.125rem;
+            color: #1f2937;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        
+        /* Risk Heat Map */
+        .heatmap-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .heatmap-container {
+            display: flex;
+            gap: 2rem;
+            align-items: start;
+        }
+        
+        .risk-matrix {
+            flex: 1;
+        }
+        
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 4px;
+            max-width: 500px;
+            margin: 1rem 0;
+        }
+        
+        .matrix-cell {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 1.125rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .matrix-cell:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+        
+        .matrix-cell.low { background: #22c55e; }
+        .matrix-cell.medium { background: #f59e0b; }
+        .matrix-cell.high { background: #ef4444; }
+        
+        .matrix-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .axis-labels {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .axis-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        /* Risk Categories */
+        .risk-categories {
+            flex: 0 0 300px;
+        }
+        
+        .category-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .category-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: #f9fafb;
+            border-radius: 6px;
+            border-left: 4px solid;
+        }
+        
+        .category-item.financial { border-left-color: #3b82f6; }
+        .category-item.customer { border-left-color: #8b5cf6; }
+        .category-item.process { border-left-color: #10b981; }
+        .category-item.learning { border-left-color: #f59e0b; }
+        
+        .category-name {
+            font-weight: 500;
+            color: #1f2937;
+        }
+        
+        .category-count {
+            background: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        /* Recent Activities */
+        .activities-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .activities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+        
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .activity-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 8px;
+            align-items: start;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .activity-icon.risk { background: #fee2e2; color: #dc2626; }
+        .activity-icon.kri { background: #fef3c7; color: #d97706; }
+        .activity-icon.treatment { background: #d1fae5; color: #059669; }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+        
+        .activity-desc {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.25rem;
+        }
+        
+        .activity-time {
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .action-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 2px solid #e5e7eb;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .action-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .action-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1rem;
+            background: #eff6ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #3b82f6;
+        }
+        
+        .action-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+        
+        .action-desc {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .heatmap-container {
+                flex-direction: column;
+            }
+            
+            .risk-categories {
+                flex: 1;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1><i class="fas fa-shield-alt"></i> ERM Enterprise</h1>
+            <div class="nav-menu">
+                <a href="dashboard.html" class="active"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="risk-register.html"><i class="fas fa-clipboard-list"></i> Risk Register</a>
+                <a href="risk-analytics.html"><i class="fas fa-chart-pie"></i> Analytics</a>
+                <a href="kri-monitoring.html"><i class="fas fa-chart-line"></i> KRI</a>
+                <a href="kpi-management.html"><i class="fas fa-tachometer-alt"></i> KPI</a>
+                <a href="risk-treatment.html"><i class="fas fa-tasks"></i> Treatment</a>
+                <a href="risk-dictionary.html"><i class="fas fa-book"></i> Dictionary</a>
+                <a href="event-loss-database.html"><i class="fas fa-database"></i> Loss DB</a>
+                <a href="reports.html"><i class="fas fa-file-alt"></i> Reports</a>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <select id="userRole" style="padding: 0.5rem 1rem; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; border-radius: 6px; font-size: 0.875rem;">
+                    <option value="management">Management (View All)</option>
+                    <option value="risk-owner">Risk Owner</option>
+                    <option value="unit-mr">Unit MR</option>
+                    <option value="auditor">Auditor</option>
+                </select>
+                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px;">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userName" style="font-size: 0.875rem;">John Doe</span>
+                </div>
+                <a href="login.html" style="color: white; text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span style="font-size: 0.875rem;">Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div>
+                <h2>Enterprise Risk Management Dashboard</h2>
+                <p style="margin: 0.5rem 0 0 0; color: #6b7280;">Real-time risk overview as of <span id="currentDate"></span></p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary">
+                    <i class="fas fa-sync"></i> Refresh
+                </button>
+                <button class="btn btn-primary">
+                    <i class="fas fa-download"></i> Export Dashboard
+                </button>
+            </div>
+        </div>
+
+        <!-- Executive Summary Cards -->
+        <div class="summary-grid">
+            <div class="summary-card risks">
+                <h3>156</h3>
+                <p>Total Active Risks</p>
+                <div class="summary-trend">
+                    <i class="fas fa-arrow-up"></i> 8% from last month
+                </div>
+            </div>
+            <div class="summary-card critical">
+                <h3>23</h3>
+                <p>Critical Risks (High Impact)</p>
+                <div class="summary-trend down">
+                    <i class="fas fa-arrow-down"></i> 2 from last month
+                </div>
+            </div>
+            <div class="summary-card kris">
+                <h3>5/24</h3>
+                <p>KRIs Above Threshold</p>
+                <div class="summary-trend">
+                    <i class="fas fa-arrow-up"></i> 1 new breach
+                </div>
+            </div>
+            <div class="summary-card treatments">
+                <h3>47</h3>
+                <p>Active Risk Treatments</p>
+                <div class="summary-trend">
+                    <i class="fas fa-check"></i> 89% on track
+                </div>
+            </div>
+            <div class="summary-card compliance">
+                <h3>94%</h3>
+                <p>Risk Compliance Score</p>
+                <div class="summary-trend">
+                    <i class="fas fa-arrow-up"></i> 2% improvement
+                </div>
+            </div>
+        </div>
+
+        <!-- KRI Monitoring Summary -->
+        <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="margin: 0; font-size: 1.25rem; color: #1f2937;">
+                    <i class="fas fa-traffic-light"></i> KRI Monitoring Summary
+                </h3>
+                <a href="kri-monitoring.html" style="color: #3b82f6; text-decoration: none; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem;">
+                    View Details <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                <div style="text-align: center; padding: 1rem; background: #fee2e2; border-radius: 8px;">
+                    <div style="font-size: 2rem; font-weight: 700; color: #dc2626;">8</div>
+                    <div style="font-size: 0.875rem; color: #991b1b; margin-top: 0.5rem;">High Risk</div>
+                    <div style="font-size: 0.75rem; color: #7f1d1d; margin-top: 0.25rem;">Immediate Action</div>
+                </div>
+                <div style="text-align: center; padding: 1rem; background: #fef3c7; border-radius: 8px;">
+                    <div style="font-size: 2rem; font-weight: 700; color: #d97706;">15</div>
+                    <div style="font-size: 0.875rem; color: #92400e; margin-top: 0.5rem;">Medium Risk</div>
+                    <div style="font-size: 0.75rem; color: #78350f; margin-top: 0.25rem;">Monitor Closely</div>
+                </div>
+                <div style="text-align: center; padding: 1rem; background: #d1fae5; border-radius: 8px;">
+                    <div style="font-size: 2rem; font-weight: 700; color: #059669;">24</div>
+                    <div style="font-size: 0.875rem; color: #065f46; margin-top: 0.5rem;">Low Risk</div>
+                    <div style="font-size: 0.75rem; color: #064e3b; margin-top: 0.25rem;">Under Control</div>
+                </div>
+                <div style="text-align: center; padding: 1rem; background: #f3f4f6; border-radius: 8px;">
+                    <div style="font-size: 2rem; font-weight: 700; color: #6b7280;">47</div>
+                    <div style="font-size: 0.875rem; color: #4b5563; margin-top: 0.5rem;">Total KRIs</div>
+                    <div style="font-size: 0.75rem; color: #374151; margin-top: 0.25rem;">All Indicators</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Risk Trend Analysis (6 Months)</h3>
+                    <select style="padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 6px;">
+                        <option>All Perspectives</option>
+                        <option>Financial</option>
+                        <option>Customer</option>
+                        <option>Internal Process</option>
+                        <option>Learning & Growth</option>
+                    </select>
+                </div>
+                <div class="chart-container">
+                    <canvas id="riskTrendChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Risk Distribution by Perspective</h3>
+                    <a href="risk-analytics.html" class="btn btn-secondary btn-sm" style="padding: 0.5rem 1rem; font-size: 0.75rem; text-decoration: none;">
+                        <i class="fas fa-chart-pie"></i> View Analytics
+                    </a>
+                </div>
+                <div class="chart-container">
+                    <canvas id="riskDistributionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Risk Heat Map -->
+        <div class="heatmap-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="margin: 0;">Risk Heat Map</h3>
+                <a href="risk-analytics.html" class="btn btn-secondary btn-sm" style="padding: 0.5rem 1rem; font-size: 0.75rem; text-decoration: none;">
+                    <i class="fas fa-chart-pie"></i> Advanced Analytics
+                </a>
+            </div>
+            <div class="heatmap-container">
+                <div class="risk-matrix">
+                    <div class="matrix-grid">
+                        <!-- Row 5 (Very High Impact) -->
+                        <div class="matrix-cell low" title="Impact: 5, Likelihood: 1">2</div>
+                        <div class="matrix-cell medium" title="Impact: 5, Likelihood: 2">5</div>
+                        <div class="matrix-cell high" title="Impact: 5, Likelihood: 3">8</div>
+                        <div class="matrix-cell high" title="Impact: 5, Likelihood: 4">12</div>
+                        <div class="matrix-cell high" title="Impact: 5, Likelihood: 5">7</div>
+                        
+                        <!-- Row 4 (High Impact) -->
+                        <div class="matrix-cell low" title="Impact: 4, Likelihood: 1">3</div>
+                        <div class="matrix-cell medium" title="Impact: 4, Likelihood: 2">7</div>
+                        <div class="matrix-cell medium" title="Impact: 4, Likelihood: 3">15</div>
+                        <div class="matrix-cell high" title="Impact: 4, Likelihood: 4">9</div>
+                        <div class="matrix-cell high" title="Impact: 4, Likelihood: 5">4</div>
+                        
+                        <!-- Row 3 (Medium Impact) -->
+                        <div class="matrix-cell low" title="Impact: 3, Likelihood: 1">5</div>
+                        <div class="matrix-cell low" title="Impact: 3, Likelihood: 2">11</div>
+                        <div class="matrix-cell medium" title="Impact: 3, Likelihood: 3">18</div>
+                        <div class="matrix-cell medium" title="Impact: 3, Likelihood: 4">6</div>
+                        <div class="matrix-cell high" title="Impact: 3, Likelihood: 5">2</div>
+                        
+                        <!-- Row 2 (Low Impact) -->
+                        <div class="matrix-cell low" title="Impact: 2, Likelihood: 1">8</div>
+                        <div class="matrix-cell low" title="Impact: 2, Likelihood: 2">14</div>
+                        <div class="matrix-cell low" title="Impact: 2, Likelihood: 3">9</div>
+                        <div class="matrix-cell medium" title="Impact: 2, Likelihood: 4">3</div>
+                        <div class="matrix-cell medium" title="Impact: 2, Likelihood: 5">1</div>
+                        
+                        <!-- Row 1 (Very Low Impact) -->
+                        <div class="matrix-cell low" title="Impact: 1, Likelihood: 1">12</div>
+                        <div class="matrix-cell low" title="Impact: 1, Likelihood: 2">7</div>
+                        <div class="matrix-cell low" title="Impact: 1, Likelihood: 3">4</div>
+                        <div class="matrix-cell low" title="Impact: 1, Likelihood: 4">2</div>
+                        <div class="matrix-cell medium" title="Impact: 1, Likelihood: 5">0</div>
+                    </div>
+                    <div class="axis-labels">
+                        <div class="axis-label">← Low Likelihood</div>
+                        <div class="axis-label" style="margin-left: auto;">High Likelihood →</div>
+                    </div>
+                    <div class="axis-labels">
+                        <div class="axis-label">↓ Low Impact</div>
+                        <div class="axis-label" style="margin-left: auto;">High Impact ↑</div>
+                    </div>
+                </div>
+                
+                <div class="risk-categories">
+                    <h4 style="margin: 0 0 1rem 0;">Risk by Perspective</h4>
+                    <div class="category-list">
+                        <div class="category-item financial">
+                            <span class="category-name">Financial</span>
+                            <span class="category-count">42</span>
+                        </div>
+                        <div class="category-item customer">
+                            <span class="category-name">Customer</span>
+                            <span class="category-count">38</span>
+                        </div>
+                        <div class="category-item process">
+                            <span class="category-name">Internal Process</span>
+                            <span class="category-count">51</span>
+                        </div>
+                        <div class="category-item learning">
+                            <span class="category-name">Learning & Growth</span>
+                            <span class="category-count">25</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activities & Quick Actions -->
+        <div class="activities-section">
+            <h3 style="margin: 0;">Recent Activities & Alerts</h3>
+            <div class="activities-grid">
+                <div>
+                    <h4 style="margin: 0 0 1rem 0; color: #6b7280; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em;">Recent Risk Events</h4>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon risk">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">New High Risk Identified</div>
+                                <div class="activity-desc">Credit concentration risk in automotive sector</div>
+                                <div class="activity-time">2 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon kri">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">KRI Threshold Breach</div>
+                                <div class="activity-desc">Customer satisfaction score dropped below 3.5</div>
+                                <div class="activity-time">5 hours ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon treatment">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Treatment Plan Completed</div>
+                                <div class="activity-desc">IT security upgrade phase 1 finished</div>
+                                <div class="activity-time">1 day ago</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 style="margin: 0 0 1rem 0; color: #6b7280; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em;">Quick Actions</h4>
+                    <div class="quick-actions">
+                        <a href="risk-register.html" class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <div class="action-title">Add New Risk</div>
+                            <div class="action-desc">Register a new risk event</div>
+                        </a>
+                        <a href="kri-monitoring.html" class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-tachometer-alt"></i>
+                            </div>
+                            <div class="action-title">View KRIs</div>
+                            <div class="action-desc">Monitor key indicators</div>
+                        </a>
+                        <a href="#" class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-clipboard-check"></i>
+                            </div>
+                            <div class="action-title">Risk Assessment</div>
+                            <div class="action-desc">Conduct assessment</div>
+                        </a>
+                        <a href="#" class="action-card">
+                            <div class="action-icon">
+                                <i class="fas fa-file-export"></i>
+                            </div>
+                            <div class="action-title">Generate Report</div>
+                            <div class="action-desc">Create risk report</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="dashboard.js"></script>
+    <script>
+        // User role simulation
+        document.getElementById('userRole').addEventListener('change', function(e) {
+            const role = e.target.value;
+            const userName = document.getElementById('userName');
+            
+            // Simulate different users based on role
+            switch(role) {
+                case 'management':
+                    userName.textContent = 'John Doe (Management)';
+                    break;
+                case 'risk-owner':
+                    userName.textContent = 'Sarah Chen (Risk Owner - ITE)';
+                    break;
+                case 'unit-mr':
+                    userName.textContent = 'Ahmad Wijaya (Unit MR)';
+                    break;
+                case 'auditor':
+                    userName.textContent = 'Lisa Putri (Internal Audit)';
+                    break;
+            }
+            
+            // Show notification
+            const notification = document.createElement('div');
+            notification.style.cssText = 'position: fixed; top: 80px; right: 20px; background: #3b82f6; color: white; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000;';
+            notification.innerHTML = `<i class="fas fa-info-circle"></i> Viewing as: ${userName.textContent}`;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

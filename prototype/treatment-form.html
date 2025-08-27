@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Treatment Plan Form - ERM Enterprise</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; 
+            font-family: 'Inter', sans-serif; 
+            background: #f5f5f5; 
+            color: #1f2937;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background: #2563eb;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Form Header */
+        .form-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .form-header h2 {
+            margin: 0 0 0.5rem 0;
+            color: #1f2937;
+            font-size: 2rem;
+        }
+        
+        .form-header p {
+            color: #6b7280;
+            margin: 0;
+        }
+        
+        /* Risk Summary Card */
+        .risk-summary {
+            background: #fef3c7;
+            border: 1px solid #fbbf24;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .risk-summary h3 {
+            margin: 0 0 1rem 0;
+            color: #92400e;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .risk-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .risk-detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .risk-label {
+            font-size: 0.75rem;
+            color: #92400e;
+            margin-bottom: 0.25rem;
+        }
+        
+        .risk-value {
+            font-weight: 600;
+            color: #78350f;
+        }
+        
+        /* Form Sections */
+        .form-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0 0 1.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* Form Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .required::after {
+            content: ' *';
+            color: #ef4444;
+        }
+        
+        .form-input,
+        .form-select,
+        .form-textarea {
+            padding: 0.75rem 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            background: white;
+        }
+        
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #6b7280;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .btn-secondary:hover {
+            background: #f9fafb;
+        }
+        
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #059669;
+        }
+        
+        /* Milestone Section */
+        .milestone-container {
+            margin-top: 1rem;
+        }
+        
+        .milestone-item {
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .milestone-item input {
+            padding: 0.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+        
+        .add-milestone {
+            margin-top: 0.5rem;
+        }
+        
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        /* Help Text */
+        .help-text {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+        
+        /* Budget Grid */
+        .budget-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .budget-item {
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+        
+        .budget-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+        
+        .budget-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            font-weight: 600;
+            text-align: right;
+        }
+        
+        /* Success Criteria */
+        .criteria-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .criteria-item {
+            display: flex;
+            gap: 0.5rem;
+            align-items: start;
+            margin-bottom: 0.5rem;
+        }
+        
+        .criteria-item input[type="checkbox"] {
+            margin-top: 0.25rem;
+        }
+        
+        .criteria-text {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1><i class="fas fa-shield-alt"></i> ERM Enterprise</h1>
+            <div class="nav-menu">
+                <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="risk-register.html"><i class="fas fa-clipboard-list"></i> Risk Register</a>
+                <a href="kri-monitoring.html"><i class="fas fa-chart-line"></i> KRI</a>
+                <a href="kpi-management.html"><i class="fas fa-tachometer-alt"></i> KPI</a>
+                <a href="risk-treatment.html" class="active"><i class="fas fa-tasks"></i> Treatment</a>
+                <a href="risk-dictionary.html"><i class="fas fa-book"></i> Dictionary</a>
+                <a href="event-loss-database.html"><i class="fas fa-database"></i> Loss DB</a>
+                <a href="reports.html"><i class="fas fa-file-alt"></i> Reports</a>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <select id="userRole" style="padding: 0.5rem 1rem; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; border-radius: 6px; font-size: 0.875rem;">
+                    <option value="management">Management (View All)</option>
+                    <option value="risk-owner">Risk Owner</option>
+                    <option value="unit-mr">Unit MR</option>
+                    <option value="auditor">Auditor</option>
+                </select>
+                <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px;">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userName" style="font-size: 0.875rem;">John Doe</span>
+                </div>
+                <a href="login.html" style="color: white; text-decoration: none; padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border-radius: 6px; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span style="font-size: 0.875rem;">Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Form Header -->
+        <div class="form-header">
+            <h2><i class="fas fa-clipboard-check"></i> Create Risk Treatment Plan</h2>
+            <p>Define mitigation strategies and action plans for identified risks</p>
+        </div>
+
+        <!-- Risk Summary -->
+        <div class="risk-summary">
+            <h3><i class="fas fa-exclamation-triangle"></i> Risk Summary</h3>
+            <div class="risk-details">
+                <div class="risk-detail-item">
+                    <span class="risk-label">Risk Code</span>
+                    <span class="risk-value" id="riskCodeDisplay">RR-F-001</span>
+                </div>
+                <div class="risk-detail-item">
+                    <span class="risk-label">Risk Event</span>
+                    <span class="risk-value" id="riskEventDisplay">Revenue target not achieved due to market downturn</span>
+                </div>
+                <div class="risk-detail-item">
+                    <span class="risk-label">Inherent Risk Score</span>
+                    <span class="risk-value" id="inherentScoreDisplay">20 (High)</span>
+                </div>
+                <div class="risk-detail-item">
+                    <span class="risk-label">Current Residual Risk</span>
+                    <span class="risk-value" id="residualScoreDisplay">12 (Medium)</span>
+                </div>
+                <div class="risk-detail-item">
+                    <span class="risk-label">Risk Owner</span>
+                    <span class="risk-value" id="riskOwnerDisplay">CFO</span>
+                </div>
+                <div class="risk-detail-item">
+                    <span class="risk-label">Strategic Objective</span>
+                    <span class="risk-value" id="objectiveDisplay">Increase Shareholders Value</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Treatment Strategy -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-strategy"></i> Treatment Strategy
+            </h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label required">Treatment Option</label>
+                    <select class="form-select" id="treatmentOption">
+                        <option value="">Select Treatment Option</option>
+                        <option value="accept">Accept - Accept the risk without further action</option>
+                        <option value="mitigate">Mitigate - Implement controls to reduce risk</option>
+                        <option value="transfer">Transfer - Transfer risk to third party</option>
+                        <option value="avoid">Avoid - Eliminate the risk by avoiding the activity</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Priority Level</label>
+                    <select class="form-select">
+                        <option value="">Select Priority</option>
+                        <option value="critical">Critical - Immediate Action Required</option>
+                        <option value="high">High - Action within 30 days</option>
+                        <option value="medium">Medium - Action within 90 days</option>
+                        <option value="low">Low - Action within 180 days</option>
+                    </select>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label required">Treatment Plan Title</label>
+                    <input type="text" class="form-input" placeholder="e.g., Market Diversification Strategy">
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label required">Treatment Description</label>
+                    <textarea class="form-textarea" placeholder="Describe the treatment plan in detail, including specific actions to be taken..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Implementation Details -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-project-diagram"></i> Implementation Details
+            </h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label required">Treatment Owner</label>
+                    <select class="form-select">
+                        <option value="">Select Owner</option>
+                        <option value="cfo">Chief Financial Officer</option>
+                        <option value="cro">Chief Risk Officer</option>
+                        <option value="cmo">Chief Marketing Officer</option>
+                        <option value="coo">Chief Operating Officer</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Department</label>
+                    <select class="form-select">
+                        <option value="">Select Department</option>
+                        <option value="BOD">BOD - Board of Directors</option>
+                        <option value="MBD">MBD - Marketing & Business Dev</option>
+                        <option value="FIN">FIN - Finance Division</option>
+                        <option value="ERC">ERC - Enterprise Risk Committee</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Start Date</label>
+                    <input type="date" class="form-input">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Target Completion Date</label>
+                    <input type="date" class="form-input">
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Resources Required</label>
+                    <textarea class="form-textarea" placeholder="List human resources, tools, systems, or external support needed..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Milestones & Timeline -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-flag-checkered"></i> Milestones & Timeline
+            </h3>
+            <div class="milestone-container">
+                <div class="milestone-item">
+                    <input type="text" placeholder="Milestone 1: Market Analysis">
+                    <input type="date" placeholder="Target Date">
+                    <input type="text" placeholder="Responsible Person">
+                    <button class="btn btn-secondary btn-sm" style="padding: 0.5rem;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="milestone-item">
+                    <input type="text" placeholder="Milestone 2: Strategy Development">
+                    <input type="date" placeholder="Target Date">
+                    <input type="text" placeholder="Responsible Person">
+                    <button class="btn btn-secondary btn-sm" style="padding: 0.5rem;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <button class="btn btn-secondary add-milestone">
+                <i class="fas fa-plus"></i> Add Milestone
+            </button>
+        </div>
+
+        <!-- Budget & Resources -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-coins"></i> Budget & Financial Impact
+            </h3>
+            <div class="budget-grid">
+                <div class="budget-item">
+                    <div class="budget-label">Implementation Cost</div>
+                    <input type="text" class="budget-input" placeholder="Rp 0">
+                </div>
+                <div class="budget-item">
+                    <div class="budget-label">Annual Operating Cost</div>
+                    <input type="text" class="budget-input" placeholder="Rp 0">
+                </div>
+                <div class="budget-item">
+                    <div class="budget-label">Expected Risk Reduction (Rp)</div>
+                    <input type="text" class="budget-input" placeholder="Rp 0">
+                </div>
+            </div>
+            
+            <div class="form-group full-width" style="margin-top: 1rem;">
+                <label class="form-label">Cost-Benefit Analysis</label>
+                <textarea class="form-textarea" placeholder="Provide justification for the investment based on risk reduction and other benefits..."></textarea>
+            </div>
+        </div>
+
+        <!-- Success Criteria -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-check-circle"></i> Success Criteria & Monitoring
+            </h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label required">Target Residual Risk Score</label>
+                    <input type="number" class="form-input" placeholder="e.g., 6" min="1" max="25">
+                    <span class="help-text">Expected risk score after treatment implementation</span>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required">Review Frequency</label>
+                    <select class="form-select">
+                        <option value="">Select Frequency</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="quarterly">Quarterly</option>
+                        <option value="semi-annual">Semi-Annual</option>
+                    </select>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Key Success Indicators</label>
+                    <ul class="criteria-list">
+                        <li class="criteria-item">
+                            <input type="checkbox" id="ksi1">
+                            <label for="ksi1" class="criteria-text">Revenue diversification achieved (minimum 3 new markets)</label>
+                        </li>
+                        <li class="criteria-item">
+                            <input type="checkbox" id="ksi2">
+                            <label for="ksi2" class="criteria-text">Market dependency reduced to max 40% per segment</label>
+                        </li>
+                        <li class="criteria-item">
+                            <input type="checkbox" id="ksi3">
+                            <label for="ksi3" class="criteria-text">Early warning system implemented and operational</label>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label class="form-label">Monitoring & Reporting Plan</label>
+                    <textarea class="form-textarea" placeholder="Describe how progress will be monitored, measured, and reported..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+            <div>
+                <button class="btn btn-secondary">
+                    <i class="fas fa-save"></i> Save Draft
+                </button>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <a href="risk-treatment.html" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+                <button class="btn btn-primary">
+                    <i class="fas fa-check"></i> Submit Treatment Plan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add milestone functionality
+        document.querySelector('.add-milestone').addEventListener('click', function() {
+            const container = document.querySelector('.milestone-container');
+            const newMilestone = document.createElement('div');
+            newMilestone.className = 'milestone-item';
+            newMilestone.innerHTML = `
+                <input type="text" placeholder="Milestone: Description">
+                <input type="date" placeholder="Target Date">
+                <input type="text" placeholder="Responsible Person">
+                <button class="btn btn-secondary btn-sm" style="padding: 0.5rem;" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            container.appendChild(newMilestone);
+        });
+        
+        // Treatment option change handler
+        document.getElementById('treatmentOption').addEventListener('change', function(e) {
+            const option = e.target.value;
+            const sections = document.querySelectorAll('.form-section');
+            
+            // Show/hide relevant sections based on treatment option
+            if (option === 'accept') {
+                // For "Accept", hide some sections as minimal action is needed
+                sections.forEach((section, index) => {
+                    if (index > 1) section.style.opacity = '0.5';
+                });
+            } else {
+                sections.forEach(section => {
+                    section.style.opacity = '1';
+                });
+            }
+        });
+        
+        // User role handling
+        document.getElementById('userRole').addEventListener('change', function(e) {
+            const role = e.target.value;
+            const userName = document.getElementById('userName');
+            
+            switch(role) {
+                case 'management':
+                    userName.textContent = 'John Doe (Management)';
+                    break;
+                case 'risk-owner':
+                    userName.textContent = 'Sarah Chen (Risk Owner - ITE)';
+                    break;
+                case 'unit-mr':
+                    userName.textContent = 'Ahmad Wijaya (Unit MR)';
+                    break;
+                case 'auditor':
+                    userName.textContent = 'Lisa Putri (Internal Audit)';
+                    break;
+            }
+        });
+        
+        // Check if coming from risk register with selected risk
+        const selectedRisk = sessionStorage.getItem('selectedRisk');
+        const fromRiskRegister = sessionStorage.getItem('fromRiskRegister');
+        
+        if (selectedRisk && fromRiskRegister === 'true') {
+            const riskData = JSON.parse(selectedRisk);
+            
+            // Update risk summary display
+            document.getElementById('riskCodeDisplay').textContent = riskData.code;
+            document.getElementById('riskEventDisplay').textContent = riskData.event;
+            document.getElementById('riskOwnerDisplay').textContent = riskData.owner;
+            document.getElementById('objectiveDisplay').textContent = riskData.objective;
+            
+            // Calculate risk levels
+            const inherentScore = parseInt(riskData.inherent);
+            const residualScore = parseInt(riskData.residual);
+            
+            const getRiskLevel = (score) => {
+                if (score >= 15) return 'High';
+                if (score >= 8) return 'Medium';
+                return 'Low';
+            };
+            
+            document.getElementById('inherentScoreDisplay').textContent = `${inherentScore} (${getRiskLevel(inherentScore)})`;
+            document.getElementById('residualScoreDisplay').textContent = `${residualScore} (${getRiskLevel(residualScore)})`;
+            
+            // Add a note showing this was selected from risk register
+            const formHeader = document.querySelector('.form-header');
+            const note = document.createElement('div');
+            note.style.cssText = 'background: #dbeafe; border: 1px solid #3b82f6; color: #1e40af; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; display: flex; align-items: center; gap: 0.5rem;';
+            note.innerHTML = `
+                <i class="fas fa-info-circle"></i>
+                <span>Creating treatment plan for: <strong>${riskData.code}</strong></span>
+                <a href="risk-register.html" style="margin-left: auto; color: #3b82f6; text-decoration: none; font-size: 0.875rem;">
+                    <i class="fas fa-arrow-left"></i> Back to Risk Register
+                </a>
+            `;
+            formHeader.after(note);
+            
+            // Pre-select treatment option if available
+            if (riskData.treatment) {
+                const treatmentMap = {
+                    'Mitigate': 'mitigate',
+                    'Accept': 'accept',
+                    'Transfer': 'transfer',
+                    'Avoid': 'avoid'
+                };
+                const treatmentOption = treatmentMap[riskData.treatment];
+                if (treatmentOption) {
+                    document.getElementById('treatmentOption').value = treatmentOption;
+                }
+            }
+            
+            // Clear the session storage
+            sessionStorage.removeItem('selectedRisk');
+            sessionStorage.removeItem('fromRiskRegister');
+        }
+    </script>
+</body>
+</html>
