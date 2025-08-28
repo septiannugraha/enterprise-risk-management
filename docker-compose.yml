@@ -1,21 +1,51 @@
 version: '3.8'
 
 services:
+  # Frontend service
   erm-web:
     build: .
-    container_name: erm-pefindo-web
+    container_name: erm-frontend
     ports:
       - "8123:80"
     restart: unless-stopped
     networks:
       - erm-network
-    # volumes:
-      # Optional: Mount prototype directory for live updates during development
-      # - ./prototype:/usr/share/nginx/html:ro
+    volumes:
+      # Mount prototype directory for live updates during development
+      - ./prototype:/usr/share/nginx/html:ro
     environment:
       - TZ=Asia/Jakarta
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    depends_on:
+      - erm-backend
+
+  # Backend API service
+  erm-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: erm-backend
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - JWT_SECRET=your-secret-key-change-in-production
+      - TZ=Asia/Jakarta
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - erm-network
+    restart: unless-stopped
+    command: npm run dev
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
