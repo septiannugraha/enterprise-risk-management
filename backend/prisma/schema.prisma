@@ -1,0 +1,214 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User management
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  name          String
+  password      String
+  role          Role     @default(USER)
+  department    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  ownedRisks    Risk[]   @relation("RiskOwner")
+  createdRisks  Risk[]   @relation("RiskCreator")
+  kpis          KPI[]
+  kris          KRI[]
+}
+
+enum Role {
+  USER
+  MANAGER
+  ADMIN
+  AUDITOR
+}
+
+// Risk management
+model Risk {
+  id                    String   @id @default(uuid())
+  riskId                String   @unique // R001, R002, etc
+  title                 String
+  description           String
+  category              Category
+  department            String
+  likelihood            Int      // 1-5
+  impact                Int      // 1-5
+  inherentRisk          Float
+  controlEffectiveness  Float
+  residualRisk          Float
+  status                Status
+  
+  ownerId              String
+  owner                User     @relation("RiskOwner", fields: [ownerId], references: [id])
+  
+  createdById          String
+  createdBy            User     @relation("RiskCreator", fields: [createdById], references: [id])
+  
+  mitigations          Mitigation[]
+  assessments          Assessment[]
+  
+  lastAssessed         DateTime
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  
+  @@index([category])
+  @@index([department])
+  @@index([status])
+}
+
+enum Category {
+  OPERATIONAL
+  FINANCIAL
+  COMPLIANCE
+  STRATEGIC
+  REPUTATIONAL
+  TECHNOLOGY
+}
+
+enum Status {
+  ACTIVE
+  MONITORED
+  CONTROLLED
+  CLOSED
+}
+
+model Mitigation {
+  id          String   @id @default(uuid())
+  riskId      String
+  risk        Risk     @relation(fields: [riskId], references: [id], onDelete: Cascade)
+  action      String
+  owner       String
+  dueDate     DateTime
+  status      MitigationStatus
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum MitigationStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  OVERDUE
+}
+
+model Assessment {
+  id            String   @id @default(uuid())
+  riskId        String
+  risk          Risk     @relation(fields: [riskId], references: [id], onDelete: Cascade)
+  assessorName  String
+  likelihood    Int
+  impact        Int
+  notes         String?
+  assessedAt    DateTime @default(now())
+}
+
+// Key Performance Indicators
+model KPI {
+  id         String   @id @default(uuid())
+  kpiId      String   @unique // KPI001, KPI002, etc
+  name       String
+  category   String
+  current    Float
+  target     Float
+  unit       String
+  trend      Trend
+  status     KPIStatus
+  
+  ownerId    String
+  owner      User     @relation(fields: [ownerId], references: [id])
+  
+  history    KPIHistory[]
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  @@index([category])
+  @@index([status])
+}
+
+enum Trend {
+  UP
+  DOWN
+  STABLE
+}
+
+enum KPIStatus {
+  ON_TRACK
+  ATTENTION
+  CRITICAL
+}
+
+model KPIHistory {
+  id        String   @id @default(uuid())
+  kpiId     String
+  kpi       KPI      @relation(fields: [kpiId], references: [id], onDelete: Cascade)
+  value     Float
+  recordedAt DateTime @default(now())
+}
+
+// Key Risk Indicators
+model KRI {
+  id         String   @id @default(uuid())
+  kriId      String   @unique // KRI001, KRI002, etc
+  name       String
+  category   String
+  threshold  Float
+  current    Float
+  unit       String
+  status     KRIStatus
+  trend      Trend
+  
+  ownerId    String
+  owner      User     @relation(fields: [ownerId], references: [id])
+  
+  history    KRIHistory[]
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  @@index([category])
+  @@index([status])
+}
+
+enum KRIStatus {
+  GREEN
+  AMBER
+  RED
+}
+
+model KRIHistory {
+  id        String   @id @default(uuid())
+  kriId     String
+  kri       KRI      @relation(fields: [kriId], references: [id], onDelete: Cascade)
+  value     Float
+  status    KRIStatus
+  recordedAt DateTime @default(now())
+}
+
+// Audit logs
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String
+  action     String
+  entity     String
+  entityId   String
+  changes    Json
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+  
+  @@index([userId])
+  @@index([entity, entityId])
+  @@index([createdAt])
+}
