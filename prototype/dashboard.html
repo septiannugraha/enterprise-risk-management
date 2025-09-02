@@ -765,9 +765,63 @@
         </div>
     </div>
 
+    <!-- Socket.io Client -->
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
+    
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- WebSocket Client -->
+    <script src="websocket-client.js"></script>
+    
+    <!-- Dashboard Scripts -->
     <script src="dashboard.js"></script>
+    
+    <!-- Connection Status Indicator -->
+    <div id="connection-status" class="connection-status disconnected">
+        <i class="fas fa-circle"></i>
+        <span>Disconnected</span>
+    </div>
+    
     <script>
+        // Initialize WebSocket connection
+        document.addEventListener('DOMContentLoaded', () => {
+            const statusElement = document.getElementById('connection-status');
+            const statusIcon = statusElement.querySelector('i');
+            const statusText = statusElement.querySelector('span');
+            
+            // Connect to WebSocket server
+            if (window.riskWebSocket) {
+                // Update connection status
+                window.riskWebSocket.eventHandlers.set('connection-status', (connected) => {
+                    if (connected) {
+                        statusElement.className = 'connection-status connected';
+                        statusText.textContent = 'Connected';
+                    } else {
+                        statusElement.className = 'connection-status disconnected';
+                        statusText.textContent = 'Disconnected';
+                    }
+                });
+                
+                // Subscribe to dashboard updates
+                window.riskWebSocket.socket.on('connected', () => {
+                    statusElement.className = 'connection-status connected';
+                    statusText.textContent = 'Connected';
+                    window.riskWebSocket.subscribe('dashboard');
+                });
+                
+                window.riskWebSocket.socket.on('disconnect', () => {
+                    statusElement.className = 'connection-status disconnected';
+                    statusText.textContent = 'Disconnected';
+                });
+                
+                window.riskWebSocket.socket.on('reconnecting', () => {
+                    statusElement.className = 'connection-status reconnecting';
+                    statusText.textContent = 'Reconnecting...';
+                });
+            }
+        });
+        
         // User role simulation
         document.getElementById('userRole').addEventListener('change', function(e) {
             const role = e.target.value;

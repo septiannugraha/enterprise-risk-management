@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KRI Real-time Monitor - ERM Enterprise</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚨</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+    <style>
+        body {
+            background: #0f172a;
+            color: white;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .monitor-container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .monitor-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .monitor-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .monitor-header p {
+            color: #94a3b8;
+            font-size: 1.125rem;
+        }
+
+        .kri-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .kri-card {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #334155;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kri-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: currentColor;
+        }
+
+        .kri-card.status-green {
+            color: #22c55e;
+        }
+
+        .kri-card.status-amber {
+            color: #f59e0b;
+        }
+
+        .kri-card.status-red {
+            color: #ef4444;
+            animation: alertPulse 2s infinite;
+        }
+
+        @keyframes alertPulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 20px 10px rgba(239, 68, 68, 0.2);
+            }
+        }
+
+        .kri-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .kri-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .kri-status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            background: currentColor;
+            color: #0f172a;
+        }
+
+        .kri-metric {
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .kri-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .kri-unit {
+            font-size: 1rem;
+            color: #64748b;
+        }
+
+        .kri-threshold {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem;
+            background: #0f172a;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .threshold-label {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+
+        .threshold-value {
+            color: white;
+            font-weight: 600;
+        }
+
+        .kri-progress {
+            position: relative;
+            height: 8px;
+            background: #334155;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .kri-progress-fill {
+            height: 100%;
+            background: currentColor;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .kri-progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 20px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-20px);
+            }
+            100% {
+                transform: translateX(20px);
+            }
+        }
+
+        .kri-trend {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+
+        .trend-icon {
+            font-size: 1.25rem;
+        }
+
+        .trend-up {
+            color: #ef4444;
+        }
+
+        .trend-down {
+            color: #22c55e;
+        }
+
+        .trend-stable {
+            color: #f59e0b;
+        }
+
+        .alert-panel {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #334155;
+            margin-bottom: 2rem;
+        }
+
+        .alert-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .alert-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .alert-count {
+            background: #ef4444;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .alert-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .alert-item {
+            background: #0f172a;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .alert-item.severity-critical {
+            border-left-color: #ef4444;
+        }
+
+        .alert-item.severity-high {
+            border-left-color: #f59e0b;
+        }
+
+        .alert-item.severity-medium {
+            border-left-color: #eab308;
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-kri {
+            font-weight: 600;
+            color: white;
+            margin-bottom: 0.25rem;
+        }
+
+        .alert-details {
+            font-size: 0.875rem;
+            color: #94a3b8;
+        }
+
+        .alert-time {
+            font-size: 0.75rem;
+            color: #64748b;
+            white-space: nowrap;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #334155;
+            text-align: center;
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        .connection-indicator {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            padding: 0.5rem 1rem;
+            background: #1e293b;
+            border-radius: 20px;
+            border: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .connection-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            animation: pulse 2s infinite;
+        }
+
+        .connection-dot.disconnected {
+            background: #ef4444;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .chart-container {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #334155;
+            height: 400px;
+        }
+
+        .chart-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="connection-indicator">
+        <div class="connection-dot" id="connectionDot"></div>
+        <span id="connectionText">Connected</span>
+    </div>
+
+    <div class="monitor-container">
+        <div class="monitor-header">
+            <h1>🚨 KRI Real-time Monitor</h1>
+            <p>Live monitoring of Key Risk Indicators across the organization</p>
+        </div>
+
+        <!-- Alert Panel -->
+        <div class="alert-panel">
+            <div class="alert-header">
+                <div class="alert-title">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Active Alerts
+                </div>
+                <div class="alert-count" id="alertCount">3</div>
+            </div>
+            <div class="alert-list" id="alertList">
+                <div class="alert-item severity-critical">
+                    <div class="alert-content">
+                        <div class="alert-kri">System Downtime</div>
+                        <div class="alert-details">Current: 5.2 hours | Threshold: 4 hours | Exceeded by 30%</div>
+                    </div>
+                    <div class="alert-time">2 min ago</div>
+                </div>
+                <div class="alert-item severity-high">
+                    <div class="alert-content">
+                        <div class="alert-kri">Transaction Error Rate</div>
+                        <div class="alert-details">Current: 2.8% | Threshold: 2% | Exceeded by 40%</div>
+                    </div>
+                    <div class="alert-time">15 min ago</div>
+                </div>
+                <div class="alert-item severity-medium">
+                    <div class="alert-content">
+                        <div class="alert-kri">Customer Complaints</div>
+                        <div class="alert-details">Current: 12 | Threshold: 10 | Exceeded by 20%</div>
+                    </div>
+                    <div class="alert-time">1 hour ago</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-value" id="greenCount">8</div>
+                <div class="stat-label">Green Status</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⚠️</div>
+                <div class="stat-value" id="amberCount">4</div>
+                <div class="stat-label">Amber Status</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🔴</div>
+                <div class="stat-value" id="redCount">3</div>
+                <div class="stat-label">Red Status</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value" id="totalKRIs">15</div>
+                <div class="stat-label">Total KRIs</div>
+            </div>
+        </div>
+
+        <!-- KRI Grid -->
+        <div class="kri-grid">
+            <!-- System Downtime -->
+            <div class="kri-card status-red" data-kri-id="KRI001">
+                <div class="kri-header">
+                    <div class="kri-name">System Downtime</div>
+                    <div class="kri-status-badge">RED</div>
+                </div>
+                <div class="kri-metric">
+                    <div class="kri-value">5.2</div>
+                    <div class="kri-unit">hours</div>
+                </div>
+                <div class="kri-threshold">
+                    <span class="threshold-label">Threshold</span>
+                    <span class="threshold-value">4 hours</span>
+                </div>
+                <div class="kri-progress">
+                    <div class="kri-progress-fill" style="width: 130%"></div>
+                </div>
+                <div class="kri-trend">
+                    <i class="fas fa-arrow-up trend-icon trend-up"></i>
+                    <span>Worsening - Up 30% from last period</span>
+                </div>
+            </div>
+
+            <!-- Security Incidents -->
+            <div class="kri-card status-amber" data-kri-id="KRI002">
+                <div class="kri-header">
+                    <div class="kri-name">Security Incidents</div>
+                    <div class="kri-status-badge">AMBER</div>
+                </div>
+                <div class="kri-metric">
+                    <div class="kri-value">4</div>
+                    <div class="kri-unit">incidents</div>
+                </div>
+                <div class="kri-threshold">
+                    <span class="threshold-label">Threshold</span>
+                    <span class="threshold-value">5 incidents</span>
+                </div>
+                <div class="kri-progress">
+                    <div class="kri-progress-fill" style="width: 80%"></div>
+                </div>
+                <div class="kri-trend">
+                    <i class="fas fa-arrow-right trend-icon trend-stable"></i>
+                    <span>Stable - No change from last period</span>
+                </div>
+            </div>
+
+            <!-- Compliance Violations -->
+            <div class="kri-card status-green" data-kri-id="KRI003">
+                <div class="kri-header">
+                    <div class="kri-name">Compliance Violations</div>
+                    <div class="kri-status-badge">GREEN</div>
+                </div>
+                <div class="kri-metric">
+                    <div class="kri-value">0</div>
+                    <div class="kri-unit">violations</div>
+                </div>
+                <div class="kri-threshold">
+                    <span class="threshold-label">Threshold</span>
+                    <span class="threshold-value">0 violations</span>
+                </div>
+                <div class="kri-progress">
+                    <div class="kri-progress-fill" style="width: 0%"></div>
+                </div>
+                <div class="kri-trend">
+                    <i class="fas fa-arrow-down trend-icon trend-down"></i>
+                    <span>Improving - Clean record maintained</span>
+                </div>
+            </div>
+
+            <!-- Transaction Error Rate -->
+            <div class="kri-card status-red" data-kri-id="KRI004">
+                <div class="kri-header">
+                    <div class="kri-name">Transaction Error Rate</div>
+                    <div class="kri-status-badge">RED</div>
+                </div>
+                <div class="kri-metric">
+                    <div class="kri-value">2.8</div>
+                    <div class="kri-unit">%</div>
+                </div>
+                <div class="kri-threshold">
+                    <span class="threshold-label">Threshold</span>
+                    <span class="threshold-value">2%</span>
+                </div>
+                <div class="kri-progress">
+                    <div class="kri-progress-fill" style="width: 140%"></div>
+                </div>
+                <div class="kri-trend">
+                    <i class="fas fa-arrow-up trend-icon trend-up"></i>
+                    <span>Worsening - Up 40% from threshold</span>
+                </div>
+            </div>
+
+            <!-- Customer Complaints -->
+            <div class="kri-card status-amber" data-kri-id="KRI005">
+                <div class="kri-header">
+                    <div class="kri-name">Customer Complaints</div>
+                    <div class="kri-status-badge">AMBER</div>
+                </div>
+                <div class="kri-metric">
+                    <div class="kri-value">12</div>
+                    <div class="kri-unit">complaints</div>
+                </div>
+                <div class="kri-threshold">
+                    <span class="threshold-label">Threshold</span>
+                    <span class="threshold-value">10 complaints</span>
+                </div>
+                <div class="kri-progress">
+                    <div class="kri-progress-fill" style="width: 120%"></div>
+                </div>
+                <div class="kri-trend">
+                    <i class="fas fa-arrow-up trend-icon trend-up"></i>
+                    <span>Worsening - Up 20% from threshold</span>
+                </div>
+            </div>
+
+            <!-- Data Quality Score -->
+            <div class="kri-card status-green" data-kri-id="KRI006">
+                <div class="kri-header">
+                    <div class="kri-name">Data Quality Score</div>
+                    <div class="kri-status-badge">GREEN</div>
+                </div>
+                <div class="kri-metric">
+                    <div class="kri-value">95</div>
+                    <div class="kri-unit">%</div>
+                </div>
+                <div class="kri-threshold">
+                    <span class="threshold-label">Threshold</span>
+                    <span class="threshold-value">90%</span>
+                </div>
+                <div class="kri-progress">
+                    <div class="kri-progress-fill" style="width: 95%"></div>
+                </div>
+                <div class="kri-trend">
+                    <i class="fas fa-arrow-up trend-icon trend-down"></i>
+                    <span>Improving - Up 5% from last period</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Socket.io Client -->
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
+    
+    <!-- WebSocket Client -->
+    <script src="websocket-client.js"></script>
+    
+    <script>
+        // KRI threshold breach simulation
+        function simulateKRIBreach() {
+            const kris = [
+                { id: 'KRI007', name: 'API Response Time', value: 850, unit: 'ms', threshold: 500, status: 'amber' },
+                { id: 'KRI008', name: 'Failed Login Attempts', value: 150, unit: 'attempts', threshold: 100, status: 'red' },
+                { id: 'KRI009', name: 'Database Connection Pool', value: 85, unit: '%', threshold: 80, status: 'amber' },
+                { id: 'KRI010', name: 'Memory Usage', value: 92, unit: '%', threshold: 85, status: 'red' }
+            ];
+            
+            const kri = kris[Math.floor(Math.random() * kris.length)];
+            const exceedPercent = Math.round(((kri.value - kri.threshold) / kri.threshold) * 100);
+            
+            // Add to alert list
+            const alertList = document.getElementById('alertList');
+            const alertItem = document.createElement('div');
+            const severity = kri.status === 'red' ? 'critical' : 'high';
+            
+            alertItem.className = `alert-item severity-${severity}`;
+            alertItem.innerHTML = `
+                <div class="alert-content">
+                    <div class="alert-kri">${kri.name}</div>
+                    <div class="alert-details">Current: ${kri.value}${kri.unit} | Threshold: ${kri.threshold}${kri.unit} | Exceeded by ${exceedPercent}%</div>
+                </div>
+                <div class="alert-time">Just now</div>
+            `;
+            
+            alertList.insertBefore(alertItem, alertList.firstChild);
+            
+            // Update alert count
+            const alertCount = document.getElementById('alertCount');
+            alertCount.textContent = parseInt(alertCount.textContent) + 1;
+            
+            // Update stats
+            if (kri.status === 'red') {
+                const redCount = document.getElementById('redCount');
+                redCount.textContent = parseInt(redCount.textContent) + 1;
+            } else {
+                const amberCount = document.getElementById('amberCount');
+                amberCount.textContent = parseInt(amberCount.textContent) + 1;
+            }
+            
+            // Flash the new alert
+            alertItem.style.animation = 'none';
+            setTimeout(() => {
+                alertItem.style.animation = 'slideInRight 0.3s ease-out, alertPulse 2s infinite';
+            }, 10);
+            
+            // Limit alerts to 10
+            while (alertList.children.length > 10) {
+                alertList.removeChild(alertList.lastChild);
+            }
+        }
+
+        // Update KRI card
+        function updateKRICard(kriId, value, status) {
+            const card = document.querySelector(`[data-kri-id="${kriId}"]`);
+            if (card) {
+                // Update status
+                card.className = `kri-card status-${status}`;
+                const badge = card.querySelector('.kri-status-badge');
+                badge.textContent = status.toUpperCase();
+                
+                // Update value
+                const valueElement = card.querySelector('.kri-value');
+                valueElement.textContent = value;
+                
+                // Update progress bar
+                const threshold = parseFloat(card.querySelector('.threshold-value').textContent);
+                const percentage = Math.min((value / threshold) * 100, 150);
+                const progressFill = card.querySelector('.kri-progress-fill');
+                progressFill.style.width = `${percentage}%`;
+                
+                // Add pulse animation
+                card.style.animation = 'alertPulse 2s';
+                setTimeout(() => {
+                    card.style.animation = '';
+                }, 2000);
+            }
+        }
+
+        // WebSocket connection
+        if (window.riskWebSocket) {
+            // Subscribe to KRI updates
+            window.riskWebSocket.subscribe('kri');
+            
+            // Handle KRI alerts
+            window.riskWebSocket.socket.on('kri:alert', (data) => {
+                const { kriId, name, threshold, currentValue, severity } = data;
+                
+                // Update KRI card if exists
+                updateKRICard(kriId, currentValue, severity === 'critical' ? 'red' : severity === 'high' ? 'amber' : 'green');
+                
+                // Add to alert list
+                const exceedPercent = Math.round(((currentValue - threshold) / threshold) * 100);
+                const alertList = document.getElementById('alertList');
+                const alertItem = document.createElement('div');
+                
+                alertItem.className = `alert-item severity-${severity}`;
+                alertItem.innerHTML = `
+                    <div class="alert-content">
+                        <div class="alert-kri">${name}</div>
+                        <div class="alert-details">Current: ${currentValue} | Threshold: ${threshold} | Exceeded by ${exceedPercent}%</div>
+                    </div>
+                    <div class="alert-time">Just now</div>
+                `;
+                
+                alertList.insertBefore(alertItem, alertList.firstChild);
+                
+                // Update alert count
+                const alertCount = document.getElementById('alertCount');
+                alertCount.textContent = parseInt(alertCount.textContent) + 1;
+            });
+            
+            // Update connection indicator
+            window.riskWebSocket.socket.on('connected', () => {
+                document.getElementById('connectionDot').className = 'connection-dot';
+                document.getElementById('connectionText').textContent = 'Connected';
+            });
+            
+            window.riskWebSocket.socket.on('disconnect', () => {
+                document.getElementById('connectionDot').className = 'connection-dot disconnected';
+                document.getElementById('connectionText').textContent = 'Disconnected';
+            });
+        }
+
+        // Auto-simulate breaches for demo
+        setInterval(() => {
+            if (Math.random() > 0.8) {
+                simulateKRIBreach();
+            }
+        }, 8000);
+    </script>
+</body>
+</html>

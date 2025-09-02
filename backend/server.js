@@ -6,9 +6,17 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const http = require('http');
+const WebSocketServer = require('./websocket-server');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+// Create HTTP server for both Express and Socket.io
+const server = http.createServer(app);
+
+// Initialize WebSocket server
+const wsServer = new WebSocketServer(server);
 
 // Middleware
 app.use(cors());
@@ -213,6 +221,14 @@ app.post('/api/risks', (req, res) => {
   };
   
   risks.push(newRisk);
+  
+  // Emit WebSocket event for real-time update
+  wsServer.emitToRoom('riskRegister', 'risk:created', newRisk);
+  wsServer.emitToRoom('dashboard', 'dashboard:update', {
+    type: 'risk_added',
+    risk: newRisk
+  });
+  
   res.status(201).json(newRisk);
 });
 
@@ -394,16 +410,22 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// WebSocket stats endpoint
+app.get('/api/websocket/stats', (req, res) => {
+  res.json(wsServer.getStats());
+});
+
 // Start server
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`
 ╔════════════════════════════════════════════╗
 ║   Enterprise Risk Management API Server    ║
 ║                                            ║
 ║   Running on: http://localhost:${PORT}       ║
+║   WebSocket: ws://localhost:${PORT}         ║
 ║   API Docs: http://localhost:${PORT}/api    ║
 ║                                            ║
-║   Endpoints:                               ║
+║   REST Endpoints:                          ║
 ║   - GET  /api/dashboard/summary           ║
 ║   - GET  /api/risks                       ║
 ║   - POST /api/risks                       ║
@@ -411,6 +433,12 @@ app.listen(PORT, () => {
 ║   - GET  /api/kris                        ║
 ║   - GET  /api/analytics/risk-matrix       ║
 ║   - GET  /api/reports/executive-summary   ║
+║                                            ║
+║   WebSocket Events:                        ║
+║   - risk:create/update/delete             ║
+║   - kri:breach                            ║
+║   - matrix:update                         ║
+║   - metric:update                         ║
 ╚════════════════════════════════════════════╝
   `);
 });

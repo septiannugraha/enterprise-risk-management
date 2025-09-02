@@ -1,6 +1,21 @@
-# Enterprise Risk Management System
+# Enterprise Risk Management System 🔥
 
-> A comprehensive web-based risk management platform built with modern web technologies and containerized deployment
+> A comprehensive web-based risk management platform with **real-time WebSocket updates** - Watch risks change live across your organization
+
+## 🆕 Real-time Features (Just Added!)
+
+### Live Risk Updates 
+- **WebSocket Server**: Socket.io integration for instant updates
+- **Real-time Dashboard**: See metrics change without refreshing
+- **Live Heat Map**: Watch risks move on the matrix in real-time
+- **KRI Breach Alerts**: Instant notifications when thresholds exceeded
+- **Multi-user Sync**: Changes from any user appear instantly
+- **Activity Feed**: Live stream of all risk management activities
+- **Connection Status**: Visual indicator of WebSocket connection
+
+### Demo Pages
+- `/realtime-demo.html` - Interactive heat map with live risk movements
+- `/kri-monitor.html` - Real-time KRI monitoring dashboard
 
 ## 🚀 Features
 

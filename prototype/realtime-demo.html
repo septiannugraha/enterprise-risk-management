@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time Risk Heat Map Demo - ERM Enterprise</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔥</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .demo-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .demo-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+        }
+
+        .demo-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .demo-header p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+        }
+
+        .demo-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .heat-map-container {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .heat-map-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #1e293b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: #ef4444;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .heat-map-grid {
+            display: grid;
+            grid-template-columns: 60px repeat(5, 1fr);
+            grid-template-rows: repeat(6, 100px);
+            gap: 2px;
+            background: #e2e8f0;
+            padding: 2px;
+            border-radius: 8px;
+        }
+
+        .axis-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #64748b;
+            background: white;
+        }
+
+        .axis-label.y-axis {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+
+        .heat-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .heat-cell:hover {
+            transform: scale(1.05);
+            z-index: 10;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .heat-cell.very-low {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .heat-cell.low {
+            background: #bbf7d0;
+            color: #166534;
+        }
+
+        .heat-cell.medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .heat-cell.high {
+            background: #fed7aa;
+            color: #c2410c;
+        }
+
+        .heat-cell.very-high {
+            background: #fecaca;
+            color: #991b1b;
+        }
+
+        .risk-score-large {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .risk-count {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+
+        .risk-dots {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            display: flex;
+            gap: 2px;
+        }
+
+        .risk-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            opacity: 0.6;
+        }
+
+        .activity-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .activity-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .activity-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1e293b;
+        }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            padding: 0.75rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 3px solid;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .activity-item.created {
+            border-left-color: #22c55e;
+        }
+
+        .activity-item.updated {
+            border-left-color: #3b82f6;
+        }
+
+        .activity-item.breach {
+            border-left-color: #ef4444;
+        }
+
+        .activity-time {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-message {
+            font-size: 0.875rem;
+            color: #1e293b;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 0.25rem;
+        }
+
+        .control-panel {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .btn-simulate {
+            width: 100%;
+            padding: 0.875rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-simulate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-simulate:active {
+            transform: translateY(0);
+        }
+
+        .online-users {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: #f0f9ff;
+            border-radius: 8px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .online-count {
+            margin-left: auto;
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1>🔥 Real-time Risk Heat Map</h1>
+            <p>Watch as risks update live across the organization</p>
+        </div>
+
+        <div class="demo-content">
+            <div class="heat-map-container">
+                <div class="heat-map-title">
+                    <span>Risk Heat Map</span>
+                    <div class="live-indicator">
+                        <div class="live-dot"></div>
+                        <span>LIVE</span>
+                    </div>
+                </div>
+
+                <div class="heat-map-grid">
+                    <!-- Y-axis label -->
+                    <div class="axis-label y-axis">Likelihood →</div>
+                    
+                    <!-- Header row -->
+                    <div class="axis-label">1</div>
+                    <div class="axis-label">2</div>
+                    <div class="axis-label">3</div>
+                    <div class="axis-label">4</div>
+                    <div class="axis-label">5</div>
+
+                    <!-- Row 5 (Likelihood = 5) -->
+                    <div class="axis-label">5</div>
+                    <div class="heat-cell low" data-likelihood="5" data-impact="1">
+                        <div class="risk-score-large">5</div>
+                        <div class="risk-count">0 risks</div>
+                    </div>
+                    <div class="heat-cell medium" data-likelihood="5" data-impact="2">
+                        <div class="risk-score-large">10</div>
+                        <div class="risk-count">2 risks</div>
+                        <div class="risk-dots">
+                            <div class="risk-dot"></div>
+                            <div class="risk-dot"></div>
+                        </div>
+                    </div>
+                    <div class="heat-cell high" data-likelihood="5" data-impact="3">
+                        <div class="risk-score-large">15</div>
+                        <div class="risk-count">1 risk</div>
+                        <div class="risk-dots">
+                            <div class="risk-dot"></div>
+                        </div>
+                    </div>
+                    <div class="heat-cell very-high" data-likelihood="5" data-impact="4">
+                        <div class="risk-score-large">20</div>
+                        <div class="risk-count">3 risks</div>
+                        <div class="risk-dots">
+                            <div class="risk-dot"></div>
+                            <div class="risk-dot"></div>
+                            <div class="risk-dot"></div>
+                        </div>
+                    </div>
+                    <div class="heat-cell very-high" data-likelihood="5" data-impact="5">
+                        <div class="risk-score-large">25</div>
+                        <div class="risk-count">2 risks</div>
+                        <div class="risk-dots">
+                            <div class="risk-dot"></div>
+                            <div class="risk-dot"></div>
+                        </div>
+                    </div>
+
+                    <!-- Row 4 (Likelihood = 4) -->
+                    <div class="axis-label">4</div>
+                    <div class="heat-cell very-low" data-likelihood="4" data-impact="1">
+                        <div class="risk-score-large">4</div>
+                        <div class="risk-count">1 risk</div>
+                        <div class="risk-dots">
+                            <div class="risk-dot"></div>
+                        </div>
+                    </div>
+                    <div class="heat-cell low" data-likelihood="4" data-impact="2">
+                        <div class="risk-score-large">8</div>
+                        <div class="risk-count">0 risks</div>
+                    </div>
+                    <div class="heat-cell medium" data-likelihood="4" data-impact="3">
+                        <div class="risk-score-large">12</div>
+                        <div class="risk-count">4 risks</div>
+                        <div class="risk-dots">
+                            <div class="risk-dot"></div>
+                            <div class="risk-dot"></div>
+                            <div class="risk-dot"></div>
+                            <div class="risk-dot"></div>
+                        </div>
+                    </div>
+                    <div class="heat-cell high" data-likelihood="4" data-impact="4">
+                        <div class="risk-score-large">16</div>
+                        <div class="risk-count">2 risks</div>
+                        <div class="risk-dots">
+                            <div class="risk-dot"></div>
+                            <div class="risk-dot"></div>
+                        </div>
+                    </div>
+                    <div class="heat-cell very-high" data-likelihood="4" data-impact="5">
+                        <div class="risk-score-large">20</div>
+                        <div class="risk-count">1 risk</div>
+                        <div class="risk-dots">
+                            <div class="risk-dot"></div>
+                        </div>
+                    </div>
+
+                    <!-- Row 3 (Likelihood = 3) -->
+                    <div class="axis-label">3</div>
+                    <div class="heat-cell very-low" data-likelihood="3" data-impact="1">
+                        <div class="risk-score-large">3</div>
+                        <div class="risk-count">0 risks</div>
+                    </div>
+                    <div class="heat-cell low" data-likelihood="3" data-impact="2">
+                        <div class="risk-score-large">6</div>
+                        <div class="risk-count">2 risks</div>
+                        <div class="risk-dots">
+                            <div class="risk-dot"></div>
+                            <div class="risk-dot"></div>
+                        </div>
+                    </div>
+                    <div class="heat-cell medium" data-likelihood="3" data-impact="3">
+                        <div class="risk-score-large">9</div>
+                        <div class="risk-count">3 risks</div>
+                        <div class="risk-dots">
+                            <div class="risk-dot"></div>
+                            <div class="risk-dot"></div>
+                            <div class="risk-dot"></div>
+                        </div>
+                    </div>
+                    <div class="heat-cell medium" data-likelihood="3" data-impact="4">
+                        <div class="risk-score-large">12</div>
+                        <div class="risk-count">1 risk</div>
+                        <div class="risk-dots">
+                            <div class="risk-dot"></div>
+                        </div>
+                    </div>
+                    <div class="heat-cell high" data-likelihood="3" data-impact="5">
+                        <div class="risk-score-large">15</div>
+                        <div class="risk-count">0 risks</div>
+                    </div>
+
+                    <!-- Row 2 (Likelihood = 2) -->
+                    <div class="axis-label">2</div>
+                    <div class="heat-cell very-low" data-likelihood="2" data-impact="1">
+                        <div class="risk-score-large">2</div>
+                        <div class="risk-count">1 risk</div>
+                        <div class="risk-dots">
+                            <div class="risk-dot"></div>
+                        </div>
+                    </div>
+                    <div class="heat-cell very-low" data-likelihood="2" data-impact="2">
+                        <div class="risk-score-large">4</div>
+                        <div class="risk-count">0 risks</div>
+                    </div>
+                    <div class="heat-cell low" data-likelihood="2" data-impact="3">
+                        <div class="risk-score-large">6</div>
+                        <div class="risk-count">1 risk</div>
+                        <div class="risk-dots">
+                            <div class="risk-dot"></div>
+                        </div>
+                    </div>
+                    <div class="heat-cell low" data-likelihood="2" data-impact="4">
+                        <div class="risk-score-large">8</div>
+                        <div class="risk-count">2 risks</div>
+                        <div class="risk-dots">
+                            <div class="risk-dot"></div>
+                            <div class="risk-dot"></div>
+                        </div>
+                    </div>
+                    <div class="heat-cell medium" data-likelihood="2" data-impact="5">
+                        <div class="risk-score-large">10</div>
+                        <div class="risk-count">0 risks</div>
+                    </div>
+
+                    <!-- Row 1 (Likelihood = 1) -->
+                    <div class="axis-label">1</div>
+                    <div class="heat-cell very-low" data-likelihood="1" data-impact="1">
+                        <div class="risk-score-large">1</div>
+                        <div class="risk-count">0 risks</div>
+                    </div>
+                    <div class="heat-cell very-low" data-likelihood="1" data-impact="2">
+                        <div class="risk-score-large">2</div>
+                        <div class="risk-count">0 risks</div>
+                    </div>
+                    <div class="heat-cell very-low" data-likelihood="1" data-impact="3">
+                        <div class="risk-score-large">3</div>
+                        <div class="risk-count">1 risk</div>
+                        <div class="risk-dots">
+                            <div class="risk-dot"></div>
+                        </div>
+                    </div>
+                    <div class="heat-cell low" data-likelihood="1" data-impact="4">
+                        <div class="risk-score-large">4</div>
+                        <div class="risk-count">0 risks</div>
+                    </div>
+                    <div class="heat-cell low" data-likelihood="1" data-impact="5">
+                        <div class="risk-score-large">5</div>
+                        <div class="risk-count">0 risks</div>
+                    </div>
+
+                    <!-- X-axis label -->
+                    <div class="axis-label">Impact →</div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+
+            <div class="activity-panel">
+                <div class="activity-card">
+                    <div class="activity-title">📊 Live Activity Feed</div>
+                    <div class="activity-list" id="activityList">
+                        <div class="activity-item created">
+                            <div class="activity-time">Just now</div>
+                            <div class="activity-message">New risk "Data Breach" added by John Doe</div>
+                        </div>
+                        <div class="activity-item updated">
+                            <div class="activity-time">2 min ago</div>
+                            <div class="activity-message">Risk "Market Volatility" moved from Medium to High</div>
+                        </div>
+                        <div class="activity-item breach">
+                            <div class="activity-time">5 min ago</div>
+                            <div class="activity-message">KRI Alert: System Downtime exceeded threshold</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-card">
+                    <div class="activity-title">📈 Risk Statistics</div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="totalRisks">32</div>
+                            <div class="stat-label">Total Risks</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="highRisks">8</div>
+                            <div class="stat-label">High Risk</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="activeUsers">5</div>
+                            <div class="stat-label">Active Users</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="kriBreaches">2</div>
+                            <div class="stat-label">KRI Breaches</div>
+                        </div>
+                    </div>
+
+                    <div class="online-users">
+                        <div class="user-avatar">JD</div>
+                        <div class="user-avatar">SC</div>
+                        <div class="user-avatar">AW</div>
+                        <div class="user-avatar">LP</div>
+                        <div class="user-avatar">+2</div>
+                        <div class="online-count">6 users online</div>
+                    </div>
+                </div>
+
+                <div class="activity-card control-panel">
+                    <div class="activity-title">🎮 Simulation Controls</div>
+                    <button class="btn-simulate" onclick="simulateRiskUpdate()">
+                        <i class="fas fa-dice"></i> Simulate Risk Update
+                    </button>
+                    <button class="btn-simulate" onclick="simulateKRIBreach()" style="margin-top: 0.75rem; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+                        <i class="fas fa-exclamation-triangle"></i> Simulate KRI Breach
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Socket.io Client -->
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
+    
+    <!-- WebSocket Client -->
+    <script src="websocket-client.js"></script>
+    
+    <script>
+        // Heat map cell colors based on score
+        function getHeatColor(score) {
+            if (score <= 3) return 'very-low';
+            if (score <= 6) return 'low';
+            if (score <= 12) return 'medium';
+            if (score <= 18) return 'high';
+            return 'very-high';
+        }
+
+        // Update heat map cell
+        function updateHeatCell(likelihood, impact, count) {
+            const cell = document.querySelector(`[data-likelihood="${likelihood}"][data-impact="${impact}"]`);
+            if (cell) {
+                const score = likelihood * impact;
+                const countElement = cell.querySelector('.risk-count');
+                const dotsContainer = cell.querySelector('.risk-dots') || document.createElement('div');
+                
+                // Update count
+                countElement.textContent = count === 1 ? '1 risk' : `${count} risks`;
+                
+                // Update color
+                cell.className = `heat-cell ${getHeatColor(score)}`;
+                
+                // Update dots
+                dotsContainer.className = 'risk-dots';
+                dotsContainer.innerHTML = '';
+                for (let i = 0; i < Math.min(count, 5); i++) {
+                    const dot = document.createElement('div');
+                    dot.className = 'risk-dot';
+                    dotsContainer.appendChild(dot);
+                }
+                if (!cell.querySelector('.risk-dots')) {
+                    cell.appendChild(dotsContainer);
+                }
+                
+                // Add update animation
+                cell.classList.add('updated');
+                setTimeout(() => cell.classList.remove('updated'), 2000);
+            }
+        }
+
+        // Add activity to feed
+        function addActivity(type, message) {
+            const activityList = document.getElementById('activityList');
+            const item = document.createElement('div');
+            item.className = `activity-item ${type}`;
+            item.innerHTML = `
+                <div class="activity-time">Just now</div>
+                <div class="activity-message">${message}</div>
+            `;
+            
+            activityList.insertBefore(item, activityList.firstChild);
+            
+            // Remove old activities if too many
+            while (activityList.children.length > 10) {
+                activityList.removeChild(activityList.lastChild);
+            }
+        }
+
+        // Simulate risk update
+        function simulateRiskUpdate() {
+            const likelihood = Math.floor(Math.random() * 5) + 1;
+            const impact = Math.floor(Math.random() * 5) + 1;
+            const currentCell = document.querySelector(`[data-likelihood="${likelihood}"][data-impact="${impact}"]`);
+            const currentCount = parseInt(currentCell.querySelector('.risk-count').textContent) || 0;
+            
+            // Update heat map
+            updateHeatCell(likelihood, impact, currentCount + 1);
+            
+            // Add to activity feed
+            const riskNames = ['Cyber Attack', 'Supply Chain Disruption', 'Regulatory Change', 'Market Volatility', 'Operational Failure'];
+            const riskName = riskNames[Math.floor(Math.random() * riskNames.length)];
+            const users = ['John Doe', 'Sarah Chen', 'Ahmad Wijaya', 'Lisa Putri'];
+            const user = users[Math.floor(Math.random() * users.length)];
+            
+            addActivity('updated', `Risk "${riskName}" updated by ${user} (L${likelihood}/I${impact})`);
+            
+            // Update stats
+            const totalRisks = document.getElementById('totalRisks');
+            totalRisks.textContent = parseInt(totalRisks.textContent) + 1;
+            
+            if (likelihood * impact >= 15) {
+                const highRisks = document.getElementById('highRisks');
+                highRisks.textContent = parseInt(highRisks.textContent) + 1;
+            }
+        }
+
+        // Simulate KRI breach
+        function simulateKRIBreach() {
+            const kris = [
+                'System Downtime exceeded 4 hours',
+                'Customer Complaints above threshold',
+                'Compliance Violations detected',
+                'Security Incidents spike',
+                'Transaction Errors increased'
+            ];
+            const kri = kris[Math.floor(Math.random() * kris.length)];
+            
+            addActivity('breach', `⚠️ KRI Alert: ${kri}`);
+            
+            // Update KRI breaches count
+            const kriBreaches = document.getElementById('kriBreaches');
+            kriBreaches.textContent = parseInt(kriBreaches.textContent) + 1;
+            
+            // Flash the heat map
+            document.querySelector('.heat-map-container').classList.add('pulsing');
+            setTimeout(() => {
+                document.querySelector('.heat-map-container').classList.remove('pulsing');
+            }, 3000);
+        }
+
+        // Auto-simulate for demo
+        setInterval(() => {
+            if (Math.random() > 0.7) {
+                simulateRiskUpdate();
+            }
+        }, 5000);
+
+        setInterval(() => {
+            if (Math.random() > 0.9) {
+                simulateKRIBreach();
+            }
+        }, 10000);
+
+        // WebSocket integration (if server is running)
+        if (window.riskWebSocket) {
+            // Subscribe to risk matrix updates
+            window.riskWebSocket.subscribe('riskMatrix');
+            
+            // Handle real updates from server
+            window.riskWebSocket.socket.on('matrix:changed', (data) => {
+                const { riskId, oldPosition, newPosition } = data;
+                if (oldPosition) {
+                    // Decrease count in old position
+                    const oldCell = document.querySelector(`[data-likelihood="${oldPosition.likelihood}"][data-impact="${oldPosition.impact}"]`);
+                    if (oldCell) {
+                        const oldCount = parseInt(oldCell.querySelector('.risk-count').textContent) || 0;
+                        updateHeatCell(oldPosition.likelihood, oldPosition.impact, Math.max(0, oldCount - 1));
+                    }
+                }
+                // Increase count in new position
+                const newCell = document.querySelector(`[data-likelihood="${newPosition.likelihood}"][data-impact="${newPosition.impact}"]`);
+                if (newCell) {
+                    const newCount = parseInt(newCell.querySelector('.risk-count').textContent) || 0;
+                    updateHeatCell(newPosition.likelihood, newPosition.impact, newCount + 1);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
