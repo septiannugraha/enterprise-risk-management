@@ -21,14 +21,29 @@
 - **Pure JavaScript** with modular architecture
 - **Chart.js** for data visualizations
 - **CSS Grid/Flexbox** for responsive layouts
-- **LocalStorage** for client-side data persistence
+- **API Integration Module** for backend connectivity
 - **No framework dependencies** for maximum performance
 
+### Backend (NEW!)
+- **Express.js** REST API with comprehensive endpoints
+- **Prisma ORM** with PostgreSQL for type-safe database access
+- **JWT Authentication** with role-based access control
+- **Data Generator** for realistic demo data (50 risks, KPIs, KRIs)
+- **RESTful Architecture** with proper error handling
+
+### Database Schema
+- **Complete Prisma Models** for Risk, KPI, KRI management
+- **Audit Logging** for compliance tracking
+- **Historical Data** tracking with temporal tables
+- **Optimized Indexes** for query performance
+- **Enum Types** for data consistency
+
 ### Infrastructure
-- **Docker** containerization for consistent deployment
-- **Nginx** for high-performance static file serving
-- **Security headers** implemented at server level
-- **HTTPS ready** with SSL configuration
+- **Docker Compose** full-stack orchestration
+- **Nginx** for frontend static file serving
+- **Node.js Backend** container with hot-reload
+- **Health Checks** for both services
+- **Environment-based** configuration
 
 ## 📊 Key Achievements
 
@@ -46,20 +61,26 @@
 └────────────────┬────────────────────────────────┘
                  │ HTTPS
 ┌────────────────▼────────────────────────────────┐
-│                Nginx Web Server                  │
-│         (Static Files + Security Headers)        │
-└────────────────┬────────────────────────────────┘
-                 │
-┌────────────────▼────────────────────────────────┐
-│              Application Modules                 │
+│              Docker Compose Stack                │
+├─────────────────────────────────────────────────┤
+│   ┌─────────────────┐    ┌──────────────────┐  │
+│   │  Nginx (Port 80)│───▶│ Express.js API   │  │
+│   │  Static Files   │    │   (Port 3001)    │  │
+│   └─────────────────┘    └──────────────────┘  │
+└────────────────┬──────────────┬─────────────────┘
+                 │              │
+┌────────────────▼──────────────▼─────────────────┐
+│              Application Layer                   │
 ├─────────────────────────────────────────────────┤
 │  Dashboard │ Risk Register │ Analytics │ KRI    │
 │  KPI Mgmt  │ Risk Treatment│ Dictionary│ Reports│
 └─────────────────────────────────────────────────┘
                  │
 ┌────────────────▼────────────────────────────────┐
-│           Browser Storage (LocalStorage)         │
-│              JSON Data Persistence               │
+│           Prisma ORM + PostgreSQL                │
+│   • Risk, KPI, KRI Models                       │
+│   • User Authentication & RBAC                   │
+│   • Audit Logging & History Tracking            │
 └──────────────────────────────────────────────────┘
 ```
 
@@ -82,6 +103,26 @@
 - Risk source distribution
 - Impact area analysis by BSC perspective
 - Control effectiveness monitoring
+
+## 📡 API Endpoints
+
+### Risk Management
+- `GET /api/risks` - List all risks with filtering
+- `POST /api/risks` - Create new risk
+- `PUT /api/risks/:id` - Update risk
+- `DELETE /api/risks/:id` - Delete risk
+
+### KPI/KRI Management
+- `GET /api/kpis` - Get all KPIs
+- `PUT /api/kpis/:id` - Update KPI value
+- `GET /api/kris` - Get all KRIs with status
+- `PUT /api/kris/:id` - Update KRI threshold
+
+### Analytics
+- `GET /api/dashboard/summary` - Dashboard metrics
+- `GET /api/analytics/risk-matrix` - Risk heat map data
+- `GET /api/analytics/department-distribution` - Risk by department
+- `GET /api/reports/executive-summary` - Executive report
 
 ## 🚀 Quick Start
 
